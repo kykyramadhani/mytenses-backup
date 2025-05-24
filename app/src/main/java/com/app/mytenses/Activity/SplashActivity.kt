@@ -19,7 +19,7 @@ class SplashActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.startBtn.setOnClickListener{
-            val intent = Intent(this, LoginActivity::class.java)
+            val intent = Intent(this, OnBoarding5Activity::class.java)
             startActivity(intent)
             finish()
         }

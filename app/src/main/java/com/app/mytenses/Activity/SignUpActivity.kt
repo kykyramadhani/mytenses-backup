@@ -11,6 +11,7 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
@@ -40,7 +41,7 @@ class SignUpActivity : AppCompatActivity() {
         val btnRegister = findViewById<Button>(R.id.btnRegister)
         val tvLogin = findViewById<TextView>(R.id.tvLogin)
         val progressBar = findViewById<ProgressBar>(R.id.progressBar)
-
+        val prevBtn = findViewById<ImageButton>(R.id.btnPrev)
         val alreadyHaveAccount = getString(R.string.already_have_account)
         val loginText = getString(R.string.login_here)
         val colorPrimary = String.format("#%06X", (0xFFFFFF and ContextCompat.getColor(this, R.color.blue)))
@@ -50,6 +51,10 @@ class SignUpActivity : AppCompatActivity() {
         )
         tvLogin.text = Html.fromHtml(htmlText, Html.FROM_HTML_MODE_LEGACY)
 
+        prevBtn.setOnClickListener {
+            val intent = Intent(this, OnBoarding5Activity::class.java)
+            startActivity(intent)
+        }
         btnRegister.setOnClickListener {
             val fullName = etFullName.text.toString().trim()
             val email = etEmail.text.toString().trim()

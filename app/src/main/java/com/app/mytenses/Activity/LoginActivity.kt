@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
@@ -32,7 +33,12 @@ class LoginActivity : AppCompatActivity() {
         val btnLogin = findViewById<Button>(R.id.btnLogin)
         val tvLogin = findViewById<TextView>(R.id.tvLogin)
         val progressBar = findViewById<ProgressBar>(R.id.progressBar)
+        val previousBtn = findViewById<ImageButton>(R.id.btnBack)
 
+        previousBtn.setOnClickListener {
+            val intent = Intent(this, OnBoarding5Activity::class.java)
+            startActivity(intent)
+        }
         btnLogin.setOnClickListener {
             val email = etEmail.text.toString().trim()
             val password = etPassword.text.toString().trim()
