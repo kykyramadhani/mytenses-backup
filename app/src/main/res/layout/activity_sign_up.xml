@@ -128,6 +128,13 @@
             android:padding="12dp"
             android:layout_marginBottom="16dp"/>
 
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone" />
+
         <TextView
             android:id="@+id/tvLogin"
             android:layout_width="wrap_content"
