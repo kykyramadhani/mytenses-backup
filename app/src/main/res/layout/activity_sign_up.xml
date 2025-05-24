@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white">
+
+    <TextView
+        android:id="@+id/daftar"
+        android:layout_width="99dp"
+        android:layout_height="40dp"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="60dp"
+        android:text="@string/daftar"
+        android:fontFamily="@font/plusjakartasans_bold"
+        android:textSize="24sp"
+        android:textColor="@color/blue"
+        android:gravity="center_horizontal|top"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:layout_below="@id/daftar"
+        android:layout_marginTop="8dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Buat akun untuk memulai Perjalanan Belajarmu"
+            android:textSize="16sp"
+            android:textColor="@color/black"
+            android:fontFamily="@font/plusjakartasans_regular"
+            android:layout_marginBottom="16dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nama Lengkap"
+            android:textSize="14sp"
+            android:textColor="@color/black"
+            android:fontFamily="@font/plusjakartasans_regular"
+            android:layout_marginBottom="4dp"/>
+
+        <EditText
+            android:id="@+id/etFullName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Masukkan Nama"
+            android:textColor="@color/black"
+            android:padding="12dp"
+            android:fontFamily="@font/plusjakartasans_regular"
+            android:background="@drawable/white_bg"
+            android:layout_marginBottom="16dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Email"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            android:fontFamily="@font/plusjakartasans_regular"
+            android:layout_marginBottom="4dp"/>
+
+        <EditText
+            android:id="@+id/etEmail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Masukkan Email"
+            android:inputType="textEmailAddress"
+            android:padding="12dp"
+            android:textColor="@color/black"
+            android:fontFamily="@font/plusjakartasans_regular"
+            android:background="@drawable/white_bg"
+            android:layout_marginBottom="16dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Kata Sandi"
+            android:textSize="14sp"
+            android:textColor="@color/black"
+            android:fontFamily="@font/plusjakartasans_regular"
+            android:layout_marginBottom="4dp"/>
+
+        <EditText
+            android:id="@+id/etPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Kata Sandi"
+            android:inputType="textPassword"
+            android:padding="12dp"
+            android:textColor="@color/black"
+            android:fontFamily="@font/plusjakartasans_regular"
+            android:background="@drawable/white_bg"
+            android:layout_marginBottom="16dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Konfirmasi Kata Sandi"
+            android:textSize="14sp"
+            android:textColor="@color/black"
+            android:fontFamily="@font/plusjakartasans_regular"
+            android:layout_marginBottom="4dp"/>
+
+        <EditText
+            android:id="@+id/etConfirmPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Konfirmasi Kata Sandi"
+            android:inputType="textPassword"
+            android:padding="12dp"
+            android:textColor="@color/black"
+            android:fontFamily="@font/plusjakartasans_regular"
+            android:background="@drawable/white_bg"
+            android:layout_marginBottom="16dp"/>
+
+        <Button
+            android:id="@+id/btnRegister"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="DAFTAR"
+            android:textColor="@android:color/white"
+            android:backgroundTint="@color/blue"
+            android:fontFamily="@font/plusjakartasans_regular"
+            android:padding="12dp"
+            android:layout_marginBottom="16dp"/>
+
+        <TextView
+            android:id="@+id/tvLogin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/already_have_account"
+            android:textSize="14sp"
+            android:fontFamily="@font/plusjakartasans_regular"
+            android:layout_gravity="center"
+            android:textColor="@android:color/black"/>
+    </LinearLayout>
+</RelativeLayout>
