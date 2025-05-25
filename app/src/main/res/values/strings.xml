@@ -6,8 +6,6 @@
     <string name="masuk">Masuk</string>
     <string name="dont_have_account">Belum memiliki akun? Daftar disini</string>
     <string name="login_here">Masuk Disini</string>
-    <string name="login">Login</string>
-    <string name="register">Register</string>
     <string name="welcome_message">Selamat Datang, %s</string>
     <string name="lanjut_belajar">Lanjut Belajar</string>
     <string name="lihat_semua">Lihat Semua</string>

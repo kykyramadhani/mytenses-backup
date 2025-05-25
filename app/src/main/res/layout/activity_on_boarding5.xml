@@ -43,8 +43,8 @@
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="32dp"
-        android:fontFamily="@font/plusjakartasans_medium"
         android:lineSpacingExtra="4sp"
+        android:fontFamily="@font/plusjakartasans_medium"
         android:text="Pelajari tenses secara mandiri melalui kursus yang tersusun rapi!"
         android:textAlignment="center"
         android:textColor="@color/black"
@@ -55,37 +55,39 @@
         app:layout_constraintTop_toBottomOf="@+id/textView" />
 
     <!-- Login Button -->
+
+    <!-- Register Button -->
+
     <Button
         android:id="@+id/loginButton"
         android:layout_width="0dp"
         android:layout_height="54dp"
         android:layout_marginStart="32dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginEnd="16dp"
         android:backgroundTint="@color/blue"
         android:fontFamily="@font/plusjakartasans_medium"
-        android:text="@string/login"
+        android:text="@string/masuk"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/registerButton"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
-    <!-- Register Button -->
     <Button
         android:id="@+id/registerButton"
         android:layout_width="0dp"
-        android:layout_height="54dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="30dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="16dp"
         android:layout_marginEnd="32dp"
-        android:backgroundTint="@color/mediumGray"
+        android:background="@drawable/outlined_button"
+        android:backgroundTint="#FFFEFE"
         android:fontFamily="@font/plusjakartasans_medium"
-        android:text="@string/register"
-        android:textColor="@color/white"
+        android:text="@string/daftar"
+        android:textColor="@color/blue"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/loginButton"
         app:layout_constraintTop_toBottomOf="@+id/textView2"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="0.175" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

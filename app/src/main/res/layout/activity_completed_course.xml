@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Activity.CompletedCourseActivity">
+
+    <!-- Frame untuk tampilan hasil -->
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- Background hasil -->
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="463dp"
+            android:contentDescription="Background hasil"
+            android:src="@drawable/finishedbackground" />
+
+        <!-- Icon bintang dan centang -->
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|top"
+            android:layout_marginTop="48dp"
+            android:src="@drawable/finished"
+            android:contentDescription="3 bintang dan shield" />
+
+        <!-- Teks Selamat -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Selamat!"
+            android:fontFamily="@font/plusjakartasans_bold"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="160dp"
+            android:textColor="@android:color/black" />
+
+        <!-- Teks Deskripsi -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Anda telah menyelesaikan semua materi\nkelas Simple Present!"
+            android:textAlignment="center"
+            android:fontFamily="@font/plusjakartasans_medium"
+            android:textSize="14sp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="200dp"
+            android:textColor="@android:color/black" />
+
+        <!-- Tombol -->
+        <Button
+            android:id="@+id/btnBackCompleted"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Kembali ke Beranda"
+            android:fontFamily="@font/plusjakartasans_medium"
+            android:layout_gravity="center_horizontal|bottom"
+            android:layout_marginBottom="32dp"
+            android:backgroundTint="@color/blue"
+            android:textColor="@android:color/white" />
+    </FrameLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
