@@ -10,7 +10,7 @@
 
     <!-- Tombol kembali -->
     <ImageButton
-        android:id="@+id/btnBack"
+        android:id="@+id/btnBackChapt3"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_marginTop="44dp"
@@ -37,7 +37,7 @@
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btnBack" />
+        app:layout_constraintTop_toBottomOf="@id/btnBackChapt3" />
 
     <TextView
         android:id="@+id/tvSubTitle3"
@@ -73,13 +73,13 @@
 
         <TextView
             android:id="@+id/textOnImage1"
-            android:layout_width="wrap_content"
+            android:layout_width="213dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:fontFamily="@font/plusjakartasans_medium"
             android:text="“He likes yoghurt so much” artinya “Dia sangat menyukai yoghurt”"
             android:textColor="@android:color/white"
             android:textSize="16sp"
-            android:fontFamily="@font/plusjakartasans_medium"
             android:textStyle="bold" />
     </FrameLayout>
 
@@ -103,19 +103,19 @@
 
         <TextView
             android:id="@+id/textOnImage2"
-            android:layout_width="wrap_content"
+            android:layout_width="223dp"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:fontFamily="@font/plusjakartasans_medium"
             android:text="“I am not hungry” or “Aku tidak lapar”"
             android:textColor="@android:color/white"
-            android:textStyle="bold"
             android:textSize="16sp"
-            android:fontFamily="@font/plusjakartasans_medium"
-            android:layout_gravity="center" />
+            android:textStyle="bold" />
     </FrameLayout>
 
 
     <Button
-        android:id="@+id/btnNext3"
+        android:id="@+id/btnNextChapt3"
         android:layout_width="248dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="240dp"

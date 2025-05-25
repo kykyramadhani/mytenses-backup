@@ -1,6 +1,9 @@
 package com.app.mytenses.Activity
 
+import android.content.Intent
 import android.os.Bundle
+import android.widget.Button
+import android.widget.ImageButton
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -10,12 +13,23 @@ import com.app.mytenses.R
 class Chapter1Lesson : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(R.layout.activity_chapter1_lesson)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+
+        val prevBtn = findViewById<ImageButton>(R.id.btnBackChapt1)
+        val nextBtn = findViewById<Button>(R.id.btnNextChapt1)
+
+        prevBtn.setOnClickListener {
+            navigateTo(OnBoarding5Activity::class.java)
         }
+        nextBtn.setOnClickListener {
+            navigateTo(Chapter2Formula::class.java)
+        }
+
+    }
+
+    private fun navigateTo(activityClass: Class<*>) {
+        val intent = Intent(this, activityClass)
+        startActivity(intent)
+        finish()
     }
 }

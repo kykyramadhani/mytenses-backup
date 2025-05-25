@@ -26,13 +26,14 @@
         app:layout_constraintTop_toBottomOf="@+id/tvMainTitle" />
 
     <ImageButton
-        android:id="@+id/btnBack"
+        android:id="@+id/btnBackChapt2"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_marginTop="44dp"
         android:background="@null"
         android:padding="8dp"
         android:src="@drawable/button_back"
+        android:contentDescription="Tombol kembali"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -51,7 +52,7 @@
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btnBack" />
+        app:layout_constraintTop_toBottomOf="@id/btnBackChapt2" />
 
     <FrameLayout
         android:id="@+id/frameCard1"
@@ -148,7 +149,7 @@ Pada rumus kedua, ada imbuhan s/es di akhir kata kerja. Ini karena kata kerja
     </FrameLayout>
 
     <Button
-        android:id="@+id/btnNext2"
+        android:id="@+id/btnNextChapt2"
         android:layout_width="248dp"
         android:layout_height="wrap_content"
         android:text="Berikutnya"

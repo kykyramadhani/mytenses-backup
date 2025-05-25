@@ -10,7 +10,7 @@
 
     <!-- Tombol kembali -->
     <ImageButton
-        android:id="@+id/btnBack"
+        android:id="@+id/btnBackChapt1"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_marginTop="44dp"
@@ -37,7 +37,7 @@
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btnBack" />
+        app:layout_constraintTop_toBottomOf="@id/btnBackChapt1" />
 
     <TextView
         android:id="@+id/tvSubTitleLesson1"
@@ -145,7 +145,7 @@
     </FrameLayout>
 
     <Button
-        android:id="@+id/btnNext1"
+        android:id="@+id/btnNextChapt1"
         android:layout_width="248dp"
         android:layout_height="wrap_content"
         android:text="Berikutnya"
