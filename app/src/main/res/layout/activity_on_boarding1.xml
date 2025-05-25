@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="24dp"
+    android:background="@android:color/white">
+
+    <!-- Tombol Lewati -->
+    <TextView
+        android:id="@+id/btnSkip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="LEWATI"
+        android:textSize="12sp"
+        android:fontFamily="@font/plusjakartasans_regular"
+        android:textColor="#000000"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/rounded_button"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
+        android:paddingTop="6dp"
+        android:paddingBottom="6dp"
+        android:gravity="center"
+        android:layout_margin="4dp" />
+
+    <!-- Konten utama: gambar dan teks -->
+    <LinearLayout
+        android:id="@+id/layoutContent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:layout_below="@id/btnSkip"
+        android:layout_above="@+id/pagerIndicator"
+        android:layout_alignParentTop="true"
+        android:layout_marginBottom="24dp">
+
+        <ImageView
+            android:layout_width="298dp"
+            android:layout_height="290dp"
+            android:layout_marginTop="70dp"
+            android:layout_marginBottom="24dp"
+            android:contentDescription="Ilustrasi onboarding 2"
+            android:src="@drawable/onboarding1" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Selamat datang di MyTenses, tempat belajar bertemu inovasi!"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:fontFamily="@font/plusjakartasans_bold"
+            android:gravity="center"
+            android:textColor="#000000"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Dukung perjalanan menguasai tenses bahasa Inggris dengan jelas dan penuh percaya diri"
+            android:textSize="18sp"
+            android:fontFamily="@font/plusjakartasans_medium"
+            android:gravity="center"
+            android:textColor="#444444" />
+    </LinearLayout>
+
+    <!-- Titik indikator (pager dots) -->
+    <LinearLayout
+        android:id="@+id/pagerIndicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_above="@+id/btnNextBoarding1"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="16dp">
+
+        <View
+            android:layout_width="10dp"
+            android:layout_height="10dp"
+            android:layout_margin="4dp"
+            android:background="@drawable/indicator_selected" />
+
+        <View
+            android:layout_width="10dp"
+            android:layout_height="10dp"
+            android:layout_margin="4dp"
+            android:background="@drawable/indicator_unselected" />
+
+        <View
+            android:layout_width="10dp"
+            android:layout_height="10dp"
+            android:layout_margin="4dp"
+            android:background="@drawable/indicator_unselected" />
+    </LinearLayout>
+
+    <!-- Tombol Berikutnya -->
+    <Button
+        android:id="@+id/btnNextBoarding1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Berikutnya"
+        android:textAllCaps="false"
+        android:fontFamily="@font/plusjakartasans_bold"
+        android:backgroundTint="#003096"
+        android:textColor="@android:color/white"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="12dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp"
+        android:layout_marginHorizontal="0dp" />
+</RelativeLayout>
