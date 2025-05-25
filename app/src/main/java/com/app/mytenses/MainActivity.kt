@@ -7,7 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.app.mytenses.Activity.ClassFragment
+import com.app.mytenses.Activity.CourseFragment
 import com.app.mytenses.Activity.HomeFragment
 import com.app.mytenses.Activity.NotificationFragment
 import com.app.mytenses.Activity.ProfileFragment
@@ -49,7 +49,7 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.nav_class -> {
-                    replaceFragment(ClassFragment())
+                    replaceFragment(CourseFragment())
                     true
                 }
                 R.id.nav_notification -> {
