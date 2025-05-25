@@ -9,35 +9,33 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.app.mytenses.R
 
-class CourseRingkasanSimplePresent : Fragment() {
+class CourseMateriSimplePresent : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_course_ringkasan_simple_present, container, false)
+        return inflater.inflate(R.layout.fragment_course_materi_simple_present, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         // Tombol kembali
-        view.findViewById<ImageButton>(R.id.backButton)?.setOnClickListener {
+        view.findViewById<ImageButton>(R.id.backButtonMateriSimplePresent)?.setOnClickListener {
             requireActivity().supportFragmentManager.popBackStack()
         }
 
-        // Tab Materi -> Ganti fragment
-        val tabMateri = view.findViewById<TextView>(R.id.tabMateri)
-        tabMateri.setOnClickListener {
-            // Ini setara dengan startActivity dalam Fragment
-            val fragment = CourseMateriSimplePresent()
+        // Tab Ringkasan -> Ganti fragment kembali
+        val tabRingkasan = view.findViewById<TextView>(R.id.tabRingkasan)
+        tabRingkasan.setOnClickListener {
+            val fragment = CourseRingkasanSimplePresent()
             requireActivity().supportFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, fragment)
-                .addToBackStack(null) // Agar bisa kembali dengan tombol back
+                .addToBackStack(null)
                 .commit()
         }
-
     }
 }
 

@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="30dp"
+    android:padding="16dp"
+    android:background="#FFFFFF">
+
+    <!-- Header Image -->
+    <ImageView
+        android:id="@+id/headerImage"
+        android:layout_width="match_parent"
+        android:layout_height="160dp"
+        android:layout_marginTop="18dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/simple_present_header" />
+
+    <!-- Back Button -->
+    <FrameLayout
+        android:id="@+id/backContainer"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_alignTop="@id/headerImage"
+        android:layout_alignStart="@id/headerImage"
+        android:layout_margin="8dp">
+
+        <ImageButton
+            android:id="@+id/backButtonMateriSimplePresent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="8dp"
+            android:src="@drawable/button_back"
+            android:background="@android:color/transparent"
+            android:contentDescription="Kembali" />
+    </FrameLayout>
+
+    <!-- Tab Bar -->
+    <LinearLayout
+        android:id="@+id/tabBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/headerImage"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <TextView
+            android:id="@+id/tabRingkasan"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Ringkasan"
+            android:gravity="center"
+            android:textColor="#003096"
+            android:padding="12dp"
+            android:background="#FFFFFF"
+            android:fontFamily="@font/plusjakartasans_bold" />
+
+        <TextView
+            android:id="@+id/tabMateri"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Materi"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:padding="12dp"
+            android:background="#003096"
+            android:fontFamily="@font/plusjakartasans_bold" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/tabBar"
+        android:background="#C6C6C6" />
+
+    <!-- Daftar Chapter -->
+    <LinearLayout
+        android:id="@+id/chapterButtons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tabBar"
+        android:layout_marginTop="16dp"
+        android:orientation="vertical">
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Chapter 1 : Apa itu Simple Present Tense?"
+            android:backgroundTint="#1A003096"
+            android:textColor="#000000"
+            android:fontFamily="@font/plusjakartasans_bold"
+            android:gravity="start|center_vertical"
+            android:paddingStart="16dp"
+            android:drawableEnd="@drawable/chapter_button"
+            android:drawablePadding="8dp" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Chapter 2 : Rumus Simple Present Tense"
+            android:layout_marginTop="8dp"
+            android:backgroundTint="#1A003096"
+            android:textColor="#000000"
+            android:fontFamily="@font/plusjakartasans_bold"
+            android:gravity="start|center_vertical"
+            android:paddingStart="16dp"
+            android:drawableEnd="@drawable/chapter_button"
+            android:drawablePadding="8dp" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Chapter 3 : Contoh"
+            android:layout_marginTop="8dp"
+            android:backgroundTint="#1A003096"
+            android:textColor="#000000"
+            android:fontFamily="@font/plusjakartasans_bold"
+            android:gravity="start|center_vertical"
+            android:paddingStart="16dp"
+            android:drawableEnd="@drawable/chapter_button"
+            android:drawablePadding="8dp" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Chapter 4 : Quiz!"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="24dp"
+            android:backgroundTint="#1A003096"
+            android:textColor="#000000"
+            android:fontFamily="@font/plusjakartasans_bold"
+            android:gravity="start|center_vertical"
+            android:paddingStart="16dp"
+            android:drawableEnd="@drawable/chapter_button"
+            android:drawablePadding="8dp" />
+    </LinearLayout>
+
+    <!-- BELAJAR Button -->
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="BELAJAR"
+        android:layout_below="@id/chapterButtons"
+        android:backgroundTint="#003096"
+        android:textColor="#FFFFFF"
+        android:fontFamily="@font/plusjakartasans_regular" />
+</RelativeLayout>
