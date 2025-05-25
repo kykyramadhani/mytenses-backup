@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <!-- Header Image -->
+        <ImageView
+            android:id="@+id/headerImage"
+            android:layout_width="match_parent"
+            android:layout_height="160dp"
+            android:layout_marginTop="18dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/simple_present_header" />
+
+        <!-- Back Button dalam FrameLayout agar touch target cukup -->
+        <FrameLayout
+            android:id="@+id/backContainer"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_alignTop="@id/headerImage"
+            android:layout_alignStart="@id/headerImage"
+            android:layout_margin="8dp">
+
+            <ImageButton
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="8dp"
+                android:src="@drawable/button_back"
+                android:background="@android:color/transparent"
+                android:contentDescription="Kembali" />
+        </FrameLayout>
+
+        <!-- Tab Bar -->
+        <LinearLayout
+            android:id="@+id/tabBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/headerImage"
+            android:layout_marginTop="16dp"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/tabRingkasan"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Ringkasan"
+                android:gravity="center"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:padding="12dp"
+                android:background="#003096"
+                android:fontFamily="@font/plusjakartasans_bold" />
+
+            <TextView
+                android:id="@+id/tabMateri"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Materi"
+                android:gravity="center"
+                android:textColor="#003096"
+                android:padding="12dp"
+                android:background="#FFFFFF"
+                android:fontFamily="@font/plusjakartasans_bold" />
+        </LinearLayout>
+
+        <!-- Garis bawah tab -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@id/tabBar"
+            android:background="#C6C6C6" />
+
+        <!-- Title -->
+        <TextView
+            android:id="@+id/titleText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Simple Present"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_below="@id/tabBar"
+            android:layout_marginTop="16dp"
+            android:fontFamily="@font/plusjakartasans_bold" />
+
+        <!-- Description -->
+        <TextView
+            android:id="@+id/descText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/titleText"
+            android:layout_marginTop="8dp"
+            android:text="Simple present tense adalah bentuk waktu dalam bahasa Inggris yang digunakan untuk menyatakan fakta, kebiasaan, atau kejadian yang terjadi secara rutin. Tense ini biasanya menggunakan bentuk dasar kata kerja (verb 1) dan ditambahkan akhiran -s atau -es jika subjeknya adalah orang ketiga tunggal (he, she, it). Contoh penggunaannya adalah kalimat seperti She drinks coffee every morning atau They play football on Sundays. Simple present juga digunakan untuk menyatakan kebenaran umum seperti The sun rises in the east."
+            android:fontFamily="@font/plusjakartasans_regular"
+            android:justificationMode="inter_word"
+            android:textAlignment="viewStart" />
+
+        <!-- Learn Button -->
+        <Button
+            android:id="@+id/btnBelajar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="BELAJAR"
+            android:layout_below="@id/descText"
+            android:layout_marginTop="24dp"
+            android:backgroundTint="#003096"
+            android:textColor="#FFFFFF"
+            android:fontFamily="@font/plusjakartasans_regular" />
+    </RelativeLayout>
+</ScrollView>
