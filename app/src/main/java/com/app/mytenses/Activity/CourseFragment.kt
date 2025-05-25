@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.app.mytenses.R
@@ -15,7 +16,8 @@ import com.app.mytenses.Course
 class CourseFragment : Fragment() {
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         return inflater.inflate(R.layout.fragment_course, container, false)
@@ -24,12 +26,10 @@ class CourseFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Inisialisasi RecyclerView menggunakan view yang sudah diinflasi
         val rvCourses = view.findViewById<RecyclerView>(R.id.rvCourses)
         if (rvCourses != null) {
-            rvCourses.layoutManager = LinearLayoutManager(requireContext())
+            rvCourses.layoutManager = LinearLayoutManager(view.context)
 
-            // Data dummy untuk kursus
             val courseList = listOf(
                 Course("Simple Present", "Selesai", 100, R.drawable.simple_present),
                 Course("Simple Past", "Sedang Dipelajari", 50, R.drawable.simple_past),
@@ -38,12 +38,27 @@ class CourseFragment : Fragment() {
                 Course("Continuous Present", "Sedang Dipelajari", 10, R.drawable.continuous_present)
             )
 
-            // Debugging: Cek jumlah item
-            Log.d("CourseActivity", "Jumlah kursus: ${courseList.size}")
+            Log.d("CourseFragment", "Jumlah kursus: ${courseList.size}")
 
-            // Set adapter ke RecyclerView
             val adapter = CourseAdapter(courseList)
             rvCourses.adapter = adapter
+
+            adapter.setOnItemClickListener(object : CourseAdapter.OnItemClickListener {
+                override fun onItemClick(position: Int) {
+                    val course = courseList[position]
+                    if (course.title == "Simple Present") {
+                        val fragment = CourseRingkasanSimplePresent()
+                        val transaction: FragmentTransaction = requireActivity().supportFragmentManager.beginTransaction()
+                        transaction.replace(R.id.fragment_container, fragment)
+                        transaction.addToBackStack(null)
+                        transaction.commit()
+                    } else {
+                        Log.w("CourseFragment", "Ringkasan hanya tersedia untuk Simple Present saat ini")
+                    }
+                }
+            })
+        } else {
+            Log.e("CourseFragment", "rvCourses is null, check layout file!")
         }
     }
 }

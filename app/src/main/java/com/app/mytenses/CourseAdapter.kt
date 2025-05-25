@@ -1,6 +1,5 @@
 package com.app.mytenses
 
-import com.app.mytenses.Course
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,18 +11,36 @@ import androidx.recyclerview.widget.RecyclerView
 class CourseAdapter(private val courseList: List<Course>) :
     RecyclerView.Adapter<CourseAdapter.CourseViewHolder>() {
 
-    // ViewHolder untuk setiap item
-    class CourseViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    interface OnItemClickListener {
+        fun onItemClick(position: Int)
+    }
+
+    private var onItemClickListener: OnItemClickListener? = null
+
+    fun setOnItemClickListener(listener: OnItemClickListener) {
+        this.onItemClickListener = listener
+    }
+
+    class CourseViewHolder(itemView: View, private val listener: OnItemClickListener?) : RecyclerView.ViewHolder(itemView) {
         val ivIcon: ImageView = itemView.findViewById(R.id.ivIconCourse)
         val tvTitle: TextView = itemView.findViewById(R.id.tvTitleCourse)
         val progressBar: ProgressBar = itemView.findViewById(R.id.progressBarCourse)
         val tvStatus: TextView = itemView.findViewById(R.id.tvStatusCourse)
+
+        init {
+            itemView.setOnClickListener {
+                val position = adapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    listener?.onItemClick(position)
+                }
+            }
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CourseViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_card_course, parent, false)
-        return CourseViewHolder(view)
+        return CourseViewHolder(view, onItemClickListener)
     }
 
     override fun onBindViewHolder(holder: CourseViewHolder, position: Int) {

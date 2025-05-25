@@ -9,7 +9,6 @@
         android:layout_height="wrap_content"
         android:padding="16dp">
 
-        <!-- Header Image -->
         <ImageView
             android:id="@+id/headerImage"
             android:layout_width="match_parent"
@@ -18,7 +17,6 @@
             android:scaleType="centerCrop"
             android:src="@drawable/simple_present_header" />
 
-        <!-- Back Button dalam FrameLayout agar touch target cukup -->
         <FrameLayout
             android:id="@+id/backContainer"
             android:layout_width="48dp"
@@ -28,6 +26,7 @@
             android:layout_margin="8dp">
 
             <ImageButton
+                android:id="@+id/backButton"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:padding="8dp"
@@ -36,7 +35,6 @@
                 android:contentDescription="Kembali" />
         </FrameLayout>
 
-        <!-- Tab Bar -->
         <LinearLayout
             android:id="@+id/tabBar"
             android:layout_width="match_parent"
@@ -72,14 +70,12 @@
                 android:fontFamily="@font/plusjakartasans_bold" />
         </LinearLayout>
 
-        <!-- Garis bawah tab -->
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_below="@id/tabBar"
             android:background="#C6C6C6" />
 
-        <!-- Title -->
         <TextView
             android:id="@+id/titleText"
             android:layout_width="wrap_content"
@@ -87,23 +83,23 @@
             android:text="Simple Present"
             android:textSize="20sp"
             android:textStyle="bold"
+            android:textColor="@color/black"
             android:layout_below="@id/tabBar"
             android:layout_marginTop="16dp"
             android:fontFamily="@font/plusjakartasans_bold" />
 
-        <!-- Description -->
         <TextView
             android:id="@+id/descText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/titleText"
             android:layout_marginTop="8dp"
-            android:text="Simple present tense adalah bentuk waktu dalam bahasa Inggris yang digunakan untuk menyatakan fakta, kebiasaan, atau kejadian yang terjadi secara rutin. Tense ini biasanya menggunakan bentuk dasar kata kerja (verb 1) dan ditambahkan akhiran -s atau -es jika subjeknya adalah orang ketiga tunggal (he, she, it). Contoh penggunaannya adalah kalimat seperti She drinks coffee every morning atau They play football on Sundays. Simple present juga digunakan untuk menyatakan kebenaran umum seperti The sun rises in the east."
+            android:textColor="@color/black"
+            android:text="@string/ringkasan_simple_present"
             android:fontFamily="@font/plusjakartasans_regular"
             android:justificationMode="inter_word"
             android:textAlignment="viewStart" />
 
-        <!-- Learn Button -->
         <Button
             android:id="@+id/btnBelajar"
             android:layout_width="match_parent"

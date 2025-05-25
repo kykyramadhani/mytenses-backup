@@ -9,4 +9,6 @@
     <string name="welcome_message">Selamat Datang, %s</string>
     <string name="lanjut_belajar">Lanjut Belajar</string>
     <string name="lihat_semua">Lihat Semua</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="ringkasan_simple_present">Simple present tense adalah bentuk waktu dalam bahasa Inggris yang digunakan untuk menyatakan fakta, kebiasaan, atau kejadian yang terjadi secara rutin. Tense ini biasanya menggunakan bentuk dasar kata kerja (verb 1) dan ditambahkan akhiran -s atau -es jika subjeknya adalah orang ketiga tunggal (he, she, it). Contoh penggunaannya adalah kalimat seperti She drinks coffee every morning atau They play football on Sundays. Simple present juga digunakan untuk menyatakan kebenaran umum seperti The sun rises in the east.</string>
 </resources>
