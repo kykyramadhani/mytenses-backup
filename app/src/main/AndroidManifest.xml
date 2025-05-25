@@ -16,6 +16,9 @@
         android:theme="@style/Theme.Mytenses"
         tools:targetApi="31">
         <activity
+            android:name=".Activity.ResetPw"
+            android:exported="false" />
+        <activity
             android:name=".Activity.CourseRingkasanSimplePresent"
             android:exported="false" />
         <activity
