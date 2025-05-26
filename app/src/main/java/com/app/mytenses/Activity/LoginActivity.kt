@@ -110,7 +110,7 @@ class LoginActivity : AppCompatActivity() {
                         .apply()
 
                     Toast.makeText(this, "Login berhasil! Selamat datang, $name", Toast.LENGTH_SHORT).show()
-                    val intent = Intent(this, QuizResultActivity::class.java)
+                    val intent = Intent(this, MainActivity::class.java)
                     startActivity(intent)
                     finish()
                 } catch (e: Exception) {
