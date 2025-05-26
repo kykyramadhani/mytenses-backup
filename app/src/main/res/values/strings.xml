@@ -3,7 +3,8 @@
     <string name="cari">Cari</string>
     <string name="daftar">Daftar</string>
     <string name="already_have_account">Sudah punya akun? Masuk disini</string>
-    <string name="masuk">Masuk</string>
+    <string name="masukLowercase">Masuk</string>
+    <string name="masukUppercase">MASUK</string>
     <string name="dont_have_account">Belum memiliki akun? Daftar disini</string>
     <string name="login_here">Masuk Disini</string>
     <string name="welcome_message">Selamat Datang, %s</string>

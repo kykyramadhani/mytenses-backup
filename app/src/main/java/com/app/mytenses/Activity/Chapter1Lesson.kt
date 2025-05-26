@@ -9,8 +9,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.app.mytenses.R
+import com.app.mytenses.databinding.ActivityChapter1LessonBinding
+
 
 class Chapter1Lesson : AppCompatActivity() {
+    lateinit var binding: ActivityChapter1LessonBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chapter1_lesson)
