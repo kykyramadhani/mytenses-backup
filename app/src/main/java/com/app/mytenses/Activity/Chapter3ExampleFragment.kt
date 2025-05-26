@@ -9,44 +9,36 @@ import android.widget.ImageButton
 import androidx.fragment.app.Fragment
 import com.app.mytenses.R
 
-class Chapter1LessonFragment : Fragment() {
+class Chapter3ExampleFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        println("OneFragment: onCreateView called")
-        return inflater.inflate(R.layout.fragment_chapter1_lesson, container, false)
+        println("Chapter3ExampleFragment: onCreateView called")
+        return inflater.inflate(R.layout.fragment_chapter3_example, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        println("OneFragment: onViewCreated called")
+        println("Chapter3ExampleFragment: onViewCreated called")
 
         // Find views
         val btnBack = view.findViewById<ImageButton>(R.id.btnBack)
-        val btnNext = view.findViewById<Button>(R.id.btnNextChapt1)
         println("btnBack: $btnBack")
-        println("btnNext: $btnNext")
 
         // Set back button listener
         btnBack?.setOnClickListener {
-            println("OneFragment: Back clicked")
+            println("Chapter3ExampleFragment: Back clicked")
             requireActivity().supportFragmentManager.popBackStack()
         }
 
-        // Set next button listener
-        btnNext?.setOnClickListener {
-            println("OneFragment: Next clicked")
-            requireActivity().supportFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, Chapter2FormulaFragment.newInstance())
-                .addToBackStack(null)
-                .commit()
-        }
+        // Next button is disabled in XML, no action needed
+        println("Chapter3ExampleFragment: Next button disabled")
     }
 
     companion object {
         @JvmStatic
-        fun newInstance() = Chapter1LessonFragment()
+        fun newInstance() = Chapter3ExampleFragment()
     }
 }

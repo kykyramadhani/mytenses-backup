@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -8,7 +9,7 @@
     tools:context=".Activity.Chapter1Lesson"
     android:background="@color/white">
 
-    <!-- Tombol kembali -->
+    <!-- Back Button -->
     <ImageButton
         android:id="@+id/btnBackChapt1"
         android:layout_width="48dp"
@@ -21,10 +22,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Judul -->
-
-    <!-- CARD 1 -->
-
+    <!-- Main Title -->
     <TextView
         android:id="@+id/tvMainTitle"
         android:layout_width="wrap_content"
@@ -39,124 +37,31 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/btnBackChapt1" />
 
-    <TextView
-        android:id="@+id/tvSubTitleLesson1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="4dp"
-        android:fontFamily="@font/plusjakartasans_medium"
-        android:text="Simple Present Tense"
-        android:textColor="@color/blue"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/frameCard1"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvMainTitle"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <FrameLayout
-        android:id="@+id/frameCard1"
-        android:layout_width="248dp"
-        android:layout_height="120dp"
-        android:layout_marginTop="42dp"
+    <!-- Fragment Container -->
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragmentContainer"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:name="com.app.mytenses.Activity.OneFragment"
+        app:layout_constraintBottom_toTopOf="@id/btnNextChapt1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvMainTitle">
+        app:layout_constraintTop_toBottomOf="@id/tvMainTitle" />
 
-        <ImageView
-            android:id="@+id/starter1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:scaleType="fitXY"
-            android:src="@drawable/card" />
-
-        <TextView
-            android:id="@+id/textOnImage1"
-            android:layout_width="229dp"
-            android:layout_height="110dp"
-            android:layout_gravity="center"
-            android:fontFamily="@font/plusjakartasans_medium"
-            android:text="                   Present Simple
-            Tense ini igunakan untuk menunjukkan rutinitas dan kebenaran atau fakta."
-            android:textColor="@android:color/white"
-            android:textSize="16sp"
-            android:textStyle="bold" />
-    </FrameLayout>
-
-    <!-- CARD 2 -->
-    <FrameLayout
-        android:id="@+id/frameCard2"
-        android:layout_width="248dp"
-        android:layout_height="120dp"
-        app:layout_constraintTop_toBottomOf="@id/frameCard1"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="24dp">
-
-        <ImageView
-            android:id="@+id/starter2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:scaleType="fitXY"
-            android:src="@drawable/card" />
-
-        <TextView
-            android:id="@+id/textOnImage2"
-            android:layout_width="229dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="Present itu artinya apa? Present dalam simple present tense artinya &quot;masa kini&quot;, kemudian simple artinya sederhana."
-            android:textColor="@android:color/white"
-            android:fontFamily="@font/plusjakartasans_medium"
-            android:textSize="16sp"
-            android:textStyle="bold" />
-    </FrameLayout>
-
-    <!-- CARD 3 -->
-    <FrameLayout
-        android:id="@+id/frameCard3"
-        android:layout_width="248dp"
-        android:layout_height="120dp"
-        app:layout_constraintTop_toBottomOf="@id/frameCard2"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="24dp">
-
-        <ImageView
-            android:id="@+id/starter3"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="fitXY"
-            android:src="@drawable/card" />
-
-        <TextView
-            android:id="@+id/textOnImage3"
-            android:layout_width="237dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="Contoh kata yang sering muncul sebagai pelengkap: always, normally, usually, sometimes, often, never, every."
-            android:textColor="@android:color/white"
-            android:fontFamily="@font/plusjakartasans_medium"
-            android:textSize="16sp"
-            android:textStyle="bold" />
-    </FrameLayout>
-
+    <!-- Next Button -->
     <Button
         android:id="@+id/btnNextChapt1"
         android:layout_width="248dp"
         android:layout_height="wrap_content"
-        android:text="Berikutnya"
-        android:fontFamily="@font/plusjakartasans_bold"
-        android:textColor="@android:color/white"
-        android:textStyle="bold"
-        android:textSize="16sp"
+        android:layout_marginBottom="32dp"
         android:backgroundTint="@color/blue"
-        app:layout_constraintTop_toBottomOf="@id/frameCard3"
-        app:layout_constraintStart_toStartOf="parent"
+        android:fontFamily="@font/plusjakartasans_bold"
+        android:text="Berikutnya"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="32dp" />
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

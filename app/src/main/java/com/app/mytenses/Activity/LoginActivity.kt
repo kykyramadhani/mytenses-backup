@@ -103,7 +103,7 @@ class LoginActivity : AppCompatActivity() {
                     val username = user.getString("username")
 
                     val sharedPreferences = getSharedPreferences("MyTensesPrefs", MODE_PRIVATE)
-                    sharedPreferences.edit()
+                        sharedPreferences.edit()
                         .putInt("user_id", userId)
                         .putString("username", username)
                         .putString("name", name)

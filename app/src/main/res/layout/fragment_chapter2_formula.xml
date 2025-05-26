@@ -8,14 +8,14 @@
 
     <!-- Subtitle -->
     <TextView
-        android:id="@+id/tvSubTitleLesson1"
+        android:id="@+id/tvSubTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:fontFamily="@font/plusjakartasans_medium"
-        android:text="Simple Present Tense"
+        android:text="Rumus Simple Present Tense"
         android:textColor="@color/blue"
-        android:textSize="18sp"
+        android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -25,11 +25,11 @@
     <FrameLayout
         android:id="@+id/frameCard1"
         android:layout_width="248dp"
-        android:layout_height="120dp"
+        android:layout_height="100dp"
         android:layout_marginTop="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvSubTitleLesson1">
+        app:layout_constraintTop_toBottomOf="@id/tvSubTitle">
 
         <ImageView
             android:id="@+id/starter1"
@@ -40,13 +40,13 @@
 
         <TextView
             android:id="@+id/textOnImage1"
-            android:layout_width="229dp"
-            android:layout_height="110dp"
+            android:layout_width="223dp"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:fontFamily="@font/plusjakartasans_medium"
-            android:text="Present Simple\nTense ini digunakan untuk menunjukkan rutinitas dan kebenaran atau fakta."
+            android:text="S + V1 dengan bentuk negatif S + don’t/doesn’t + V1"
             android:textColor="@android:color/white"
-            android:textSize="16sp"
+            android:textSize="14sp"
             android:textStyle="bold" />
     </FrameLayout>
 
@@ -54,7 +54,7 @@
     <FrameLayout
         android:id="@+id/frameCard2"
         android:layout_width="248dp"
-        android:layout_height="120dp"
+        android:layout_height="125dp"
         android:layout_marginTop="24dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -69,11 +69,11 @@
 
         <TextView
             android:id="@+id/textOnImage2"
-            android:layout_width="229dp"
+            android:layout_width="228dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:fontFamily="@font/plusjakartasans_medium"
-            android:text="Present itu artinya apa? Present dalam simple present tense artinya masa kini, kemudian simple artinya sederhana."
+            android:text="Subject + Verb 1 + s/es + keterangan lanjutan (objek, waktu, dll)\n\nPada rumus kedua, ada imbuhan s/es di akhir kata kerja. Ini karena kata kerja yang mengikuti subjek She, He, dan It harus diberi imbuhan s/es"
             android:textColor="@android:color/white"
             android:textSize="12sp"
             android:textStyle="bold" />
@@ -83,7 +83,7 @@
     <FrameLayout
         android:id="@+id/frameCard3"
         android:layout_width="248dp"
-        android:layout_height="120dp"
+        android:layout_height="125dp"
         android:layout_marginTop="24dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -98,11 +98,11 @@
 
         <TextView
             android:id="@+id/textOnImage3"
-            android:layout_width="237dp"
+            android:layout_width="232dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:fontFamily="@font/plusjakartasans_bold"
-            android:text="Contoh kata yang sering muncul sebagai pelengkap: always, normally, usually, sometimes, often, never, every."
+            android:fontFamily="@font/plusjakartasans_medium"
+            android:text="Bagaimana cara membuat kalimat simple present tense? Berikut rumus simple present tense yang bisa kamu gunakan:\n(+) Subject + To be + Complement\n(-) Subject + To be + Not + Complement\n(?) To be + Subject + Complement"
             android:textColor="@android:color/white"
             android:textSize="12sp"
             android:textStyle="bold" />

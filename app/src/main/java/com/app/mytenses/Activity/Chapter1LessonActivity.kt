@@ -1,0 +1,45 @@
+package com.app.mytenses.Activity
+
+import android.content.Intent
+import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
+import com.app.mytenses.databinding.ActivityChapter1LessonBinding
+import com.app.mytenses.R
+
+class Chapter1LessonActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityChapter1LessonBinding
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding = ActivityChapter1LessonBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        println("Chapter1Lesson: onCreate called")
+
+        // Load fragment
+        if (savedInstanceState == null) {
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.fragmentContainer, Chapter1LessonFragment.newInstance())
+                .commit()
+            println("Chapter1Lesson: Fragment loaded")
+        }
+
+        // Set up navigation buttons
+        binding.btnBackChapt1.setOnClickListener {
+            println("Chapter1Lesson: Back clicked")
+            navigateTo(CourseMateriSimplePresent::class.java)
+        }
+        binding.btnNextChapt1.setOnClickListener {
+            println("Chapter1Lesson: Next clicked")
+            navigateTo(Chapter2FormulaActivity::class.java)
+        }
+    }
+
+    private fun navigateTo(activityClass: Class<*>) {
+        try {
+            startActivity(Intent(this, activityClass))
+            finish()
+        } catch (e: Exception) {
+            println("Chapter1Lesson: Error navigating to $activityClass: $e")
+        }
+    }
+}
