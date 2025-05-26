@@ -16,12 +16,12 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="530dp">
+            android:layout_height="687dp">
 
             <ImageView
                 android:id="@+id/statrter"
-                android:layout_width="248dp"
-                android:layout_height="225dp"
+                android:layout_width="324dp"
+                android:layout_height="339dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.496"
@@ -34,6 +34,7 @@
                 android:id="@+id/textView"
                 android:layout_width="357dp"
                 android:layout_height="70dp"
+                android:layout_margin="30dp"
                 android:fontFamily="@font/plusjakartasans_bold"
                 android:text="Bergabung dengan MyTenses untuk Memulai Pelajaran Anda"
                 android:textAlignment="center"
@@ -50,6 +51,7 @@
                 android:id="@+id/textView2"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_margin="50dp"
                 android:layout_marginBottom="24dp"
                 android:fontFamily="@font/plusjakartasans_medium"
                 android:lineSpacingExtra="4sp"

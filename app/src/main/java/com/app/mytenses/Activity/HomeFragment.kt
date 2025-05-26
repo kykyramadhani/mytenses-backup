@@ -15,9 +15,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.app.mytenses.R
 import com.app.mytenses.TenseCard
 import com.app.mytenses.TenseCardAdapter
+import android.widget.Button
 import android.widget.TextView
 
 class HomeFragment : Fragment() {
+
+    private var selectedButton: Button? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -29,11 +32,10 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Welcome TextView setup
         val welcomeTextView = view.findViewById<TextView>(R.id.textView2)
-
         val sharedPreferences = requireActivity().getSharedPreferences("MyTensesPrefs", Context.MODE_PRIVATE)
         val fullName = sharedPreferences.getString("name", null)
-
         Log.d(TAG, "SharedPreferences - name: $fullName")
 
         val firstName = fullName?.split(" ")?.firstOrNull() ?: "Pengguna"
@@ -49,9 +51,9 @@ class HomeFragment : Fragment() {
             nameEndIndex,
             SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE
         )
-
         welcomeTextView.text = spannable
 
+        // RecyclerView setup
         val rvTenseCards = view.findViewById<RecyclerView>(R.id.rvTenseCards)
         val tenseCards = listOf(
             TenseCard("Simple Present", "Sedang Diproses", 50, R.drawable.simple_present),
@@ -59,10 +61,8 @@ class HomeFragment : Fragment() {
             TenseCard("Simple Future", "Selesai", 100, R.drawable.simple_future),
             TenseCard("Simple Past Future", "Selesai", 100, R.drawable.simple_past_future)
         )
-
         val adapter = TenseCardAdapter(tenseCards)
         rvTenseCards.adapter = adapter
-
         val gridLayoutManager = GridLayoutManager(requireContext(), 2)
         gridLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
             override fun getSpanSize(position: Int): Int {
@@ -70,9 +70,45 @@ class HomeFragment : Fragment() {
             }
         }
         rvTenseCards.layoutManager = gridLayoutManager
+
+        // Button selection logic
+        val buttons = listOf(
+            view.findViewById<Button>(R.id.btnSimple),
+            view.findViewById<Button>(R.id.btnContinuous),
+            view.findViewById<Button>(R.id.btnPerfect),
+            view.findViewById<Button>(R.id.btnPerfectContinuous),
+            view.findViewById<Button>(R.id.btnPresent),
+            view.findViewById<Button>(R.id.btnPast),
+            view.findViewById<Button>(R.id.btnFuture),
+            view.findViewById<Button>(R.id.btnPresentPerfect),
+            view.findViewById<Button>(R.id.btnPastPerfect)
+        )
+
+        // Set default selected button (e.g., btnSimple)
+        selectedButton = buttons[0]
+        selectedButton?.isSelected = true
+
+        buttons.forEach { button ->
+            button.setOnClickListener {
+                // Deselect previous button
+                selectedButton?.isSelected = false
+                // Select clicked button
+                button.isSelected = true
+                selectedButton = button
+                // Optionally, update RecyclerView based on selected button
+                updateRecyclerView(button.text.toString())
+            }
+        }
+    }
+
+    private fun updateRecyclerView(filter: String) {
+        // Implement logic to filter RecyclerView based on the selected button
+        // For example, update the TenseCardAdapter with filtered data
+        Log.d(TAG, "Selected filter: $filter")
+        // Update your RecyclerView adapter here based on the filter
     }
 
     companion object {
-        private val TAG = "HomeFragment"
+        private const val TAG = "HomeFragment"
     }
 }

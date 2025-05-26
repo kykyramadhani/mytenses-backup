@@ -79,103 +79,131 @@
                         android:layout_margin="16dp"
                         android:orientation="horizontal">
 
-                        <Button
+                        <androidx.appcompat.widget.AppCompatButton
                             android:id="@+id/btnSimple"
-                            android:layout_width="80dp"
-                            android:layout_height="35dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="30dp"
                             android:layout_marginEnd="8dp"
-                            android:backgroundTint="@color/blue"
+                            android:background="@drawable/button_lesson_selector_home"
                             android:padding="4dp"
-                            android:text="Simple"
-                            android:textColor="@android:color/white"
-                            android:textSize="8sp" />
+                            android:minWidth="80dp"
+                            android:text="@string/simple"
+                            android:textAllCaps="false"
+                            android:fontFamily="@font/plusjakartasans_regular"
+                            android:textColor="@drawable/button_lesson_home_color"
+                            android:textSize="12sp" />
 
-                        <Button
+                        <androidx.appcompat.widget.AppCompatButton
                             android:id="@+id/btnContinuous"
-                            android:layout_width="80dp"
-                            android:layout_height="35dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="30dp"
                             android:layout_marginEnd="8dp"
-                            android:backgroundTint="@android:color/darker_gray"
+                            android:background="@drawable/button_lesson_selector_home"
                             android:padding="4dp"
-                            android:text="Continuous"
-                            android:textColor="@android:color/black"
-                            android:textSize="8sp" />
+                            android:minWidth="80dp"
+                            android:text="@string/continuous"
+                            android:textAllCaps="false"
+                            android:fontFamily="@font/plusjakartasans_regular"
+                            android:textColor="@drawable/button_lesson_home_color"
+                            android:textSize="12sp" />
 
-                        <Button
+                        <androidx.appcompat.widget.AppCompatButton
                             android:id="@+id/btnPerfect"
-                            android:layout_width="80dp"
-                            android:layout_height="35dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="30dp"
                             android:layout_marginEnd="8dp"
-                            android:backgroundTint="@android:color/darker_gray"
+                            android:background="@drawable/button_lesson_selector_home"
                             android:padding="4dp"
-                            android:text="Perfect"
-                            android:textColor="@android:color/black"
-                            android:textSize="8sp" />
+                            android:minWidth="80dp"
+                            android:text="@string/perfect"
+                            android:textAllCaps="false"
+                            android:fontFamily="@font/plusjakartasans_regular"
+                            android:textColor="@drawable/button_lesson_home_color"
+                            android:textSize="12sp"/>
 
-                        <Button
-                            android:id="@+id/btnPerf"
-                            android:layout_width="80dp"
-                            android:layout_height="35dp"
-                            android:layout_marginEnd="8dp"
-                            android:backgroundTint="@android:color/darker_gray"
-                            android:padding="4dp"
-                            android:text="Present"
-                            android:textColor="@android:color/black"
-                            android:textSize="8sp" />
-
-                        <Button
+                        <androidx.appcompat.widget.AppCompatButton
                             android:id="@+id/btnPresent"
-                            android:layout_width="80dp"
-                            android:layout_height="35dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="30dp"
                             android:layout_marginEnd="8dp"
-                            android:backgroundTint="@android:color/darker_gray"
+                            android:background="@drawable/button_lesson_selector_home"
                             android:padding="4dp"
-                            android:text="Perfect Continuous"
-                            android:textColor="@android:color/black"
-                            android:textSize="8sp" />
+                            android:minWidth="80dp"
+                            android:text="@string/present"
+                            android:textAllCaps="false"
+                            android:fontFamily="@font/plusjakartasans_regular"
+                            android:textColor="@drawable/button_lesson_home_color"
+                            android:textSize="12sp"/>
 
-                        <Button
+                        <androidx.appcompat.widget.AppCompatButton
+                            android:id="@+id/btnPerfectContinuous"
+                            android:layout_width="wrap_content"
+                            android:layout_height="30dp"
+                            android:layout_marginEnd="8dp"
+                            android:background="@drawable/button_lesson_selector_home"
+                            android:padding="4dp"
+                            android:minWidth="80dp"
+                            android:text="@string/perfect_continuous"
+                            android:textAllCaps="false"
+                            android:fontFamily="@font/plusjakartasans_regular"
+                            android:textColor="@drawable/button_lesson_home_color"
+                            android:textSize="12sp"/>
+
+                        <androidx.appcompat.widget.AppCompatButton
                             android:id="@+id/btnPast"
-                            android:layout_width="80dp"
-                            android:layout_height="35dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="30dp"
                             android:layout_marginEnd="8dp"
-                            android:backgroundTint="@android:color/darker_gray"
+                            android:background="@drawable/button_lesson_selector_home"
                             android:padding="4dp"
-                            android:text="Past"
-                            android:textColor="@android:color/black"
-                            android:textSize="8sp" />
+                            android:minWidth="80dp"
+                            android:text="@string/past"
+                            android:textAllCaps="false"
+                            android:fontFamily="@font/plusjakartasans_regular"
+                            android:textColor="@drawable/button_lesson_home_color"
+                            android:textSize="12sp"/>
 
-                        <Button
+                        <androidx.appcompat.widget.AppCompatButton
                             android:id="@+id/btnFuture"
-                            android:layout_width="80dp"
-                            android:layout_height="35dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="30dp"
                             android:layout_marginEnd="8dp"
-                            android:backgroundTint="@android:color/darker_gray"
+                            android:background="@drawable/button_lesson_selector_home"
                             android:padding="4dp"
-                            android:text="Future"
-                            android:textColor="@android:color/black"
-                            android:textSize="8sp" />
+                            android:minWidth="80dp"
+                            android:text="@string/future"
+                            android:textAllCaps="false"
+                            android:fontFamily="@font/plusjakartasans_regular"
+                            android:textColor="@drawable/button_lesson_home_color"
+                            android:textSize="12sp"/>
 
-                        <Button
+                        <androidx.appcompat.widget.AppCompatButton
                             android:id="@+id/btnPresentPerfect"
-                            android:layout_width="80dp"
-                            android:layout_height="35dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="30dp"
                             android:layout_marginEnd="8dp"
-                            android:backgroundTint="@android:color/darker_gray"
+                            android:background="@drawable/button_lesson_selector_home"
                             android:padding="4dp"
-                            android:text="Present Perfect"
-                            android:textColor="@android:color/black"
-                            android:textSize="8sp" />
+                            android:minWidth="80dp"
+                            android:text="@string/present_perfect"
+                            android:textAllCaps="false"
+                            android:fontFamily="@font/plusjakartasans_regular"
+                            android:textColor="@drawable/button_lesson_home_color"
+                            android:textSize="12sp"/>
 
-                        <Button
+                        <androidx.appcompat.widget.AppCompatButton
                             android:id="@+id/btnPastPerfect"
-                            android:layout_width="80dp"
-                            android:layout_height="35dp"
-                            android:backgroundTint="@android:color/darker_gray"
+                            android:layout_width="wrap_content"
+                            android:layout_height="30dp"
+                            android:layout_marginEnd="8dp"
+                            android:background="@drawable/button_lesson_selector_home"
                             android:padding="4dp"
-                            android:text="Past Perfect"
-                            android:textColor="@android:color/black"
-                            android:textSize="8sp" />
+                            android:minWidth="80dp"
+                            android:text="@string/past_perfect"
+                            android:textAllCaps="false"
+                            android:fontFamily="@font/plusjakartasans_regular"
+                            android:textColor="@drawable/button_lesson_home_color"
+                            android:textSize="12sp"/>
                     </LinearLayout>
                 </HorizontalScrollView>
             </androidx.constraintlayout.widget.ConstraintLayout>
