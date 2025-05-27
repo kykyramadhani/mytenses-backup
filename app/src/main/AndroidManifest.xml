@@ -16,26 +16,11 @@
         android:theme="@style/Theme.Mytenses"
         tools:targetApi="31">
         <activity
-            android:name=".Activity.Chapter2FormulaActivity"
+            android:name=".Activity.UbahKataSandiActivity"
             android:exported="false" />
         <activity
-            android:name=".Activity.Chapter3Example"
-            android:exported="false" />
-        <activity
-            android:name=".Activity.Chapter1LessonActivity"
-            android:exported="false" />
-        <activity
-            android:name=".Activity.ChaptersActivity"
-            android:exported="false" />
-        <activity
-            android:name=".Activity.ResetPw"
-            android:exported="false" />
-        <activity
-            android:name=".Activity.CourseRingkasanSimplePresent"
-            android:exported="false" />
-        <activity
-            android:name=".Activity.CourseMateriSimplePresent"
-            android:exported="false" />
+            android:name=".Activity.PasswordUpdatedActivity"
+            android:exported="false"/>
         <activity
             android:name=".Activity.CompletedCourseActivity"
             android:exported="false" />
@@ -50,12 +35,6 @@
             android:exported="false" />
         <activity
             android:name=".Activity.OnBoarding1Activity"
-            android:exported="false" />
-        <activity
-            android:name=".Activity.Chapter2Formula"
-            android:exported="false" />
-        <activity
-            android:name=".Activity.Chapter1Lesson"
             android:exported="false" />
         <activity
             android:name=".Activity.OnBoarding5Activity"
