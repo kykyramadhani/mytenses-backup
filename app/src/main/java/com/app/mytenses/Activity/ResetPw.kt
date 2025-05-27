@@ -1,58 +1,95 @@
-/*
-    package com.app.mytenses.Activity
+package com.app.mytenses.Activity
 
-    import android.content.Context
-    import android.content.Intent
-    import android.net.ConnectivityManager
-    import android.net.NetworkCapabilities
-    import android.os.Bundle
-    import android.view.View
-    import android.widget.Button
-    import android.widget.EditText
-    import android.widget.ImageButton
-    import android.widget.ProgressBar
-    import android.widget.TextView
-    import android.widget.Toast
-    import androidx.appcompat.app.AppCompatActivity
-    import com.android.volley.NoConnectionError
-    import com.android.volley.Request
-    import com.android.volley.Response
-    import com.android.volley.toolbox.JsonObjectRequest
-    import com.android.volley.toolbox.Volley
-    import com.app.mytenses.MainActivity
-    import com.app.mytenses.R
-    import org.json.JSONObject
+import android.content.Context
+import android.content.Intent
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.os.Bundle
+import android.text.InputType
+import android.widget.Button
+import android.widget.EditText
+import android.widget.ImageButton
+import android.widget.ProgressBar
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import com.android.volley.NoConnectionError
+import com.android.volley.Request
+import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.Volley
+import com.app.mytenses.R
+import org.json.JSONObject
 
-    class ResetPw : AppCompatActivity() {
+class UbahKataSandiActivity : AppCompatActivity() {
 
-        override fun onCreate(savedInstanceState: Bundle?) {
-            super.onCreate(savedInstanceState)
+    private lateinit var etEmail: EditText
+    private lateinit var etNewPassword: EditText
+    private lateinit var etConfirmPassword: EditText
+    private lateinit var btnSave: Button
+    private lateinit var backButton: ImageButton
+    private lateinit var progressBar: ProgressBar
+    private var isPasswordVisible = false
+    private var isConfirmPasswordVisible = false
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        try {
             setContentView(R.layout.activity_reset_pw)
+        } catch (e: Exception) {
+            Toast.makeText(this, "Error memuat layout: ${e.message}", Toast.LENGTH_LONG).show()
+            finish()
+            return
+        }
 
-            val etEmail = findViewById<EditText>(R.id.etEmail)
-            val etPassword = findViewById<EditText>(R.id.etPassword)
-            val btnLogin = findViewById<Button>(R.id.btnLogin)
-            val tvLogin = findViewById<TextView>(R.id.tvLogin)
-            val tvForgotPassword = findViewById<TextView>(R.id.tvForgotPassword) // Tambahkan TextView
-            val progressBar = findViewById<ProgressBar>(R.id.progressBar)
-            val previousBtn = findViewById<ImageButton>(R.id.btnBack)
+        // Inisialisasi view sesuai XML
+        try {
+            etEmail = findViewById(R.id.emailPw)
+            etNewPassword = findViewById(R.id.NewPw)
+            etConfirmPassword = findViewById(R.id.etConfirmPassword)
+            btnSave = findViewById(R.id.btnSimpanPw)
+            backButton = findViewById(R.id.btnBack)
+            progressBar = findViewById(R.id.progressBar)
+        } catch (e: Exception) {
+            Toast.makeText(this, "Error inisialisasi tampilan: ${e.message}", Toast.LENGTH_LONG).show()
+            finish()
+            return
+        }
 
-            previousBtn.setOnClickListener {
-                val intent = Intent(this, OnBoarding5Activity::class.java)
-                startActivity(intent)
+        // Tombol kembali
+        backButton.setOnClickListener {
+            finish() // Kembali ke LoginActivity
+        }
+
+        // Toggle password baru
+        etNewPassword.setOnClickListener {
+            isPasswordVisible = !isPasswordVisible
+            if (isPasswordVisible) {
+                etNewPassword.inputType = InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+            } else {
+                etNewPassword.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
             }
+            etNewPassword.setSelection(etNewPassword.text.length)
+        }
 
-            btnLogin.setOnClickListener {
+        // Toggle konfirmasi password
+        etConfirmPassword.setOnClickListener {
+            isConfirmPasswordVisible = !isConfirmPasswordVisible
+            if (isConfirmPasswordVisible) {
+                etConfirmPassword.inputType = InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+            } else {
+                etConfirmPassword.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+            }
+            etConfirmPassword.setSelection(etConfirmPassword.text.length)
+        }
+
+        // Validasi dan Simpan
+        btnSave.setOnClickListener {
+            try {
                 val email = etEmail.text.toString().trim()
-                val password = etPassword.text.toString().trim()
+                val newPassword = etNewPassword.text.toString().trim()
+                val confirmPassword = etConfirmPassword.text.toString().trim()
 
                 if (email.isEmpty()) {
                     etEmail.error = "Email harus diisi"
-                    return@setOnClickListener
-                }
-
-                if (password.isEmpty()) {
-                    etPassword.error = "Password harus diisi"
                     return@setOnClickListener
                 }
 
@@ -61,93 +98,112 @@
                     return@setOnClickListener
                 }
 
+                if (newPassword.isEmpty()) {
+                    etNewPassword.error = "Kata sandi baru harus diisi"
+                    return@setOnClickListener
+                }
+
+                if (confirmPassword.isEmpty()) {
+                    etConfirmPassword.error = "Konfirmasi kata sandi harus diisi"
+                    return@setOnClickListener
+                }
+
+                if (newPassword.length < 6) {
+                    Toast.makeText(this, "Kata sandi harus minimal 6", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+
+                if (newPassword != confirmPassword) {
+                    Toast.makeText(this, "Konfirmasi kata sandi tidak cocok", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+
                 if (!isNetworkAvailable()) {
                     Toast.makeText(this, "Tidak ada koneksi internet", Toast.LENGTH_LONG).show()
                     return@setOnClickListener
                 }
 
-                progressBar.visibility = View.VISIBLE
-                btnLogin.isEnabled = false
+                progressBar.visibility = ProgressBar.VISIBLE
+                btnSave.isEnabled = false
 
-                loginUser(email, password, progressBar, btnLogin)
-            }
-
-            tvLogin.setOnClickListener {
-                val intent = Intent(this, SignUpActivity::class.java)
-                startActivity(intent)
-            }
-
-            // Navigasi ke ResetPasswordActivity
-            tvForgotPassword.setOnClickListener {
-                val intent = Intent(this, PasswordUpdatedActivity::class.java)
-                startActivity(intent)
+                resetPassword(email, newPassword)
+            } catch (e: Exception) {
+                Toast.makeText(this, "Error saat validasi: ${e.message}", Toast.LENGTH_LONG).show()
+                progressBar.visibility = ProgressBar.GONE
+                btnSave.isEnabled = true
             }
         }
+    }
 
-        private fun isNetworkAvailable(): Boolean {
+    private fun isNetworkAvailable(): Boolean {
+        try {
             val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
             val network = connectivityManager.activeNetwork ?: return false
             val capabilities = connectivityManager.getNetworkCapabilities(network) ?: return false
             return capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+        } catch (e: Exception) {
+            Toast.makeText(this, "Error memeriksa jaringan: ${e.message}", Toast.LENGTH_LONG).show()
+            return false
+        }
+    }
+
+    private fun resetPassword(email: String, newPassword: String) {
+        val url = "https://mytenses-api.vercel.app/api/change-password-by-email"
+
+        val jsonBody = JSONObject().apply {
+            put("email", email)
+            put("new_password", newPassword)
         }
 
-        private fun loginUser(email: String, password: String, progressBar: ProgressBar, btnLogin: Button) {
-            val url = "https://mytenses-api.vercel.app/api/login"
-
-            val jsonBody = JSONObject().apply {
-                put("email", email)
-                put("password", password)
-            }
-
-            val jsonObjectRequest = JsonObjectRequest(
-                Request.Method.POST, url, jsonBody,
-                Response.Listener { response ->
-                    try {
-                        progressBar.visibility = View.GONE
-                        btnLogin.isEnabled = true
-
-                        val user = response.getJSONObject("user")
-                        val name = user.getString("name")
-                        val userId = user.getInt("user_id")
-                        val username = user.getString("username")
-
-                        val sharedPreferences = getSharedPreferences("MyTensesPrefs", MODE_PRIVATE)
-                        sharedPreferences.edit()
-                            .putInt("user_id", userId)
-                            .putString("username", username)
-                            .putString("name", name)
-                            .apply()
-
-                        Toast.makeText(this, "Login berhasil! Selamat datang, $name", Toast.LENGTH_SHORT).show()
-                        val intent = Intent(this, MainActivity::class.java)
-                        startActivity(intent)
-                        finish()
-                    } catch (e: Exception) {
-                        progressBar.visibility = View.GONE
-                        btnLogin.isEnabled = true
-                        Toast.makeText(this, "Gagal memproses data: ${e.message}", Toast.LENGTH_LONG).show()
-                    }
-                },
-                Response.ErrorListener { error ->
-                    progressBar.visibility = View.GONE
-                    btnLogin.isEnabled = true
-                    val errorMessage = when {
-                        error is NoConnectionError -> "Tidak ada koneksi internet"
-                        error.networkResponse?.statusCode == 401 -> {
-                            try {
-                                val errorObj = JSONObject(String(error.networkResponse.data))
-                                errorObj.getString("error")
-                            } catch (e: Exception) {
-                                "Email atau password salah"
-                            }
-                        }
-                        error.networkResponse?.statusCode == 500 -> "Terjadi kesalahan server"
-                        else -> "Gagal login: ${error.message}"
-                    }
-                    Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show()
+        val jsonObjectRequest = JsonObjectRequest(
+            Request.Method.PUT, url, jsonBody,
+            { response ->
+                progressBar.visibility = ProgressBar.GONE
+                btnSave.isEnabled = true
+                try {
+                    Toast.makeText(this, response.getString("message"), Toast.LENGTH_SHORT).show()
+                    val intent = Intent(this, PasswordUpdatedActivity::class.java)
+                    startActivity(intent)
+                    finish()
+                } catch (e: Exception) {
+                    Toast.makeText(this, "Gagal memproses respons: ${e.message}", Toast.LENGTH_LONG).show()
                 }
-            )
+            },
+            { error ->
+                progressBar.visibility = ProgressBar.GONE
+                btnSave.isEnabled = true
+                val errorMessage = when {
+                    error is NoConnectionError -> "Tidak ada koneksi internet"
+                    error.networkResponse?.statusCode == 400 -> {
+                        try {
+                            val errorObj = JSONObject(String(error.networkResponse.data))
+                            errorObj.getString("error")
+                        } catch (e: Exception) {
+                            "Permintaan tidak valid"
+                        }
+                    }
+                    error.networkResponse?.statusCode == 404 -> {
+                        try {
+                            val errorObj = JSONObject(String(error.networkResponse.data))
+                            errorObj.getString("error")
+                        } catch (e: Exception) {
+                            "Email tidak ditemukan"
+                        }
+                    }
+                    error.networkResponse?.statusCode == 500 -> {
+                        try {
+                            val errorObj = JSONObject(String(error.networkResponse.data))
+                            errorObj.getString("error")
+                        } catch (e: Exception) {
+                            "Terjadi kesalahan server"
+                        }
+                    }
+                    else -> "Gagal memperbarui kata sandi: ${error.message}"
+                }
+                Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show()
+            }
+        )
 
-            Volley.newRequestQueue(this).add(jsonObjectRequest)
-        }
-    }*/
+        Volley.newRequestQueue(this).add(jsonObjectRequest)
+    }
+}

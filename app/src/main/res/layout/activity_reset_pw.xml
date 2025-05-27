@@ -16,8 +16,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/resetPw"
-        android:layout_marginTop="8dp"
+        android:layout_below="@id/btnBack"
         android:orientation="vertical"
         android:padding="16dp">
 
@@ -25,7 +24,7 @@
             android:id="@+id/resetPw"
             android:layout_width="378dp"
             android:layout_height="40dp"
-            android:layout_marginTop="100dp"
+            android:layout_marginTop="10dp"
             android:fontFamily="@font/plusjakartasans_bold"
             android:gravity="center_horizontal|top"
             android:text="Ubah Kata Sandi"
@@ -47,12 +46,33 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="4dp"
             android:fontFamily="@font/plusjakartasans_regular"
+            android:text="Email"
+            android:textColor="@color/black"
+            android:textSize="14sp" />
+
+        <EditText
+            android:id="@+id/emailPw"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/white_bg"
+            android:fontFamily="@font/plusjakartasans_regular"
+            android:hint="Masukkan Email"
+            android:textColor="@color/black"
+            android:inputType="textEmailAddress"
+            android:padding="12dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:fontFamily="@font/plusjakartasans_regular"
             android:text="Kata Sandi Baru"
             android:textColor="@color/black"
             android:textSize="14sp" />
 
         <EditText
-            android:id="@+id/etEmailReset"
+            android:id="@+id/NewPw"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
@@ -73,7 +93,7 @@
             android:textSize="14sp" />
 
         <EditText
-            android:id="@+id/etPasswordReset"
+            android:id="@+id/etConfirmPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
@@ -88,20 +108,21 @@
             android:id="@+id/btnSimpanPw"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
             android:layout_marginBottom="16dp"
             android:backgroundTint="@color/blue"
             android:fontFamily="@font/plusjakartasans_regular"
             android:padding="12dp"
-            android:text="MASUK"
+            android:text="SIMPAN"
             android:textColor="@android:color/white" />
 
-        <!-- <ProgressBar
+        <ProgressBar
             android:id="@+id/progressBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginBottom="16dp"
-            android:visibility="gone" /> -->
+            android:visibility="gone" />
 
     </LinearLayout>
 </RelativeLayout>

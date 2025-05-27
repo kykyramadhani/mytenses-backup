@@ -11,12 +11,13 @@ class PasswordUpdatedActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_password_updated)
 
-       // val btnSelesai: Button = findViewById(R.id.btnSelesai)
+        val btnSelesai: Button = findViewById(R.id.btnResetPw) // Diperbaiki dari btnSelesai ke btnResetPw
 
-      //  btnSelesai.setOnClickListener {
-            // Aksi ketika tombol selesai ditekan
-      //      finish() // atau arahkan ke halaman login misalnya
-            // startActivity(Intent(this, LoginActivity::class.java))
-       // }
+        btnSelesai.setOnClickListener {
+            // Arahkan ke LoginActivity setelah kata sandi diperbarui
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
+            finish() // Tutup aktivitas ini agar tidak kembali ke sini
+        }
     }
 }
