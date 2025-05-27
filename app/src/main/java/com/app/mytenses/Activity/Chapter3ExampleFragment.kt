@@ -23,7 +23,7 @@ class Chapter3ExampleFragment : Fragment() {
 
         // Find views
         val btnBack = view.findViewById<ImageButton>(R.id.btnBackChapt3)
-        //val btnNext = view.findViewById<Button>(R.id.btnNextChapt3)
+        val btnNext = view.findViewById<Button>(R.id.btnNextChapt3)
 
         // Set back button listener
         btnBack?.setOnClickListener {
@@ -31,12 +31,12 @@ class Chapter3ExampleFragment : Fragment() {
         }
 
         // Set next button listener
-      /*  btnNext?.setOnClickListener {
+        btnNext?.setOnClickListener {
             requireActivity().supportFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, Chapter4Quiz.newInstance())
+                .replace(R.id.fragment_container, QuizStartFragment.newInstance())
                 .addToBackStack(null)
                 .commit()
-        }*/
+        }
     }
 
 
