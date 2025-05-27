@@ -40,6 +40,7 @@
             android:layout_marginBottom="16dp"
             android:fontFamily="@font/plusjakartasans_regular"
             android:text="Silakan Masuk dengan Akun Anda"
+            android:textAlignment="center"
             android:textColor="@color/black"
             android:textSize="16sp" />
 
@@ -84,6 +85,17 @@
             android:textColor="@color/black"
             android:inputType="textPassword"
             android:padding="12dp" />
+
+        <TextView
+            android:id="@+id/changePassword"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginBottom="16dp"
+            android:fontFamily="@font/plusjakartasans_regular"
+            android:text="Lupa Kata Sandi?"
+            android:textColor="@color/black"
+            android:textSize="12sp" />
 
         <Button
             android:id="@+id/btnLogin"

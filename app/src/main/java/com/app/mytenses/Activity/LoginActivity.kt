@@ -34,11 +34,18 @@ class LoginActivity : AppCompatActivity() {
         val tvLogin = findViewById<TextView>(R.id.tvLogin)
         val progressBar = findViewById<ProgressBar>(R.id.progressBar)
         val previousBtn = findViewById<ImageButton>(R.id.btnBack)
+        val changePassword = findViewById<TextView>(R.id.changePassword)
 
         previousBtn.setOnClickListener {
             val intent = Intent(this, OnBoarding5Activity::class.java)
             startActivity(intent)
         }
+
+        changePassword.setOnClickListener {
+            val intent = Intent(this, UbahKataSandiActivity::class.java)
+            startActivity(intent)
+        }
+
         btnLogin.setOnClickListener {
             val email = etEmail.text.toString().trim()
             val password = etPassword.text.toString().trim()
