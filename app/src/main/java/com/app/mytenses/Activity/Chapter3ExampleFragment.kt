@@ -22,14 +22,23 @@ class Chapter3ExampleFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         // Find views
-        val btnBack = view.findViewById<ImageButton>(R.id.btnBack)
+        val btnBack = view.findViewById<ImageButton>(R.id.btnBackChapt3)
+        //val btnNext = view.findViewById<Button>(R.id.btnNextChapt3)
 
         // Set back button listener
         btnBack?.setOnClickListener {
             requireActivity().supportFragmentManager.popBackStack()
         }
 
+        // Set next button listener
+      /*  btnNext?.setOnClickListener {
+            requireActivity().supportFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, Chapter4Quiz.newInstance())
+                .addToBackStack(null)
+                .commit()
+        }*/
     }
+
 
     companion object {
         @JvmStatic

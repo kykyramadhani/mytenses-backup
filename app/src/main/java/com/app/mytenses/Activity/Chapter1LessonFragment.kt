@@ -21,23 +21,18 @@ class Chapter1LessonFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        println("OneFragment: onViewCreated called")
 
         // Find views
-        val btnBack = view.findViewById<ImageButton>(R.id.btnBack)
+        val btnBack = view.findViewById<ImageButton>(R.id.btnBackChapt1)
         val btnNext = view.findViewById<Button>(R.id.btnNextChapt1)
-        println("btnBack: $btnBack")
-        println("btnNext: $btnNext")
 
         // Set back button listener
         btnBack?.setOnClickListener {
-            println("OneFragment: Back clicked")
             requireActivity().supportFragmentManager.popBackStack()
         }
 
         // Set next button listener
         btnNext?.setOnClickListener {
-            println("OneFragment: Next clicked")
             requireActivity().supportFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, Chapter2FormulaFragment.newInstance())
                 .addToBackStack(null)
