@@ -15,26 +15,20 @@ class Chapter3ExampleFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        println("Chapter3ExampleFragment: onCreateView called")
         return inflater.inflate(R.layout.fragment_chapter3_example, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        println("Chapter3ExampleFragment: onViewCreated called")
 
         // Find views
         val btnBack = view.findViewById<ImageButton>(R.id.btnBack)
-        println("btnBack: $btnBack")
 
         // Set back button listener
         btnBack?.setOnClickListener {
-            println("Chapter3ExampleFragment: Back clicked")
             requireActivity().supportFragmentManager.popBackStack()
         }
 
-        // Next button is disabled in XML, no action needed
-        println("Chapter3ExampleFragment: Next button disabled")
     }
 
     companion object {

@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="24dp"
-    tools:context=".Activity.Chapter1Lesson"
+    tools:context=".Activity.Chapter1LessonActivity"
     android:background="@color/white">
 
     <!-- Back Button -->

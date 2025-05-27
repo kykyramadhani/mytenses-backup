@@ -1,5 +1,6 @@
 package com.app.mytenses.Activity
 
+import CourseRingkasanSimplePresent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment

@@ -13,23 +13,14 @@ class Chapter1LessonActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityChapter1LessonBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        println("Chapter1Lesson: onCreate called")
 
-        // Load fragment
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
                 .replace(R.id.fragmentContainer, Chapter1LessonFragment.newInstance())
                 .commit()
-            println("Chapter1Lesson: Fragment loaded")
         }
 
-        // Set up navigation buttons
-        binding.btnBackChapt1.setOnClickListener {
-            println("Chapter1Lesson: Back clicked")
-            navigateTo(CourseMateriSimplePresent::class.java)
-        }
         binding.btnNextChapt1.setOnClickListener {
-            println("Chapter1Lesson: Next clicked")
             navigateTo(Chapter2FormulaActivity::class.java)
         }
     }

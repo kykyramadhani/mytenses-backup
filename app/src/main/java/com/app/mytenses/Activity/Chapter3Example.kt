@@ -23,21 +23,9 @@ class Chapter3Example : AppCompatActivity() {
             println("Chapter3Example: Fragment loaded")
         }
 
-        // Set up navigation buttons
-        binding.btnBackChapt3.setOnClickListener {
-            println("Chapter3Example: Back clicked")
-            navigateTo(CourseMateriSimplePresent::class.java)
-        }
+
         binding.btnNextChapt3.isEnabled = false
         println("Chapter3Example: Next button disabled")
     }
 
-    private fun navigateTo(activityClass: Class<*>) {
-        try {
-            startActivity(Intent(this, activityClass))
-            finish()
-        } catch (e: Exception) {
-            println("Chapter3Example: Error navigating to $activityClass: $e")
-        }
-    }
 }

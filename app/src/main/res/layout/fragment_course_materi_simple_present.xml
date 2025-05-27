@@ -45,6 +45,7 @@
         android:gravity="center">
 
         <TextView
+            android:id="@+id/tabRingkasan"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -73,7 +74,7 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_below="@id/tabBar"
-        android:background="#C6C6C6C6" />
+        android:background="#C6C6C6" />
 
     <!-- Daftar Chapter -->
     <LinearLayout
@@ -81,7 +82,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/tabBar"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="16dp"
         android:orientation="vertical">
 
         <Button
@@ -95,8 +96,7 @@
             android:gravity="start|center_vertical"
             android:paddingStart="16dp"
             android:drawableEnd="@drawable/chapter_button"
-            android:drawablePadding="8dp"
-            android:clickable="true" />
+            android:drawablePadding="8dp" />
 
         <Button
             android:id="@+id/btnChapter2"
@@ -110,8 +110,7 @@
             android:gravity="start|center_vertical"
             android:paddingStart="16dp"
             android:drawableEnd="@drawable/chapter_button"
-            android:drawablePadding="8dp"
-            android:clickable="true" />
+            android:drawablePadding="8dp" />
 
         <Button
             android:id="@+id/btnChapter3"
@@ -125,8 +124,7 @@
             android:gravity="start|center_vertical"
             android:paddingStart="16dp"
             android:drawableEnd="@drawable/chapter_button"
-            android:drawablePadding="8dp"
-            android:clickable="true" />
+            android:drawablePadding="8dp" />
 
         <Button
             android:id="@+id/btnChapter4"
@@ -141,19 +139,16 @@
             android:gravity="start|center_vertical"
             android:paddingStart="16dp"
             android:drawableEnd="@drawable/chapter_button"
-            android:drawablePadding="8dp"
-            android:clickable="true" />
+            android:drawablePadding="8dp" />
     </LinearLayout>
 
     <!-- BELAJAR Button -->
     <Button
-        android:id="@+id/btnBelajar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="BELAJAR"
         android:layout_below="@id/chapterButtons"
         android:backgroundTint="#003096"
         android:textColor="#FFFFFF"
-        android:fontFamily="@font/plusjakartasans_regular"
-        android:clickable="true" />
+        android:fontFamily="@font/plusjakartasans_regular" />
 </RelativeLayout>
