@@ -6,9 +6,9 @@ import android.widget.Button
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import com.app.mytenses.R
-import com.app.mytenses.Activity.Chapter1LessonActivity
+import androidx.fragment.app.FragmentManager
 import com.app.mytenses.Activity.Chapter1LessonFragment
+import com.app.mytenses.R
 
 class CourseRingkasanSimplePresent : Fragment() {
 
@@ -23,32 +23,42 @@ class CourseRingkasanSimplePresent : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Tombol kembali
+
+        // Tombol kembali: skip CourseMateri jika ada di backstack
         view.findViewById<ImageButton>(R.id.backButton)?.setOnClickListener {
-            requireActivity().supportFragmentManager.popBackStack()
+            val fm = requireActivity().supportFragmentManager
+            val count = fm.backStackEntryCount
+
+            for (i in count - 1 downTo 0) {
+                val entry = fm.getBackStackEntryAt(i)
+                if (entry.name == "CourseMateri") {
+                    fm.popBackStack(entry.name, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+                    break
+                }
+            }
+
+            // Pop ke fragment sebelumnya
+            fm.popBackStack()
         }
 
-        // Tab Materi -> Ganti fragment
+        // Tab Materi -> Ganti fragment ke CourseMateriSimplePresent
         val tabMateri = view.findViewById<TextView>(R.id.tabMateri)
         tabMateri.setOnClickListener {
-            // Ini setara dengan startActivity dalam Fragment
             val fragment = CourseMateriSimplePresent()
             requireActivity().supportFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, fragment)
-                .addToBackStack(null) // Agar bisa kembali dengan tombol back
+//                .addToBackStack("CourseRingkasan")
                 .commit()
         }
 
+        // Tombol BELAJAR
         val btnMulaiBelajar = view.findViewById<Button>(R.id.btnBelajar)
         btnMulaiBelajar.setOnClickListener {
-            // Ini setara dengan startActivity dalam Fragment
             val fragment = Chapter1LessonFragment()
             requireActivity().supportFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, fragment)
-                .addToBackStack(null) // Agar bisa kembali dengan tombol back
+                .addToBackStack(null)
                 .commit()
         }
-
-
     }
 }
