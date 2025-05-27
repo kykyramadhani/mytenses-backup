@@ -7,6 +7,17 @@
     android:padding="24dp"
     android:background="@color/white">
 
+    <!-- ProgressBar -->
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvSubTitle" />
+
     <!-- Back Button -->
     <ImageButton
         android:id="@+id/btnBackChapt3"
@@ -42,7 +53,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:fontFamily="@font/plusjakartasans_medium"
-        android:text="Contoh"
+        android:text=""
         android:textColor="@color/blue"
         android:textSize="20sp"
         android:textStyle="bold"
@@ -56,9 +67,10 @@
         android:layout_width="248dp"
         android:layout_height="100dp"
         android:layout_marginTop="16dp"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvSubTitle">
+        app:layout_constraintTop_toBottomOf="@id/progressBar">
 
         <ImageView
             android:id="@+id/starter1"
@@ -73,7 +85,7 @@
             android:layout_height="77dp"
             android:layout_gravity="center"
             android:fontFamily="@font/plusjakartasans_bold"
-            android:text="“He likes yoghurt soad” artinya “Dia sangat menyukai yogyah”"
+            android:text=""
             android:textColor="@android:color/white"
             android:textSize="14sp"
             android:textStyle="bold" />
@@ -85,6 +97,7 @@
         android:layout_width="248dp"
         android:layout_height="100dp"
         android:layout_marginTop="24dp"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/frameCard1">
@@ -102,7 +115,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:fontFamily="@font/plusjakartasans_bold"
-            android:text="“I am not tired” or “Aku tidak ada”"
+            android:text=""
             android:textColor="@android:color/white"
             android:textSize="14sp"
             android:textStyle="bold" />
