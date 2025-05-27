@@ -26,6 +26,18 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Cek apakah pengguna sudah login
+        val sharedPreferences = getSharedPreferences("MyTensesPrefs", MODE_PRIVATE)
+        val userId = sharedPreferences.getInt("user_id", -1) // -1 sebagai default jika belum login
+        if (userId != -1) {
+            // Pengguna sudah login, langsung ke MainActivity
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+            finish()
+            return
+        }
+
         setContentView(R.layout.activity_login)
 
         val etEmail = findViewById<EditText>(R.id.etEmail)
@@ -42,8 +54,8 @@ class LoginActivity : AppCompatActivity() {
         }
 
         changePassword.setOnClickListener {
-            val intent = Intent(this, UbahKataSandiActivity::class.java)
-            startActivity(intent)
+            // val intent = Intent(this, UbahKataSandiActivity::class.java)
+            // startActivity(intent)
         }
 
         btnLogin.setOnClickListener {
@@ -109,6 +121,7 @@ class LoginActivity : AppCompatActivity() {
                     val userId = user.getInt("user_id")
                     val username = user.getString("username")
 
+                    // Simpan data pengguna ke SharedPreferences
                     val sharedPreferences = getSharedPreferences("MyTensesPrefs", MODE_PRIVATE)
                     sharedPreferences.edit()
                         .putInt("user_id", userId)

@@ -19,17 +19,4 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/logo_mytenses" />
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/startBtn"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="32dp"
-        android:text="MULAI"
-        android:textSize="18sp"
-        android:textColor="@color/white"
-        android:textStyle="bold"
-        android:background="@drawable/blue_bg"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
