@@ -7,6 +7,17 @@
     android:padding="24dp"
     android:background="@color/white">
 
+    <!-- ProgressBar -->
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvSubTitleLesson1" />
+
     <!-- Back Button -->
     <ImageButton
         android:id="@+id/btnBackChapt1"
@@ -42,7 +53,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:fontFamily="@font/plusjakartasans_medium"
-        android:text="Simple Present Tense"
+        android:text=""
         android:textColor="@color/blue"
         android:textSize="18sp"
         android:textStyle="bold"
@@ -56,9 +67,10 @@
         android:layout_width="248dp"
         android:layout_height="120dp"
         android:layout_marginTop="16dp"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvSubTitleLesson1">
+        app:layout_constraintTop_toBottomOf="@id/progressBar">
 
         <ImageView
             android:id="@+id/starter1"
@@ -73,7 +85,7 @@
             android:layout_height="110dp"
             android:layout_gravity="center"
             android:fontFamily="@font/plusjakartasans_medium"
-            android:text="Present Simple\nTense ini digunakan untuk menunjukkan rutinitas dan kebenaran atau fakta."
+            android:text=""
             android:textColor="@android:color/white"
             android:textSize="16sp"
             android:textStyle="bold" />
@@ -85,6 +97,7 @@
         android:layout_width="248dp"
         android:layout_height="120dp"
         android:layout_marginTop="24dp"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/frameCard1">
@@ -102,7 +115,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:fontFamily="@font/plusjakartasans_medium"
-            android:text="Present itu artinya apa? Present dalam simple present tense artinya masa kini, kemudian simple artinya sederhana."
+            android:text=""
             android:textColor="@android:color/white"
             android:textSize="12sp"
             android:textStyle="bold" />
@@ -114,6 +127,7 @@
         android:layout_width="248dp"
         android:layout_height="120dp"
         android:layout_marginTop="24dp"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/frameCard2">
@@ -131,7 +145,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:fontFamily="@font/plusjakartasans_bold"
-            android:text="Contoh kata yang sering muncul sebagai pelengkap: always, normally, usually, sometimes, often, never, every."
+            android:text=""
             android:textColor="@android:color/white"
             android:textSize="12sp"
             android:textStyle="bold" />

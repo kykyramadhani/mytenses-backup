@@ -7,6 +7,17 @@
     android:padding="24dp"
     android:background="@color/white">
 
+    <!-- ProgressBar -->
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvSubTitle" />
+
     <!-- Back Button -->
     <ImageButton
         android:id="@+id/btnBackChapt2"
@@ -42,7 +53,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:fontFamily="@font/plusjakartasans_medium"
-        android:text="Rumus Simple Present Tense"
+        android:text=""
         android:textColor="@color/blue"
         android:textSize="20sp"
         android:textStyle="bold"
@@ -56,9 +67,10 @@
         android:layout_width="248dp"
         android:layout_height="100dp"
         android:layout_marginTop="16dp"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvSubTitle">
+        app:layout_constraintTop_toBottomOf="@id/progressBar">
 
         <ImageView
             android:id="@+id/starter1"
@@ -73,7 +85,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:fontFamily="@font/plusjakartasans_medium"
-            android:text="S + V1 dengan bentuk negatif S + don’t/doesn’t + V1"
+            android:text=""
             android:textColor="@android:color/white"
             android:textSize="14sp"
             android:textStyle="bold" />
@@ -85,6 +97,7 @@
         android:layout_width="248dp"
         android:layout_height="125dp"
         android:layout_marginTop="24dp"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/frameCard1">
@@ -102,7 +115,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:fontFamily="@font/plusjakartasans_medium"
-            android:text="Subject + Verb 1 + s/es + keterangan lanjutan (objek, waktu, dll)\n\nPada rumus kedua, ada imbuhan s/es di akhir kata kerja. Ini karena kata kerja yang mengikuti subjek She, He, dan It harus diberi imbuhan s/es"
+            android:text=""
             android:textColor="@android:color/white"
             android:textSize="12sp"
             android:textStyle="bold" />
@@ -114,6 +127,7 @@
         android:layout_width="248dp"
         android:layout_height="125dp"
         android:layout_marginTop="24dp"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/frameCard2">
@@ -131,7 +145,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:fontFamily="@font/plusjakartasans_medium"
-            android:text="Bagaimana cara membuat kalimat simple present tense? Berikut rumus simple present tense yang bisa kamu gunakan:\n(+) Subject + To be + Complement\n(-) Subject + To be + Not + Complement\n(?) To be + Subject + Complement"
+            android:text=""
             android:textColor="@android:color/white"
             android:textSize="12sp"
             android:textStyle="bold" />
