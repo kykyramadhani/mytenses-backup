@@ -8,7 +8,7 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class TenseCardAdapter(private val tenseCards: List<TenseCard>) :
+class TenseCardAdapter(private val tenseCards: List<TenseCard>, private val onItemClick: (TenseCard) -> Unit) :
     RecyclerView.Adapter<TenseCardAdapter.TenseCardViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TenseCardViewHolder {
@@ -20,6 +20,9 @@ class TenseCardAdapter(private val tenseCards: List<TenseCard>) :
     override fun onBindViewHolder(holder: TenseCardViewHolder, position: Int) {
         val tenseCard = tenseCards[position]
         holder.bind(tenseCard)
+        holder.itemView.setOnClickListener {
+            onItemClick(tenseCard)
+        }
     }
 
     override fun getItemCount(): Int = tenseCards.size

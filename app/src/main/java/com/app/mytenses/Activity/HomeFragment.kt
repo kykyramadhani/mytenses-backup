@@ -1,5 +1,6 @@
 package com.app.mytenses.Activity
 
+import CourseRingkasanSimplePresentFragment
 import android.content.Context
 import android.os.Bundle
 import android.text.SpannableString
@@ -61,7 +62,21 @@ class HomeFragment : Fragment() {
             TenseCard("Simple Future", "Selesai", 100, R.drawable.simple_future),
             TenseCard("Simple Past Future", "Selesai", 100, R.drawable.simple_past_future)
         )
-        val adapter = TenseCardAdapter(tenseCards)
+        val adapter = TenseCardAdapter(tenseCards) { tenseCard ->
+            // Navigasi ke CourseRingkasanSimplePresentFragment saat item diklik
+            val fragment = CourseRingkasanSimplePresentFragment().apply {
+                arguments = Bundle().apply {
+                    putString("TITLE", tenseCard.title)
+                    putString("STATUS", tenseCard.status)
+                    putInt("PROGRESS", tenseCard.progress)
+                    putInt("IMAGE_RES_ID", tenseCard.imageResId)
+                }
+            }
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, fragment)
+                .addToBackStack(null)
+                .commit()
+        }
         rvTenseCards.adapter = adapter
         val gridLayoutManager = GridLayoutManager(requireContext(), 2)
         gridLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
@@ -103,7 +118,6 @@ class HomeFragment : Fragment() {
 
     private fun updateRecyclerView(filter: String) {
         // Implement logic to filter RecyclerView based on the selected button
-        // For example, update the TenseCardAdapter with filtered data
         Log.d(TAG, "Selected filter: $filter")
         // Update your RecyclerView adapter here based on the filter
     }

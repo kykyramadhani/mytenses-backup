@@ -12,7 +12,7 @@ import com.app.mytenses.Activity.Chapter2FormulaFragment
 import com.app.mytenses.Activity.Chapter3ExampleFragment
 import com.app.mytenses.R
 
-class CourseMateriSimplePresent : Fragment() {
+class CourseMateriSimplePresentFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -45,7 +45,7 @@ class CourseMateriSimplePresent : Fragment() {
         // Tab Ringkasan -> Ganti fragment ke CourseRingkasanSimplePresent
         val tabRingkasan = view.findViewById<TextView>(R.id.tabRingkasan)
         tabRingkasan.setOnClickListener {
-            val fragment = CourseRingkasanSimplePresent()
+            val fragment = CourseRingkasanSimplePresentFragment()
             requireActivity().supportFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, fragment)
 //                .addToBackStack("CourseRingkasan") // <--- penting!
