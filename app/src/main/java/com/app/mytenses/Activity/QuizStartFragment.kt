@@ -24,14 +24,14 @@ class QuizStartFragment : Fragment() {
 
         // Find views
         val btnBackQuiz = view.findViewById<ImageButton>(R.id.btnBackQuiz)
-        val btnBerikutnyaQuiz = view.findViewById<AppCompatButton>(R.id.btnMulaiQuiz)
+        val btnMulaiQuiz = view.findViewById<AppCompatButton>(R.id.btnMulaiQuiz)
 
         // Set arrow back button listener to use popBackStack
         btnBackQuiz?.setOnClickListener {
             requireActivity().supportFragmentManager.popBackStack()
         }
 
-        btnBerikutnyaQuiz?.setOnClickListener {
+        btnMulaiQuiz?.setOnClickListener {
             val intent = Intent(requireContext(), QuizActivity::class.java)
             startActivity(intent)
         }

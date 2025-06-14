@@ -1,174 +1,181 @@
 package com.app.mytenses.Activity
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.*
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.AppCompatRadioButton
+import androidx.appcompat.widget.AppCompatButton
+import androidx.lifecycle.lifecycleScope
 import com.app.mytenses.R
-import com.google.firebase.database.*
+import com.app.mytenses.model.Question
+import com.app.mytenses.network.RetrofitClient
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import retrofit2.Response
 
 class QuizActivity : AppCompatActivity() {
 
-    private lateinit var databaseRef: DatabaseReference
     private lateinit var tvQuestion: TextView
-    private lateinit var optionsA: TextView
-    private lateinit var optionsB: TextView
-    private lateinit var optionsC: TextView
-    private lateinit var optionsD: TextView
-    private lateinit var rbA: AppCompatRadioButton
-    private lateinit var rbB: AppCompatRadioButton
-    private lateinit var rbC: AppCompatRadioButton
-    private lateinit var rbD: AppCompatRadioButton
+    private lateinit var optionButtons: List<AppCompatButton>
+    private lateinit var optionTexts: List<TextView>
     private lateinit var btnNext: Button
     private lateinit var btnBack: Button
-
-    private var questionsList = mutableListOf<Question>()
+    private var questionsList: List<Question> = emptyList()
     private var questionIndex = 0
-    private var userAnswers = mutableMapOf<Int, String>()
-    private var score = 0
+    private var selectedOptionIndex = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_quiz)
 
-        // Inisialisasi Firebase
-        databaseRef = FirebaseDatabase.getInstance().getReference("questions")
-
-        // Inisialisasi view
         tvQuestion = findViewById(R.id.tvQuestion)
-        optionsA = findViewById(R.id.optionsAText)
-        optionsB = findViewById(R.id.optionsBText)
-        optionsC = findViewById(R.id.optionsCText)
-        optionsD = findViewById(R.id.optionsDText)
-        rbA = findViewById(R.id.rbOptionA2)
-        rbB = findViewById(R.id.rbOptionB)
-        rbC = findViewById(R.id.rbOptionC)
-        rbD = findViewById(R.id.rbOptionD)
-        btnNext = findViewById(R.id.btnNexOrLihatJawaban)
-        btnBack = findViewById(R.id.btnBack)
+        btnNext = findViewById(R.id.btnNextQuestion)
+        btnBack = findViewById(R.id.btnBackQuestion)
 
-        // Ambil data soal dari Firebase
-        fetchQuestions()
+        optionButtons = listOf(
+            findViewById(R.id.rbOptionA),
+            findViewById(R.id.rbOptionB),
+            findViewById(R.id.rbOptionC),
+            findViewById(R.id.rbOptionD)
+        )
 
-        // Tombol Next
+        optionTexts = listOf(
+            findViewById(R.id.optionsAText),
+            findViewById(R.id.optionsBText),
+            findViewById(R.id.optionsCText),
+            findViewById(R.id.optionsDText)
+        )
+
+        // Tombol back dari header
+        findViewById<ImageButton>(R.id.btnBackQuizSP)?.setOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
+        }
+
+        // Fetch soal dari API dalam coroutine
+        lifecycleScope.launch {
+            fetchQuestionsFromApi(Dispatchers.IO)
+        }
+
+        // Navigasi soal
         btnNext.setOnClickListener {
-            saveUserAnswer()
             if (questionIndex < questionsList.size - 1) {
                 questionIndex++
+                Log.d("QuizActivity", "Tombol Next diklik. Index sekarang: $questionIndex, Jumlah soal: ${questionsList.size}")
                 showQuestion()
             } else {
-                hitungSkor()
+                Log.d("QuizActivity", "Sudah di soal terakhir. Index: $questionIndex")
+                Toast.makeText(this@QuizActivity, "Ini soal terakhir", Toast.LENGTH_SHORT).show()
             }
         }
 
-        // Tombol Back
         btnBack.setOnClickListener {
             if (questionIndex > 0) {
                 questionIndex--
+                Log.d("QuizActivity", "Tombol Back diklik. Index sekarang: $questionIndex")
                 showQuestion()
+            } else {
+                Log.d("QuizActivity", "Sudah di soal pertama. Index: $questionIndex")
+                Toast.makeText(this@QuizActivity, "Ini soal pertama", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        // Pilihan jawaban
+        optionButtons.forEachIndexed { index, button ->
+            button.setOnClickListener {
+                selectedOptionIndex = index
+                Log.d("QuizActivity", "Opsi yang dipilih: Index $index")
+                updateOptionSelection()
             }
         }
     }
 
-    private fun fetchQuestions() {
-        databaseRef.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                questionsList.clear()
-                for (data in snapshot.children) {
-                    val questionText = data.child("text").getValue(String::class.java) ?: ""
-                    val correctOptionKey = data.child("correct_option").getValue(String::class.java) ?: ""
+    private suspend fun fetchQuestionsFromApi(dispatcher: CoroutineDispatcher = Dispatchers.IO) {
+        try {
+            Log.d("QuizActivity", "Memulai panggilan API ke endpoint: api/questions")
+            val response = withContext(dispatcher) {
+                RetrofitClient.apiService.getQuestions()
+            }
+            Log.d("QuizActivity", "Respons diterima: ${response.raw()}")
 
-                    val optionsSnapshot = data.child("options")
-                    val optionsMap = mutableMapOf<String, String>()
-                    val labelMap = mapOf("0" to "A", "1" to "B", "2" to "C", "3" to "D")
+            if (response.isSuccessful) {
+                val questions = response.body()
+                Log.d("QuizActivity", "API Response Body: $questions")
 
-                    for (option in optionsSnapshot.children) {
-                        val label = labelMap[option.key] ?: continue
-                        val value = option.getValue(String::class.java) ?: ""
-                        optionsMap[label] = value
+                if (questions == null || questions.isEmpty()) {
+                    Log.e("QuizActivity", "API response is null or empty")
+                    runOnUiThread {
+                        Toast.makeText(this@QuizActivity, "Tidak ada soal tersedia", Toast.LENGTH_LONG).show()
                     }
-
-                    val correctOptionValue = optionsMap[labelMap[correctOptionKey]] ?: ""
-
-                    val question = Question(
-                        text = questionText,
-                        options = optionsMap,
-                        correct_option = correctOptionValue
-                    )
-                    questionsList.add(question)
+                    return
                 }
-                showQuestion()
-            }
 
-            override fun onCancelled(error: DatabaseError) {
-                Toast.makeText(this@QuizActivity, "Gagal ambil soal", Toast.LENGTH_SHORT).show()
+                questionsList = questions
+                Log.d("QuizActivity", "Jumlah soal berhasil dimuat: ${questionsList.size}")
+                questionsList.forEachIndexed { i, q ->
+                    Log.d("QuizActivity", "Soal ke-$i: ${q.text}, Opsi: ${q.options.joinToString()}")
+                }
+
+                runOnUiThread {
+                    showQuestion()
+                }
+            } else {
+                val errorMessage = "Error: ${response.code()} - ${response.message()}"
+                Log.e("QuizActivity", "HTTP Error: $errorMessage")
+                Log.e("QuizActivity", "Error body: ${response.errorBody()?.string()}")
+                runOnUiThread {
+                    Toast.makeText(this@QuizActivity, "Soal tidak tersedia: $errorMessage", Toast.LENGTH_LONG).show()
+                }
             }
-        })
+        } catch (e: Exception) {
+            val errorMessage = when (e) {
+                is retrofit2.HttpException -> "HTTP Error: ${e.code()} - ${e.message()}"
+                is java.net.UnknownHostException -> "Tidak ada koneksi internet: ${e.message}"
+                else -> "Error memuat data: ${e.message}"
+            }
+            Log.e("QuizActivity", errorMessage, e)
+            runOnUiThread {
+                Toast.makeText(this@QuizActivity, "Gagal memuat soal: $errorMessage", Toast.LENGTH_LONG).show()
+            }
+        }
     }
 
     private fun showQuestion() {
-        if (questionIndex in questionsList.indices) {
-            val current = questionsList[questionIndex]
-            tvQuestion.text = current.text
-            optionsA.text = current.options["A"]
-            optionsB.text = current.options["B"]
-            optionsC.text = current.options["C"]
-            optionsD.text = current.options["D"]
-
-            // Reset pilihan
-            rbA.isChecked = false
-            rbB.isChecked = false
-            rbC.isChecked = false
-            rbD.isChecked = false
-
-            // Tampilkan jawaban sebelumnya jika ada
-            when (userAnswers[questionIndex]) {
-                current.options["A"] -> rbA.isChecked = true
-                current.options["B"] -> rbB.isChecked = true
-                current.options["C"] -> rbC.isChecked = true
-                current.options["D"] -> rbD.isChecked = true
-            }
-
-            btnBack.visibility = if (questionIndex == 0) View.GONE else View.VISIBLE
-            btnNext.text = if (questionIndex == questionsList.size - 1) "Lihat Skor" else "Next"
-        }
-    }
-
-    private fun saveUserAnswer() {
-        val selectedAnswer = when {
-            rbA.isChecked -> optionsA.text.toString()
-            rbB.isChecked -> optionsB.text.toString()
-            rbC.isChecked -> optionsC.text.toString()
-            rbD.isChecked -> optionsD.text.toString()
-            else -> ""
+        if (questionsList.isEmpty()) {
+            Log.d("QuizActivity", "Daftar soal kosong, tidak ada yang ditampilkan")
+            return
         }
 
-        if (selectedAnswer.isNotEmpty()) {
-            userAnswers[questionIndex] = selectedAnswer
-        }
-    }
+        val currentQuestion = questionsList[questionIndex]
+        Log.d("QuizActivity", "Menampilkan soal index: $questionIndex -> ${currentQuestion.text}")
 
-    private fun hitungSkor() {
-        score = 0
-        for ((index, question) in questionsList.withIndex()) {
-            val jawaban = userAnswers[index]
-            if (jawaban == question.correct_option) {
-                score++
+        tvQuestion.text = currentQuestion.text
+        selectedOptionIndex = -1
+
+        optionButtons.forEachIndexed { index, button ->
+            button.isSelected = false
+            if (index < currentQuestion.options.size) {
+                button.visibility = View.VISIBLE
+                optionTexts[index].visibility = View.VISIBLE
+                button.text = ('A' + index).toString()
+                optionTexts[index].text = currentQuestion.options[index]
+                Log.d("QuizActivity", "Opsi $index: ${currentQuestion.options[index]}")
+            } else {
+                button.visibility = View.GONE
+                optionTexts[index].visibility = View.GONE
+                Log.d("QuizActivity", "Opsi $index disembunyikan (tidak ada)")
             }
         }
 
-        AlertDialog.Builder(this)
-            .setTitle("Skor Kamu")
-            .setMessage("Jawaban benar: $score dari ${questionsList.size}")
-            .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
-            .show()
+        btnBack.visibility = if (questionIndex == 0) View.INVISIBLE else View.VISIBLE
+        btnNext.visibility = if (questionIndex == questionsList.size - 1) View.INVISIBLE else View.VISIBLE
     }
 
-    data class Question(
-        val text: String = "",
-        val options: Map<String, String> = emptyMap(),
-        val correct_option: String = ""
-    )
+    private fun updateOptionSelection() {
+        optionButtons.forEachIndexed { index, button ->
+            button.isSelected = index == selectedOptionIndex
+        }
+    }
 }

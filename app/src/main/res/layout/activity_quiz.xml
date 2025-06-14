@@ -19,7 +19,7 @@
         android:orientation="vertical">
 
         <ImageButton
-            android:id="@+id/btnBackQuiz"
+            android:id="@+id/btnBackQuizSP"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_marginTop="28dp"
@@ -107,9 +107,9 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <androidx.appcompat.widget.AppCompatRadioButton
-                    android:id="@+id/rbOptionA2"
-                    android:layout_width="wrap_content"
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/rbOptionA"
+                    android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:layout_marginTop="16dp"
                     android:background="@drawable/quiz_number"
@@ -127,7 +127,7 @@
                     android:layout_marginLeft="10dp"
                     android:layout_marginTop="15dp"
                     android:fontFamily="@font/plusjakartasans_regular"
-                    android:text="go"
+                    android:text="walk"
                     android:textColor="@color/black"
                     android:textSize="18sp" />
             </LinearLayout>
@@ -137,9 +137,9 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <androidx.appcompat.widget.AppCompatRadioButton
+                <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/rbOptionB"
-                    android:layout_width="wrap_content"
+                    android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:layout_marginTop="16dp"
                     android:background="@drawable/quiz_number"
@@ -157,7 +157,7 @@
                     android:layout_marginLeft="10dp"
                     android:layout_marginTop="15dp"
                     android:fontFamily="@font/plusjakartasans_regular"
-                    android:text="gone"
+                    android:text="walks"
                     android:textColor="@color/black"
                     android:textSize="18sp" />
             </LinearLayout>
@@ -167,9 +167,9 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <androidx.appcompat.widget.AppCompatRadioButton
+                <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/rbOptionC"
-                    android:layout_width="wrap_content"
+                    android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:layout_marginTop="16dp"
                     android:background="@drawable/quiz_number"
@@ -187,7 +187,7 @@
                     android:layout_marginLeft="10dp"
                     android:layout_marginTop="15dp"
                     android:fontFamily="@font/plusjakartasans_regular"
-                    android:text="going"
+                    android:text="walking"
                     android:textColor="@color/black"
                     android:textSize="18sp" />
             </LinearLayout>
@@ -197,9 +197,9 @@
                 android:layout_height="169dp"
                 android:orientation="horizontal">
 
-                <androidx.appcompat.widget.AppCompatRadioButton
+                <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/rbOptionD"
-                    android:layout_width="wrap_content"
+                    android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:layout_marginTop="16dp"
                     android:background="@drawable/quiz_number"
@@ -217,7 +217,7 @@
                     android:layout_marginLeft="10dp"
                     android:layout_marginTop="15dp"
                     android:fontFamily="@font/plusjakartasans_regular"
-                    android:text="goes"
+                    android:text="walked"
                     android:textColor="@color/black"
                     android:textSize="18sp" />
             </LinearLayout>
@@ -232,7 +232,7 @@
             android:layout_gravity="center">
 
             <Button
-                android:id="@+id/btnBack"
+                android:id="@+id/btnBackQuestion"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
@@ -242,13 +242,13 @@
                 android:visibility="visible" />
 
             <Button
-                android:id="@+id/btnNexOrLihatJawaban"
+                android:id="@+id/btnNextQuestion"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="150dp"
                 android:layout_marginBottom="16dp"
                 android:backgroundTint="@color/blue"
                 android:text="Next"
-                android:layout_marginLeft="200dp"
                 android:textColor="@android:color/white"
                 android:visibility="visible" />
         </LinearLayout>
