@@ -20,7 +20,7 @@
             android:exported="false" />
         <activity
             android:name=".Activity.PasswordUpdatedActivity"
-            android:exported="false"/>
+            android:exported="false" />
         <activity
             android:name=".Activity.CompletedCourseActivity"
             android:exported="false" />
