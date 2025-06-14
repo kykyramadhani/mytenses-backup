@@ -1,0 +1,28 @@
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/homeFragment">
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.app.mytenses.Activity.HomeFragment"
+        android:label="Home" />
+    <fragment
+        android:id="@+id/courseFragment"
+        android:name="com.app.mytenses.Activity.CourseFragment"
+        android:label="Course" />
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.app.mytenses.Activity.ProfileFragment"
+        android:label="Profile">
+        <action
+            android:id="@+id/action_profileFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment"
+            app:popUpTo="@id/profileFragment"
+            app:popUpToInclusive="false" />
+    </fragment>
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.app.mytenses.Activity.SettingFragment"
+        android:label="Settings" />
+</navigation>
