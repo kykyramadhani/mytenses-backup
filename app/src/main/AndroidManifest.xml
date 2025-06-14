@@ -28,6 +28,9 @@
             android:name=".Activity.QuizResultActivity"
             android:exported="false" />
         <activity
+            android:name=".Activity.QuizActivity"
+            android:exported="false"/>
+        <activity
             android:name=".Activity.OnBoarding3Activity"
             android:exported="false" />
         <activity

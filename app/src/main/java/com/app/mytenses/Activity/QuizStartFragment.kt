@@ -1,5 +1,6 @@
 package com.app.mytenses.Activity
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -30,14 +31,11 @@ class QuizStartFragment : Fragment() {
             requireActivity().supportFragmentManager.popBackStack()
         }
 
-        // Set "Berikutnya" button listener (optional, to be implemented if needed)
         btnBerikutnyaQuiz?.setOnClickListener {
-            // Example:
-            // requireActivity().supportFragmentManager.beginTransaction()
-            //     .replace(R.id.fragment_container, QuizFragment.newInstance())
-            //     .addToBackStack(null)
-            //     .commit()
+            val intent = Intent(requireContext(), QuizActivity::class.java)
+            startActivity(intent)
         }
+
     }
 
     companion object {
