@@ -13,7 +13,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.app.mytenses.R
-import com.app.mytenses.model.Lesson
+import com.app.mytenses.model.Material
 import com.app.mytenses.network.RetrofitClient
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -123,12 +123,13 @@ class Chapter1LessonFragment : Fragment() {
                     tvMainTitle.text = "Chapter 1"
                     tvSubTitle.text = material.chapter_title
 
-                    // Update cards with material data
-                    textOnImage1.text = "${material.chapter_title}\n${material.explanation}"
+                    // Update cards with material data from the explanation list
+                    val explanations = material.explanation ?: emptyList()
+                    textOnImage1.text = explanations.getOrNull(0) ?: "No data"
                     Log.d(TAG, "Card 1: ${textOnImage1.text}")
-                    textOnImage2.text = material.explanation
+                    textOnImage2.text = explanations.getOrNull(1) ?: "No data"
                     Log.d(TAG, "Card 2: ${textOnImage2.text}")
-                    textOnImage3.text = material.explanation
+                    textOnImage3.text = explanations.getOrNull(2) ?: "No data"
                     Log.d(TAG, "Card 3: ${textOnImage3.text}")
 
                     // Hide ProgressBar, show cards

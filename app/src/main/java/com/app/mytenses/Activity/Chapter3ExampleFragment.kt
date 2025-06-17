@@ -6,22 +6,36 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import com.android.volley.NoConnectionError
-import com.android.volley.Request
-import com.android.volley.toolbox.JsonObjectRequest
-import com.android.volley.toolbox.Volley
 import com.app.mytenses.R
-import org.json.JSONObject
-import android.widget.FrameLayout
+import com.app.mytenses.network.RetrofitClient
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import retrofit2.HttpException
+import java.net.UnknownHostException
 
 class Chapter3ExampleFragment : Fragment() {
 
     private val TAG = "Chapter3ExampleFragment"
+    private lateinit var progressBar: ProgressBar
+    private lateinit var frameCard1: FrameLayout
+    private lateinit var frameCard2: FrameLayout
+    private lateinit var tvMainTitle: TextView
+    private lateinit var tvSubTitle: TextView
+    private lateinit var textOnImage1: TextView
+    private lateinit var textOnImage2: TextView
+
+    // Coroutine scope for the Fragment
+    private val fragmentScope = CoroutineScope(Dispatchers.Main + Job())
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -34,93 +48,24 @@ class Chapter3ExampleFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Find views
+        // Initialize views
         val btnBack = view.findViewById<ImageButton>(R.id.btnBackChapt3)
         val btnNext = view.findViewById<Button>(R.id.btnNextChapt3)
-        val tvMainTitle = view.findViewById<TextView>(R.id.tvMainTitle)
-        val tvSubTitle = view.findViewById<TextView>(R.id.tvSubTitle)
-        val textOnImage1 = view.findViewById<TextView>(R.id.textOnImage1)
-        val textOnImage2 = view.findViewById<TextView>(R.id.textOnImage2)
-        val progressBar = view.findViewById<ProgressBar>(R.id.progressBar)
-
-        // Initialize Volley
-        val queue = Volley.newRequestQueue(requireContext())
-        val url = "https://mytenses-api.vercel.app/api/api/lessons"
+        tvMainTitle = view.findViewById(R.id.tvMainTitle) ?: throw IllegalStateException("tvMainTitle not found")
+        tvSubTitle = view.findViewById(R.id.tvSubTitle) ?: throw IllegalStateException("tvSubTitle not found")
+        textOnImage1 = view.findViewById(R.id.textOnImage1) ?: throw IllegalStateException("textOnImage1 not found")
+        textOnImage2 = view.findViewById(R.id.textOnImage2) ?: throw IllegalStateException("textOnImage2 not found")
+        progressBar = view.findViewById(R.id.progressBar) ?: throw IllegalStateException("progressBar not found")
+        frameCard1 = view.findViewById(R.id.frameCard1) ?: throw IllegalStateException("frameCard1 not found")
+        frameCard2 = view.findViewById(R.id.frameCard2) ?: throw IllegalStateException("frameCard2 not found")
 
         // Show ProgressBar, hide cards
         progressBar.visibility = View.VISIBLE
-        view.findViewById<FrameLayout>(R.id.frameCard1).visibility = View.GONE
-        view.findViewById<FrameLayout>(R.id.frameCard2).visibility = View.GONE
+        frameCard1.visibility = View.GONE
+        frameCard2.visibility = View.GONE
 
-        // Create JSON request
-        val jsonObjectRequest = JsonObjectRequest(
-            Request.Method.GET, url, null,
-            { response ->
-                Log.d(TAG, "API Response: $response")
-                try {
-                    // Check if simple_present exists
-                    if (!response.has("simple_present")) {
-                        Log.e(TAG, "Key 'simple_present' not found in response")
-                        Toast.makeText(requireContext(), "Key 'simple_present' not found", Toast.LENGTH_LONG).show()
-                        return@JsonObjectRequest
-                    }
-
-                    // Parse JSON response
-                    val simplePresent = response.getJSONObject("simple_present")
-                    val title = simplePresent.getString("title")
-                    val examples = simplePresent.getJSONArray("examples")
-
-                    Log.d(TAG, "Title: $title")
-                    Log.d(TAG, "Examples: $examples")
-
-                    // Update UI
-                    tvMainTitle.text = "Chapter 3"
-                    tvSubTitle.text = "Contoh $title"
-
-                    // Update cards with example data
-                    if (examples.length() > 0) {
-                        val firstExample = examples.getJSONObject(0)
-                        textOnImage1.text = "“${firstExample.getString("sentence")}”\nArtinya: “${firstExample.getString("translation")}”"
-                        Log.d(TAG, "Card 1: ${textOnImage1.text}")
-                    }
-                    if (examples.length() > 1) {
-                        val secondExample = examples.getJSONObject(1)
-                        textOnImage2.text = "“${secondExample.getString("sentence")}”\nArtinya: “${secondExample.getString("translation")}”"
-                        Log.d(TAG, "Card 2: ${textOnImage2.text}")
-                    }
-
-                    // Hide ProgressBar, show cards
-                    progressBar.visibility = View.GONE
-                    view.findViewById<FrameLayout>(R.id.frameCard1).visibility = View.VISIBLE
-                    view.findViewById<FrameLayout>(R.id.frameCard2).visibility = View.VISIBLE
-                } catch (e: Exception) {
-                    Log.e(TAG, "Error parsing JSON: ${e.message}")
-                    textOnImage1.text = "Error parsing data"
-                    textOnImage2.text = "Error parsing data"
-                    Toast.makeText(requireContext(), "Error parsing data: ${e.message}", Toast.LENGTH_LONG).show()
-                    progressBar.visibility = View.GONE
-                    view.findViewById<FrameLayout>(R.id.frameCard1).visibility = View.VISIBLE
-                    view.findViewById<FrameLayout>(R.id.frameCard2).visibility = View.VISIBLE
-                }
-            },
-            { error ->
-                val errorMessage = when (error) {
-                    is NoConnectionError -> "No internet connection"
-                    else -> "Error loading data: ${error.message}"
-                }
-                Log.e(TAG, errorMessage)
-                textOnImage1.text = errorMessage
-                textOnImage2.text = errorMessage
-                Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG).show()
-                progressBar.visibility = View.GONE
-                view.findViewById<FrameLayout>(R.id.frameCard1).visibility = View.VISIBLE
-                view.findViewById<FrameLayout>(R.id.frameCard2).visibility = View.VISIBLE
-            }
-        )
-
-        // Add request to queue
-        Log.d(TAG, "Adding request to queue: $url")
-        queue.add(jsonObjectRequest)
+        // Fetch data using coroutine
+        fetchExampleData()
 
         // Set back button listener
         btnBack?.setOnClickListener {
@@ -138,8 +83,93 @@ class Chapter3ExampleFragment : Fragment() {
         }
     }
 
+    private fun fetchExampleData() {
+        fragmentScope.launch {
+            try {
+                // Perform API call on IO dispatcher
+                val response = withContext(Dispatchers.IO) {
+                    RetrofitClient.apiService.getMaterials()
+                }
+
+                if (response.isSuccessful) {
+                    val materialsResponse = response.body()
+                    Log.d(TAG, "Raw API Response: ${materialsResponse?.materials}")
+
+                    if (materialsResponse == null || materialsResponse.materials.isEmpty()) {
+                        Log.e(TAG, "API response is null or empty")
+                        showError("No material data received")
+                        return@launch
+                    }
+
+                    // Find material for "simple_present"
+                    val material = materialsResponse.materials.find { it.lesson_id == "simple_present" }
+                    if (material == null) {
+                        Log.e(TAG, "Material for 'simple_present' not found in response: ${materialsResponse.materials}")
+                        showError("Material data not found")
+                        return@launch
+                    }
+
+                    // Verify and log the material fields
+                    Log.d(TAG, "lesson_id: ${material.lesson_id}")
+                    Log.d(TAG, "chapter_title: ${material.chapter_title}")
+                    Log.d(TAG, "examples: ${material.examples}")
+
+                    // Update UI
+                    tvMainTitle.text = "Chapter 3"
+                    tvSubTitle.text = "Contoh Simple Present"
+
+                    // Update cards with example data
+                    val examples = material.examples ?: emptyList()
+                    if (examples.isNotEmpty()) {
+                        textOnImage1.text = "${examples[0].sentence}\n(${examples[0].example_translation})"
+                        Log.d(TAG, "Card 1: ${textOnImage1.text}")
+                    } else {
+                        textOnImage1.text = "No example available"
+                    }
+                    if (examples.size > 1) {
+                        textOnImage2.text = "${examples[1].sentence}\n(${examples[1].example_translation})"
+                        Log.d(TAG, "Card 2: ${textOnImage2.text}")
+                    } else {
+                        textOnImage2.text = "No example available"
+                    }
+
+                    // Hide ProgressBar, show cards
+                    progressBar.visibility = View.GONE
+                    frameCard1.visibility = View.VISIBLE
+                    frameCard2.visibility = View.VISIBLE
+                } else {
+                    val errorMessage = "Error: ${response.code()} - ${response.message()}"
+                    Log.e(TAG, "HTTP Error: $errorMessage")
+                    showError(errorMessage)
+                }
+            } catch (e: Exception) {
+                val errorMessage = when (e) {
+                    is HttpException -> "HTTP Error: ${e.code()} - ${e.message()}"
+                    is UnknownHostException -> "No internet connection"
+                    else -> "Error loading data: ${e.message}"
+                }
+                Log.e(TAG, errorMessage, e)
+                showError(errorMessage)
+            }
+        }
+    }
+
+    private fun showError(message: String) {
+        textOnImage1.text = message
+        textOnImage2.text = message
+        Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show()
+        progressBar.visibility = View.GONE
+        frameCard1.visibility = View.VISIBLE
+        frameCard2.visibility = View.VISIBLE
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        // Cancel coroutines when the view is destroyed
+        fragmentScope.cancel()
+    }
+
     companion object {
-        @JvmStatic
         fun newInstance() = Chapter3ExampleFragment()
     }
 }

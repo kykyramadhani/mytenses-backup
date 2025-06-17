@@ -10,6 +10,7 @@ import androidx.fragment.app.FragmentManager
 import com.app.mytenses.Activity.Chapter1LessonFragment
 import com.app.mytenses.Activity.Chapter2FormulaFragment
 import com.app.mytenses.Activity.Chapter3ExampleFragment
+import com.app.mytenses.Activity.QuizResultFragment
 import com.app.mytenses.R
 
 class CourseMateriSimplePresentFragment : Fragment() {

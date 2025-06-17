@@ -13,7 +13,7 @@ import retrofit2.http.Body
 
 interface ApiService {
     @GET("api/lessons")
-    suspend fun getLessons(): Response<Lesson>
+    suspend fun getLessons(): Response<ApiResponse>
 
     @GET("api/materials")
     suspend fun getMaterials(): Response<MaterialsResponse>

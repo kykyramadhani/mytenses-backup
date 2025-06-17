@@ -3,7 +3,7 @@ package com.app.mytenses.model
 data class ApiResponse(
     val counters: Counters? = null,
     val lessons: Map<String, Lesson>? = null,
-    val materials: Map<String, Material>? = null,
+    val materials: Map<String, Material>? = null
 )
 
 data class Counters(
@@ -20,10 +20,14 @@ data class Material(
     val material_id: String,
     val lesson_id: String,
     val chapter_title: String,
-    val explanation: String,
+    val explanation: List<String>? = null,
     val formulas: List<Formula>? = null,
-    val example: String? = null,
-    val example_translation: String? = null
+    val examples: List<Example>? = null
+)
+
+data class Example(
+    val sentence: String,
+    val example_translation: String
 )
 
 data class Formula(
@@ -50,6 +54,3 @@ data class Question(
 data class MaterialsResponse(
     val materials: List<Material>
 )
-
-
-
