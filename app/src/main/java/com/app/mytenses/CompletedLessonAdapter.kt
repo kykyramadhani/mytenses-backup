@@ -1,4 +1,4 @@
-package com.app.mytenses.Activity
+package com.app.mytenses
 
 import android.view.LayoutInflater
 import android.view.View

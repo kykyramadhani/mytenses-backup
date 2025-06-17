@@ -8,7 +8,8 @@ import com.app.mytenses.model.UserData
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
-import retrofit2.http.Query
+import retrofit2.http.PUT
+import retrofit2.http.Body
 
 interface ApiService {
     @GET("api/lessons")
@@ -23,5 +24,9 @@ interface ApiService {
     @GET("api/questions")
     suspend fun getQuestions(): Response<Map<String, List<Question>>>
 
-
+    @PUT("api/users/{username}")
+    suspend fun updateUserData(
+        @Path("username") username: String,
+        @Body data: Map<String, String?>
+    ): Response<Unit>
 }

@@ -12,12 +12,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="29dp"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <TextView
             android:id="@+id/profile_title"
@@ -39,7 +36,7 @@
             android:layout_width="30dp"
             android:layout_height="37dp"
             android:layout_marginTop="16dp"
-            android:layout_marginRight="40dp"
+            android:layout_marginEnd="40dp"
             android:background="@null"
             android:contentDescription="Settings"
             android:src="@drawable/settings"
@@ -50,43 +47,87 @@
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="333dp"
-        android:layout_height="485dp"
+        android:layout_height="500dp"
         android:background="@drawable/rounded_lightblue_bg"
         android:orientation="vertical"
+        android:clipToPadding="false"
+        android:clipChildren="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.504"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@id/linearLayout2"
+        app:layout_constraintVertical_bias="0.225">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp">
+            android:layout_marginTop="20dp"
+            android:clipToPadding="false"
+            android:clipChildren="false">
 
             <TextView
                 android:id="@+id/profile_name"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="50dp"
+                android:layout_marginStart="50dp"
+                android:layout_marginEnd="16dp"
                 android:fontFamily="@font/plusjakartasans_bold"
                 android:text="Nama"
                 android:textAlignment="center"
                 android:textSize="23sp"
+                android:visibility="visible"
                 app:layout_constraintEnd_toStartOf="@id/edit_button"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <EditText
+                android:id="@+id/profile_name_edit"
+                android:layout_width="211dp"
+                android:layout_height="45dp"
+                android:layout_marginStart="25dp"
+                android:layout_marginEnd="16dp"
+                android:fontFamily="@font/plusjakartasans_bold"
+                android:hint="Masukkan nama"
+                android:textAlignment="center"
+                android:textSize="23sp"
+                android:visibility="gone"
+                app:layout_constraintEnd_toStartOf="@id/edit_button"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ImageButton
                 android:id="@+id/edit_button"
-                android:layout_width="40dp"
+                android:layout_width="60dp"
                 android:layout_height="40dp"
                 android:layout_marginEnd="20dp"
                 android:background="@null"
                 android:contentDescription="Edit Profile"
                 android:src="@drawable/edit_button_svgrepo_com"
+                android:scaleType="fitCenter"
+                android:padding="8dp"
+                android:visibility="visible"
                 app:layout_constraintBottom_toBottomOf="@id/profile_name"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@id/profile_name" />
+
+            <ImageButton
+                android:id="@+id/cancel_button"
+                android:layout_width="60dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="20dp"
+                android:background="@null"
+                android:contentDescription="Cancel Edit"
+                android:padding="8dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_cancel"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@id/profile_name_edit"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/profile_name_edit"
+                app:layout_constraintTop_toTopOf="@id/profile_name_edit" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -94,9 +135,9 @@
             android:id="@+id/profile_bio_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
             android:layout_marginTop="40dp"
-            android:layout_marginRight="20dp"
+            android:layout_marginEnd="20dp"
             android:fontFamily="@font/plusjakartasans_bold"
             android:text="Bio"
             android:textSize="19sp" />
@@ -105,20 +146,43 @@
             android:id="@+id/profile_bio"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
             android:fontFamily="@font/plusjakartasans_regular"
-            android:padding="0dp"
             android:text=""
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            android:visibility="visible" />
+
+        <EditText
+            android:id="@+id/profile_bio_edit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:fontFamily="@font/plusjakartasans_regular"
+            android:hint="Masukkan bio"
+            android:textSize="16sp"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/save_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="16dp"
+            android:text="Simpan"
+            android:visibility="gone"
+            android:backgroundTint="@color/blue"
+            android:fontFamily="@font/plusjakartasans_bold"
+            android:textColor="@android:color/white" />
 
         <TextView
             android:id="@+id/completed_class_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
             android:layout_marginTop="20dp"
-            android:layout_marginRight="20dp"
+            android:layout_marginEnd="20dp"
             android:fontFamily="@font/plusjakartasans_bold"
             android:text="Kelas yang Telah Diselesaikan"
             android:textSize="19sp" />
@@ -127,21 +191,20 @@
             android:id="@+id/empty_lessons_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:text="Belum ada kelas selesai"
-            android:visibility="gone"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
             android:fontFamily="@font/plusjakartasans_regular"
+            android:text="Belum ada kelas selesai"
             android:textSize="16sp"
-            app:layout_constraintStart_toStartOf="@id/rv_completed_lesson"
-            app:layout_constraintTop_toTopOf="@id/rv_completed_lesson" />
+            android:visibility="gone" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_completed_lesson"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
             android:layout_marginBottom="20dp" />
 
     </LinearLayout>
