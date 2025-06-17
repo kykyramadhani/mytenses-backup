@@ -101,11 +101,24 @@ class QuizActivity : AppCompatActivity() {
             Log.d("QuizActivity", "Respons diterima: ${response.raw()}")
 
             if (response.isSuccessful) {
-                val questions = response.body()
-                Log.d("QuizActivity", "API Response Body: $questions")
+                val body = response.body()
+                Log.d("QuizActivity", "API Response Body: $body")
 
-                if (questions == null || questions.isEmpty()) {
-                    Log.e("QuizActivity", "API response is null or empty")
+                if (body == null) {
+                    Log.e("QuizActivity", "API response body is null")
+                    runOnUiThread {
+                        Toast.makeText(this@QuizActivity, "Tidak ada soal tersedia", Toast.LENGTH_LONG).show()
+                    }
+                    return
+                }
+
+                // Ekstrak daftar questions dari body
+                @Suppress("UNCHECKED_CAST")
+                val questionsMap = body as? Map<String, List<Question>>
+                val questions = questionsMap?.get("questions") ?: emptyList()
+
+                if (questions.isEmpty()) {
+                    Log.e("QuizActivity", "API response questions is empty")
                     runOnUiThread {
                         Toast.makeText(this@QuizActivity, "Tidak ada soal tersedia", Toast.LENGTH_LONG).show()
                     }

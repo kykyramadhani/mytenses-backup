@@ -21,7 +21,7 @@ interface ApiService {
     suspend fun getUserData(@Path("username") username: String): Response<UserData>
 
     @GET("api/questions")
-    suspend fun getQuestions(): retrofit2.Response<List<Question>>
+    suspend fun getQuestions(): Response<Map<String, List<Question>>>
 
 
 }
