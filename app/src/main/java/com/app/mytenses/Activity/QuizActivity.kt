@@ -1,6 +1,6 @@
 package com.app.mytenses.Activity
 
-import android.graphics.Color
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -15,7 +15,6 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import retrofit2.Response
 
 class QuizActivity : AppCompatActivity() {
 
@@ -123,9 +122,12 @@ class QuizActivity : AppCompatActivity() {
                 if (questionIndex == questionsList.size - 1) {
                     val totalScore = calculateScore()
                     Log.d("QuizActivity", "Total Skor: $totalScore")
-                    isAnswerMode = true
-                    questionIndex = 0
-                    showQuestion()
+                    // Ganti fragment dengan QuizResultFragment
+                    val fragment = QuizResultFragment.newInstance(totalScore) // Asumsikan ada metode newInstance
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.fragment_container, fragment) // Ganti dengan ID container fragment di layout
+                        .addToBackStack(null) // Opsional: Tambahkan ke back stack agar bisa kembali
+                        .commit()
                 } else {
                     questionIndex++
                     isAnswerMode = true
