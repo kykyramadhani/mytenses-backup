@@ -23,9 +23,11 @@ class QuizActivity : AppCompatActivity() {
     private lateinit var optionTexts: List<TextView>
     private lateinit var btnNext: Button
     private lateinit var btnBack: Button
+    private lateinit var btnFinish: Button
     private var questionsList: List<Question> = emptyList()
     private var questionIndex = 0
     private var selectedOptionIndex = -1
+    private val selectedAnswers = mutableMapOf<Int, Int>() // Menyimpan indeks jawaban yang dipilih per soal
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,6 +36,7 @@ class QuizActivity : AppCompatActivity() {
         tvQuestion = findViewById(R.id.tvQuestion)
         btnNext = findViewById(R.id.btnNextQuestion)
         btnBack = findViewById(R.id.btnBackQuestion)
+        btnFinish = findViewById(R.id.btnFinish) // Tambahkan referensi ke btnFinish
 
         optionButtons = listOf(
             findViewById(R.id.rbOptionA),
@@ -63,6 +66,7 @@ class QuizActivity : AppCompatActivity() {
         btnNext.setOnClickListener {
             if (questionIndex < questionsList.size - 1) {
                 questionIndex++
+                saveSelectedAnswer() // Simpan jawaban sebelum berpindah
                 Log.d("QuizActivity", "Tombol Next diklik. Index sekarang: $questionIndex, Jumlah soal: ${questionsList.size}")
                 showQuestion()
             } else {
@@ -80,6 +84,14 @@ class QuizActivity : AppCompatActivity() {
                 Log.d("QuizActivity", "Sudah di soal pertama. Index: $questionIndex")
                 Toast.makeText(this@QuizActivity, "Ini soal pertama", Toast.LENGTH_SHORT).show()
             }
+        }
+
+        // Tombol Selesai
+        btnFinish.setOnClickListener {
+            val totalScore = calculateScore()
+            Log.d("QuizActivity", "Total Skor: $totalScore")
+            Toast.makeText(this@QuizActivity, "Kuis Selesai! Skor Anda: $totalScore", Toast.LENGTH_LONG).show()
+            // Anda bisa menambahkan intent atau dialog untuk menampilkan skor secara detail di sini
         }
 
         // Pilihan jawaban
@@ -167,6 +179,12 @@ class QuizActivity : AppCompatActivity() {
         tvQuestion.text = currentQuestion.text
         selectedOptionIndex = -1
 
+        // Pulihkan jawaban yang dipilih sebelumnya jika ada
+        selectedAnswers[questionIndex]?.let { index ->
+            selectedOptionIndex = index
+            updateOptionSelection()
+        }
+
         optionButtons.forEachIndexed { index, button ->
             button.isSelected = false
             if (index < currentQuestion.options.size) {
@@ -182,13 +200,37 @@ class QuizActivity : AppCompatActivity() {
             }
         }
 
+        // Kontrol visibilitas tombol untuk konsistensi posisi
         btnBack.visibility = if (questionIndex == 0) View.INVISIBLE else View.VISIBLE
         btnNext.visibility = if (questionIndex == questionsList.size - 1) View.INVISIBLE else View.VISIBLE
+        btnFinish.visibility = if (questionIndex == questionsList.size - 1) View.VISIBLE else View.GONE
     }
 
     private fun updateOptionSelection() {
         optionButtons.forEachIndexed { index, button ->
             button.isSelected = index == selectedOptionIndex
         }
+    }
+
+    private fun saveSelectedAnswer() {
+        if (selectedOptionIndex != -1) {
+            selectedAnswers[questionIndex] = selectedOptionIndex
+            Log.d("QuizActivity", "Jawaban disimpan untuk soal $questionIndex: Indeks $selectedOptionIndex")
+        }
+    }
+
+    private fun calculateScore(): Int {
+        var totalScore = 0
+        for (i in questionsList.indices) {
+            val selectedIndex = selectedAnswers[i] ?: -1
+            val correctOption = questionsList[i].options.indexOf(questionsList[i].correct_option)
+            if (selectedIndex == correctOption) {
+                totalScore += questionsList[i].points
+                Log.d("QuizActivity", "Soal $i benar, menambahkan ${questionsList[i].points} poin")
+            } else {
+                Log.d("QuizActivity", "Soal $i salah, jawaban: $selectedIndex, benar: $correctOption")
+            }
+        }
+        return totalScore
     }
 }
