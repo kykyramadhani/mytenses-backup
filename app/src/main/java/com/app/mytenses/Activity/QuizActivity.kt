@@ -28,8 +28,9 @@ class QuizActivity : AppCompatActivity() {
     private var questionsList: List<Question> = emptyList()
     private var questionIndex = 0
     private var selectedOptionIndex = -1
-    private val selectedAnswers = mutableMapOf<Int, Int>() // Menyimpan indeks jawaban yang dipilih per soal
-    private var isAnswerMode = true // True untuk mode jawab, False untuk mode lihat jawaban
+    private val selectedAnswers = mutableMapOf<Int, Int>()
+    private var isAnswerMode = true
+    private lateinit var quizNumberButtons: List<AppCompatButton>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,6 +55,15 @@ class QuizActivity : AppCompatActivity() {
             findViewById(R.id.optionsDText)
         )
 
+        // Inisialisasi tombol nomor soal
+        quizNumberButtons = listOf(
+            findViewById(R.id.quizNumber1),
+            findViewById(R.id.quizNumber2),
+            findViewById(R.id.quizNumber3),
+            findViewById(R.id.quizNumber4),
+            findViewById(R.id.quizNumber5)
+        )
+
         // Tombol back dari header
         findViewById<ImageButton>(R.id.btnBackQuizSP)?.setOnClickListener {
             onBackPressedDispatcher.onBackPressed()
@@ -69,7 +79,7 @@ class QuizActivity : AppCompatActivity() {
             if (!isAnswerMode) {
                 if (questionIndex < questionsList.size - 1) {
                     questionIndex++
-                    isAnswerMode = true // Pastikan beralih ke mode jawab soal berikutnya
+                    isAnswerMode = true
                     showQuestion()
                 } else {
                     Log.d("QuizActivity", "Sudah di soal terakhir di mode review")
@@ -82,7 +92,7 @@ class QuizActivity : AppCompatActivity() {
             if (isAnswerMode) {
                 if (questionIndex > 0) {
                     questionIndex--
-                    isAnswerMode = false // Beralih ke mode lihat jawaban soal sebelumnya
+                    isAnswerMode = false
                     showReviewQuestion()
                 } else {
                     Log.d("QuizActivity", "Sudah di soal pertama. Index: $questionIndex")
@@ -102,8 +112,8 @@ class QuizActivity : AppCompatActivity() {
         // Tombol Lihat Jawaban/Selesai
         btnFinish.setOnClickListener {
             if (isAnswerMode) {
-                if (selectedOptionIndex != -1) { // Pastikan jawaban dipilih
-                    saveSelectedAnswer() // Simpan jawaban saat beralih ke mode lihat
+                if (selectedOptionIndex != -1) {
+                    saveSelectedAnswer()
                     isAnswerMode = false
                     showReviewQuestion()
                 } else {
@@ -113,14 +123,12 @@ class QuizActivity : AppCompatActivity() {
                 if (questionIndex == questionsList.size - 1) {
                     val totalScore = calculateScore()
                     Log.d("QuizActivity", "Total Skor: $totalScore")
-                    Toast.makeText(this@QuizActivity, "Kuis Selesai! Skor Anda: $totalScore", Toast.LENGTH_LONG).show()
-                    // Reset untuk memulai ulang jika diperlukan
                     isAnswerMode = true
                     questionIndex = 0
                     showQuestion()
                 } else {
                     questionIndex++
-                    isAnswerMode = true // Pastikan beralih ke mode jawab soal berikutnya
+                    isAnswerMode = true
                     showQuestion()
                 }
             }
@@ -225,7 +233,7 @@ class QuizActivity : AppCompatActivity() {
                 optionTexts[index].visibility = View.VISIBLE
                 button.text = ('A' + index).toString()
                 optionTexts[index].text = currentQuestion.options[index]
-                button.setBackgroundResource(R.drawable.quiz_number) // Biru default untuk mode jawab
+                button.setBackgroundResource(R.drawable.quiz_number)
                 Log.d("QuizActivity", "Opsi $index: ${currentQuestion.options[index]}")
             } else {
                 button.visibility = View.GONE
@@ -234,10 +242,20 @@ class QuizActivity : AppCompatActivity() {
             }
         }
 
+        // Atur visibilitas dan status tombol nomor soal
+        quizNumberButtons.forEachIndexed { index, button ->
+            button.isSelected = index == questionIndex
+            if (index < questionsList.size) {
+                button.visibility = View.VISIBLE
+            } else {
+                button.visibility = View.GONE
+            }
+        }
+
         // Atur visibilitas tombol berdasarkan mode dan indeks
         btnBack.visibility = if (isAnswerMode && questionIndex > 0) View.VISIBLE else View.GONE
-        btnNext.visibility = View.GONE // Sembunyikan Next di mode jawab
-        btnFinish.visibility = View.VISIBLE // Selalu ada "Lihat Jawaban"
+        btnNext.visibility = View.GONE
+        btnFinish.visibility = View.VISIBLE
         btnFinish.text = "Lihat Jawaban"
     }
 
@@ -259,10 +277,10 @@ class QuizActivity : AppCompatActivity() {
 
                 // Gunakan drawable dengan bentuk bulat dan warna sesuai
                 when {
-                    index == selectedIndex && index == correctOption -> button.setBackgroundResource(R.drawable.quiz_number_green) // Hijau untuk benar
-                    index == selectedIndex -> button.setBackgroundResource(R.drawable.quiz_number_red) // Merah untuk salah
-                    index == correctOption -> button.setBackgroundResource(R.drawable.quiz_number_green) // Hijau untuk jawaban benar
-                    else -> button.setBackgroundResource(R.drawable.quiz_number_gray) // Abu-abu untuk opsi lain
+                    index == selectedIndex && index == correctOption -> button.setBackgroundResource(R.drawable.quiz_number_green)
+                    index == selectedIndex -> button.setBackgroundResource(R.drawable.quiz_number_red)
+                    index == correctOption -> button.setBackgroundResource(R.drawable.quiz_number_green)
+                    else -> button.setBackgroundResource(R.drawable.quiz_number_gray)
                 }
             } else {
                 button.visibility = View.GONE
@@ -270,9 +288,19 @@ class QuizActivity : AppCompatActivity() {
             }
         }
 
+        // Atur visibilitas dan status tombol nomor soal
+        quizNumberButtons.forEachIndexed { index, button ->
+            button.isSelected = index == questionIndex
+            if (index < questionsList.size) {
+                button.visibility = View.VISIBLE
+            } else {
+                button.visibility = View.GONE
+            }
+        }
+
         // Atur visibilitas tombol di mode review
-        btnBack.visibility = View.GONE // Hapus tombol Back di mode lihat jawaban
-        btnNext.visibility = View.GONE // Sembunyikan btnNext, gunakan btnFinish sebagai Next
+        btnBack.visibility = View.GONE
+        btnNext.visibility = View.GONE
         btnFinish.visibility = View.VISIBLE
         btnFinish.text = if (questionIndex == questionsList.size - 1) "Selesai" else "Next"
     }
