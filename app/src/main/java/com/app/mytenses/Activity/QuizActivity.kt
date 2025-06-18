@@ -1,5 +1,6 @@
 package com.app.mytenses.Activity
 
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -28,6 +29,7 @@ class QuizActivity : AppCompatActivity() {
     private var questionIndex = 0
     private var selectedOptionIndex = -1
     private val selectedAnswers = mutableMapOf<Int, Int>() // Menyimpan indeks jawaban yang dipilih per soal
+    private var isAnswerMode = true // True untuk mode jawab, False untuk mode lihat jawaban
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,7 +38,7 @@ class QuizActivity : AppCompatActivity() {
         tvQuestion = findViewById(R.id.tvQuestion)
         btnNext = findViewById(R.id.btnNextQuestion)
         btnBack = findViewById(R.id.btnBackQuestion)
-        btnFinish = findViewById(R.id.btnFinish) // Tambahkan referensi ke btnFinish
+        btnFinish = findViewById(R.id.btnFinish)
 
         optionButtons = listOf(
             findViewById(R.id.rbOptionA),
@@ -64,34 +66,64 @@ class QuizActivity : AppCompatActivity() {
 
         // Navigasi soal
         btnNext.setOnClickListener {
-            if (questionIndex < questionsList.size - 1) {
-                questionIndex++
-                saveSelectedAnswer() // Simpan jawaban sebelum berpindah
-                Log.d("QuizActivity", "Tombol Next diklik. Index sekarang: $questionIndex, Jumlah soal: ${questionsList.size}")
-                showQuestion()
-            } else {
-                Log.d("QuizActivity", "Sudah di soal terakhir. Index: $questionIndex")
-                Toast.makeText(this@QuizActivity, "Ini soal terakhir", Toast.LENGTH_SHORT).show()
+            if (!isAnswerMode) {
+                if (questionIndex < questionsList.size - 1) {
+                    questionIndex++
+                    isAnswerMode = true // Pastikan beralih ke mode jawab soal berikutnya
+                    showQuestion()
+                } else {
+                    Log.d("QuizActivity", "Sudah di soal terakhir di mode review")
+                    Toast.makeText(this@QuizActivity, "Ini soal terakhir", Toast.LENGTH_SHORT).show()
+                }
             }
         }
 
         btnBack.setOnClickListener {
-            if (questionIndex > 0) {
-                questionIndex--
-                Log.d("QuizActivity", "Tombol Back diklik. Index sekarang: $questionIndex")
-                showQuestion()
+            if (isAnswerMode) {
+                if (questionIndex > 0) {
+                    questionIndex--
+                    isAnswerMode = false // Beralih ke mode lihat jawaban soal sebelumnya
+                    showReviewQuestion()
+                } else {
+                    Log.d("QuizActivity", "Sudah di soal pertama. Index: $questionIndex")
+                    Toast.makeText(this@QuizActivity, "Ini soal pertama", Toast.LENGTH_SHORT).show()
+                }
             } else {
-                Log.d("QuizActivity", "Sudah di soal pertama. Index: $questionIndex")
-                Toast.makeText(this@QuizActivity, "Ini soal pertama", Toast.LENGTH_SHORT).show()
+                if (questionIndex > 0) {
+                    questionIndex--
+                    showReviewQuestion()
+                } else {
+                    Log.d("QuizActivity", "Sudah di soal pertama di mode review")
+                    Toast.makeText(this@QuizActivity, "Ini soal pertama", Toast.LENGTH_SHORT).show()
+                }
             }
         }
 
-        // Tombol Selesai
+        // Tombol Lihat Jawaban/Selesai
         btnFinish.setOnClickListener {
-            val totalScore = calculateScore()
-            Log.d("QuizActivity", "Total Skor: $totalScore")
-            Toast.makeText(this@QuizActivity, "Kuis Selesai! Skor Anda: $totalScore", Toast.LENGTH_LONG).show()
-            // Anda bisa menambahkan intent atau dialog untuk menampilkan skor secara detail di sini
+            if (isAnswerMode) {
+                if (selectedOptionIndex != -1) { // Pastikan jawaban dipilih
+                    saveSelectedAnswer() // Simpan jawaban saat beralih ke mode lihat
+                    isAnswerMode = false
+                    showReviewQuestion()
+                } else {
+                    Toast.makeText(this@QuizActivity, "Silakan pilih jawaban terlebih dahulu!", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                if (questionIndex == questionsList.size - 1) {
+                    val totalScore = calculateScore()
+                    Log.d("QuizActivity", "Total Skor: $totalScore")
+                    Toast.makeText(this@QuizActivity, "Kuis Selesai! Skor Anda: $totalScore", Toast.LENGTH_LONG).show()
+                    // Reset untuk memulai ulang jika diperlukan
+                    isAnswerMode = true
+                    questionIndex = 0
+                    showQuestion()
+                } else {
+                    questionIndex++
+                    isAnswerMode = true // Pastikan beralih ke mode jawab soal berikutnya
+                    showQuestion()
+                }
+            }
         }
 
         // Pilihan jawaban
@@ -100,6 +132,9 @@ class QuizActivity : AppCompatActivity() {
                 selectedOptionIndex = index
                 Log.d("QuizActivity", "Opsi yang dipilih: Index $index")
                 updateOptionSelection()
+                if (isAnswerMode) {
+                    saveSelectedAnswer()
+                }
             }
         }
     }
@@ -124,7 +159,6 @@ class QuizActivity : AppCompatActivity() {
                     return
                 }
 
-                // Ekstrak daftar questions dari body
                 @Suppress("UNCHECKED_CAST")
                 val questionsMap = body as? Map<String, List<Question>>
                 val questions = questionsMap?.get("questions") ?: emptyList()
@@ -179,7 +213,6 @@ class QuizActivity : AppCompatActivity() {
         tvQuestion.text = currentQuestion.text
         selectedOptionIndex = -1
 
-        // Pulihkan jawaban yang dipilih sebelumnya jika ada
         selectedAnswers[questionIndex]?.let { index ->
             selectedOptionIndex = index
             updateOptionSelection()
@@ -192,6 +225,7 @@ class QuizActivity : AppCompatActivity() {
                 optionTexts[index].visibility = View.VISIBLE
                 button.text = ('A' + index).toString()
                 optionTexts[index].text = currentQuestion.options[index]
+                button.setBackgroundResource(R.drawable.quiz_number) // Biru default untuk mode jawab
                 Log.d("QuizActivity", "Opsi $index: ${currentQuestion.options[index]}")
             } else {
                 button.visibility = View.GONE
@@ -200,10 +234,47 @@ class QuizActivity : AppCompatActivity() {
             }
         }
 
-        // Kontrol visibilitas tombol untuk konsistensi posisi
-        btnBack.visibility = if (questionIndex == 0) View.INVISIBLE else View.VISIBLE
-        btnNext.visibility = if (questionIndex == questionsList.size - 1) View.INVISIBLE else View.VISIBLE
-        btnFinish.visibility = if (questionIndex == questionsList.size - 1) View.VISIBLE else View.GONE
+        // Atur visibilitas tombol berdasarkan mode dan indeks
+        btnBack.visibility = if (isAnswerMode && questionIndex > 0) View.VISIBLE else View.GONE
+        btnNext.visibility = View.GONE // Sembunyikan Next di mode jawab
+        btnFinish.visibility = View.VISIBLE // Selalu ada "Lihat Jawaban"
+        btnFinish.text = "Lihat Jawaban"
+    }
+
+    private fun showReviewQuestion() {
+        if (questionsList.isEmpty()) return
+
+        val currentQuestion = questionsList[questionIndex]
+        tvQuestion.text = "${currentQuestion.text}"
+
+        val selectedIndex = selectedAnswers[questionIndex] ?: -1
+        val correctOption = currentQuestion.options.indexOf(currentQuestion.correct_option)
+
+        optionButtons.forEachIndexed { index, button ->
+            if (index < currentQuestion.options.size) {
+                button.visibility = View.VISIBLE
+                optionTexts[index].visibility = View.VISIBLE
+                button.text = ('A' + index).toString()
+                optionTexts[index].text = currentQuestion.options[index]
+
+                // Gunakan drawable dengan bentuk bulat dan warna sesuai
+                when {
+                    index == selectedIndex && index == correctOption -> button.setBackgroundResource(R.drawable.quiz_number_green) // Hijau untuk benar
+                    index == selectedIndex -> button.setBackgroundResource(R.drawable.quiz_number_red) // Merah untuk salah
+                    index == correctOption -> button.setBackgroundResource(R.drawable.quiz_number_green) // Hijau untuk jawaban benar
+                    else -> button.setBackgroundResource(R.drawable.quiz_number_gray) // Abu-abu untuk opsi lain
+                }
+            } else {
+                button.visibility = View.GONE
+                optionTexts[index].visibility = View.GONE
+            }
+        }
+
+        // Atur visibilitas tombol di mode review
+        btnBack.visibility = View.GONE // Hapus tombol Back di mode lihat jawaban
+        btnNext.visibility = View.GONE // Sembunyikan btnNext, gunakan btnFinish sebagai Next
+        btnFinish.visibility = View.VISIBLE
+        btnFinish.text = if (questionIndex == questionsList.size - 1) "Selesai" else "Next"
     }
 
     private fun updateOptionSelection() {
