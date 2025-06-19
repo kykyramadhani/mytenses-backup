@@ -47,3 +47,15 @@ data class Question(
 data class MaterialsResponse(
     val materials: List<Material>
 )
+
+data class LessonProgressResponse(
+    val lesson_progress: List<LessonProgressItem>
+)
+
+
+data class LessonProgressItem(
+    val lesson_id: String,
+    val title: String,
+    val progress: Int,
+    val status: String
+)

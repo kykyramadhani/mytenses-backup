@@ -1,5 +1,6 @@
 package com.app.mytenses.Activity
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -13,15 +14,16 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.app.mytenses.R
+import com.app.mytenses.model.LessonProgress
 import com.app.mytenses.network.RetrofitClient
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
-import java.net.UnknownHostException
 
 class Chapter2FormulaFragment : Fragment() {
 
@@ -35,8 +37,15 @@ class Chapter2FormulaFragment : Fragment() {
     private lateinit var textOnImage1: TextView
     private lateinit var textOnImage2: TextView
     private lateinit var textOnImage3: TextView
+    private var lessonId: String? = null
 
     private val fragmentScope = CoroutineScope(Dispatchers.Main + Job())
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        lessonId = arguments?.getString("lesson_id") ?: "simple_present"
+        Log.d(TAG, "Lesson ID: $lessonId")
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -66,7 +75,7 @@ class Chapter2FormulaFragment : Fragment() {
         frameCard2.visibility = View.GONE
         frameCard3.visibility = View.GONE
 
-        fetchFormulaData()
+        fetchLessonData()
 
         btnBack?.setOnClickListener {
             Log.d(TAG, "Back button clicked")
@@ -76,16 +85,31 @@ class Chapter2FormulaFragment : Fragment() {
         btnNext?.setOnClickListener {
             Log.d(TAG, "Next button clicked")
             fragmentScope.launch {
-
-                requireActivity().supportFragmentManager.beginTransaction()
-                    .replace(R.id.fragment_container, Chapter3ExampleFragment.newInstance())
-                    .addToBackStack(null)
-                    .commit()
+                val username = getUsername()
+                val lesson = lessonId ?: "simple_present"
+                if (username.isNotBlank() && lesson.isNotBlank()) {
+                    updateLessonProgress(username, lesson, 50, "in_progress", 2)
+                    requireActivity().supportFragmentManager.beginTransaction()
+                        .replace(R.id.fragment_container, Chapter3ExampleFragment.newInstance(lesson))
+                        .addToBackStack(null)
+                        .commit()
+                } else {
+                    Log.e(TAG, "Invalid username: $username or lessonId: $lesson")
+                    Toast.makeText(requireContext(), "Error: Username atau Lesson ID tidak valid", Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }
 
-    private fun fetchFormulaData() {
+    private fun getUsername(): String {
+        val sharedPreferences = requireContext().getSharedPreferences("MyTensesPrefs", Context.MODE_PRIVATE)
+        val userId = sharedPreferences.getInt("user_id", -1)
+        val username = sharedPreferences.getString("username", "user_$userId") ?: "user_$userId"
+        Log.d(TAG, "User ID: $userId, Username: $username")
+        return username
+    }
+
+    private fun fetchLessonData() {
         fragmentScope.launch {
             try {
                 val response = withContext(Dispatchers.IO) {
@@ -94,7 +118,7 @@ class Chapter2FormulaFragment : Fragment() {
 
                 if (response.isSuccessful) {
                     val materialsResponse = response.body()
-                    Log.d(TAG, "Raw API Response: ${materialsResponse?.materials}")
+                    Log.d(TAG, "API Response: $materialsResponse")
 
                     if (materialsResponse == null || materialsResponse.materials.isEmpty()) {
                         Log.e(TAG, "API response is null or empty")
@@ -102,33 +126,27 @@ class Chapter2FormulaFragment : Fragment() {
                         return@launch
                     }
 
-                    val material = materialsResponse.materials.find { it.lesson_id == "simple_present" }
+                    val material = materialsResponse.materials.find { it.lesson_id == lessonId }
                     if (material == null) {
-                        Log.e(TAG, "Material for 'simple_present' not found in response: ${materialsResponse.materials}")
+                        Log.e(TAG, "Material for '$lessonId' not found in response: ${materialsResponse.materials}")
                         showError("Material data not found")
                         return@launch
                     }
 
                     Log.d(TAG, "lesson_id: ${material.lesson_id}")
                     Log.d(TAG, "chapter_title: ${material.chapter_title}")
-                    Log.d(TAG, "formulas: ${material.formulas}")
+                    Log.d(TAG, "explanation: ${material.explanation}")
 
                     tvMainTitle.text = "Chapter 2"
-                    tvSubTitle.text = "Rumus Simple Present"
+                    tvSubTitle.text = material.chapter_title
 
-                    val formulas = material.formulas ?: emptyList()
-                    if (formulas.isNotEmpty()) {
-                        textOnImage1.text = "${formulas[0].type?.replaceFirstChar { it.uppercase() } ?: "Positive"}: ${formulas[0].formula}"
-                        Log.d(TAG, "Card 1: ${textOnImage1.text}")
-                    }
-                    if (formulas.size > 1) {
-                        textOnImage2.text = "${formulas[1].type?.replaceFirstChar { it.uppercase() } ?: "Negative"}: ${formulas[1].formula}"
-                        Log.d(TAG, "Card 2: ${textOnImage2.text}")
-                    }
-                    if (formulas.size > 2) {
-                        textOnImage3.text = "${formulas[2].type?.replaceFirstChar { it.uppercase() } ?: "Question"}: ${formulas[2].formula}"
-                        Log.d(TAG, "Card 3: ${textOnImage3.text}")
-                    }
+                    val explanations = material.explanation ?: emptyList()
+                    textOnImage1.text = explanations.getOrNull(0) ?: "No data"
+                    Log.d(TAG, "Card 1: ${textOnImage1.text}")
+                    textOnImage2.text = explanations.getOrNull(1) ?: "No data"
+                    Log.d(TAG, "Card 2: ${textOnImage2.text}")
+                    textOnImage3.text = explanations.getOrNull(2) ?: "No data"
+                    Log.d(TAG, "Card 3: ${textOnImage3.text}")
 
                     progressBar.visibility = View.GONE
                     frameCard1.visibility = View.VISIBLE
@@ -142,7 +160,7 @@ class Chapter2FormulaFragment : Fragment() {
             } catch (e: Exception) {
                 val errorMessage = when (e) {
                     is HttpException -> "HTTP Error: ${e.code()} - ${e.message()}"
-                    is UnknownHostException -> "No internet connection"
+                    is java.net.UnknownHostException -> "No internet connection"
                     else -> "Error loading data: ${e.message}"
                 }
                 Log.e(TAG, errorMessage, e)
@@ -150,7 +168,6 @@ class Chapter2FormulaFragment : Fragment() {
             }
         }
     }
-
 
     private fun showError(message: String) {
         textOnImage1.text = message
@@ -163,12 +180,60 @@ class Chapter2FormulaFragment : Fragment() {
         frameCard3.visibility = View.VISIBLE
     }
 
+    private suspend fun updateLessonProgress(username: String, lessonId: String, newProgress: Int, status: String, retries: Int = 2) {
+        repeat(retries + 1) { attempt ->
+            try {
+                Log.d(TAG, "Attempt ${attempt + 1}: Fetching progress for $username/$lessonId")
+                val getResponse = withContext(Dispatchers.IO) {
+                    RetrofitClient.apiService.getLessonProgress(username)
+                }
+                Log.d(TAG, "GET Response: ${getResponse.code()} ${getResponse.message()}")
+                var currentProgress = 0
+                if (getResponse.isSuccessful) {
+                    currentProgress = getResponse.body()?.lesson_progress?.find { it.lesson_id == lessonId }?.progress ?: 0
+                    Log.d(TAG, "Current progress for $lessonId: $currentProgress")
+                } else if (getResponse.code() == 404) {
+                    Log.w(TAG, "User or lesson not found, assuming current progress is 0")
+                } else {
+                    Log.e(TAG, "Failed to fetch progress: ${getResponse.code()} - ${getResponse.message()}")
+                    return@repeat
+                }
+                if (newProgress > currentProgress) {
+                    Log.d(TAG, "Updating progress to $newProgress% - $status")
+                    val updateResponse = withContext(Dispatchers.IO) {
+                        RetrofitClient.apiService.updateLessonProgress(username, lessonId, LessonProgress(newProgress, status))
+                    }
+                    Log.d(TAG, "PUT Response: ${updateResponse.code()} ${updateResponse.message()}")
+                    if (updateResponse.isSuccessful) {
+                        Log.d(TAG, "Lesson progress updated: $newProgress% - $status")
+                        return
+                    } else {
+                        Log.e(TAG, "Attempt ${attempt + 1} failed: ${updateResponse.code()} - ${updateResponse.message()}")
+                    }
+                } else {
+                    Log.d(TAG, "No update needed: newProgress ($newProgress) <= currentProgress ($currentProgress)")
+                    return
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Attempt ${attempt + 1} error: ${e.message}", e)
+            }
+            if (attempt < retries) delay(1000) // Wait 1s before retry
+        }
+        Toast.makeText(requireContext(), "Gagal memperbarui progres setelah beberapa percobaan", Toast.LENGTH_SHORT).show()
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         fragmentScope.cancel()
     }
 
     companion object {
-        fun newInstance() = Chapter2FormulaFragment()
+        fun newInstance(lessonId: String = "simple_present"): Chapter2FormulaFragment {
+            return Chapter2FormulaFragment().apply {
+                arguments = Bundle().apply {
+                    putString("lesson_id", lessonId)
+                }
+            }
+        }
     }
 }

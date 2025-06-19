@@ -1,6 +1,9 @@
 package com.app.mytenses.network
 
 import com.app.mytenses.model.Lesson
+import com.app.mytenses.model.LessonProgress
+import com.app.mytenses.model.LessonProgressResponse
+
 import com.app.mytenses.model.MaterialsResponse
 import com.app.mytenses.model.Question
 import com.app.mytenses.model.UserData
@@ -29,5 +32,14 @@ interface ApiService {
         @Body data: Map<String, String?>
     ): Response<Unit>
 
+    @PUT("api/users/{username}/lessons/{lessonId}")
+    suspend fun updateLessonProgress(
+        @Path("username") username: String,
+        @Path("lessonId") lessonId: String,
+        @Body progress: LessonProgress
+    ): Response<Unit>
+
+    @GET("api/users/{username}/lessons")
+    suspend fun getLessonProgress(@Path("username") username: String): Response<LessonProgressResponse>
 
 }
