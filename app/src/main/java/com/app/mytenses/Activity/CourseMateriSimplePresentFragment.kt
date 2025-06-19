@@ -11,6 +11,7 @@ import com.app.mytenses.Activity.Chapter1LessonFragment
 import com.app.mytenses.Activity.Chapter2FormulaFragment
 import com.app.mytenses.Activity.Chapter3ExampleFragment
 import com.app.mytenses.Activity.QuizResultFragment
+import com.app.mytenses.Activity.QuizStartFragment
 import com.app.mytenses.R
 
 class CourseMateriSimplePresentFragment : Fragment() {
@@ -77,6 +78,15 @@ class CourseMateriSimplePresentFragment : Fragment() {
         val btnChapter3 = view.findViewById<Button>(R.id.btnChapter3)
         btnChapter3.setOnClickListener {
             val fragment = Chapter3ExampleFragment()
+            requireActivity().supportFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, fragment)
+                .addToBackStack(null)
+                .commit()
+        }
+
+        val btnChapter4 = view.findViewById<Button>(R.id.btnChapter4)
+        btnChapter4.setOnClickListener {
+            val fragment = QuizStartFragment()
             requireActivity().supportFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, fragment)
                 .addToBackStack(null)

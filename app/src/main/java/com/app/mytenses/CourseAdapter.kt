@@ -8,7 +8,7 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class CourseAdapter(private val courseList: List<Course>) :
+class CourseAdapter(private var courseList: List<Course>) :
     RecyclerView.Adapter<CourseAdapter.CourseViewHolder>() {
 
     interface OnItemClickListener {
@@ -19,6 +19,15 @@ class CourseAdapter(private val courseList: List<Course>) :
 
     fun setOnItemClickListener(listener: OnItemClickListener) {
         this.onItemClickListener = listener
+    }
+
+    fun updateData(newCourseList: List<Course>) {
+        this.courseList = newCourseList
+        notifyDataSetChanged()
+    }
+
+    fun getItem(position: Int): Course {
+        return courseList[position]
     }
 
     class CourseViewHolder(itemView: View, private val listener: OnItemClickListener?) : RecyclerView.ViewHolder(itemView) {

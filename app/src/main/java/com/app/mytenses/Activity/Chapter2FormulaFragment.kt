@@ -61,7 +61,7 @@ class Chapter2FormulaFragment : Fragment() {
         val btnBack = view.findViewById<ImageButton>(R.id.btnBackChapt2)
         val btnNext = view.findViewById<Button>(R.id.btnNextChapt2)
         tvMainTitle = view.findViewById(R.id.tvMainTitle)
-        tvSubTitle = view.findViewById(R.id.tvSubTitle)
+        tvSubTitle = view.findViewById(R.id.tvSubTitleFormula2)
         textOnImage1 = view.findViewById(R.id.textOnImage1)
         textOnImage2 = view.findViewById(R.id.textOnImage2)
         textOnImage3 = view.findViewById(R.id.textOnImage3)
@@ -90,7 +90,7 @@ class Chapter2FormulaFragment : Fragment() {
                 if (username.isNotBlank() && lesson.isNotBlank()) {
                     updateLessonProgress(username, lesson, 50, "in_progress", 2)
                     requireActivity().supportFragmentManager.beginTransaction()
-                        .replace(R.id.fragment_container, Chapter3ExampleFragment.newInstance(lesson))
+                        .replace(R.id.fragment_container, Chapter3ExampleFragment.newInstance())
                         .addToBackStack(null)
                         .commit()
                 } else {
@@ -135,17 +135,19 @@ class Chapter2FormulaFragment : Fragment() {
 
                     Log.d(TAG, "lesson_id: ${material.lesson_id}")
                     Log.d(TAG, "chapter_title: ${material.chapter_title}")
-                    Log.d(TAG, "explanation: ${material.explanation}")
+                    Log.d(TAG, "formulas: ${material.formulas}")
 
+                    // Set titles
                     tvMainTitle.text = "Chapter 2"
-                    tvSubTitle.text = material.chapter_title
+                    tvSubTitle.text = "Rumus " + getLessonTitle(lessonId)
 
-                    val explanations = material.explanation ?: emptyList()
-                    textOnImage1.text = explanations.getOrNull(0) ?: "No data"
+                    // Display formulas
+                    val formulas = material.formulas ?: emptyList()
+                    textOnImage1.text = formulas.getOrNull(0)?.let { "${it.type?.capitalize()}: ${it.formula}" } ?: "No formula"
                     Log.d(TAG, "Card 1: ${textOnImage1.text}")
-                    textOnImage2.text = explanations.getOrNull(1) ?: "No data"
+                    textOnImage2.text = formulas.getOrNull(1)?.let { "${it.type?.capitalize()}: ${it.formula}" } ?: "No formula"
                     Log.d(TAG, "Card 2: ${textOnImage2.text}")
-                    textOnImage3.text = explanations.getOrNull(2) ?: "No data"
+                    textOnImage3.text = formulas.getOrNull(2)?.let { "${it.type?.capitalize()}: ${it.formula}" } ?: "No formula"
                     Log.d(TAG, "Card 3: ${textOnImage3.text}")
 
                     progressBar.visibility = View.GONE
@@ -166,6 +168,28 @@ class Chapter2FormulaFragment : Fragment() {
                 Log.e(TAG, errorMessage, e)
                 showError(errorMessage)
             }
+        }
+    }
+
+    private fun getLessonTitle(lessonId: String?): String {
+        return when (lessonId) {
+            "simple_present" -> "Simple Present"
+            "simple_past" -> "Simple Past"
+            "simple_future" -> "Simple Future"
+            "simple_past_future" -> "Simple Past Future"
+            "present_continuous" -> "Present Continuous"
+            "past_continuous" -> "Past Continuous"
+            "future_continuous" -> "Future Continuous"
+            "past_future_continuous" -> "Past Future Continuous"
+            "present_perfect" -> "Present Perfect"
+            "past_perfect" -> "Past Perfect"
+            "future_perfect" -> "Future Perfect"
+            "past_future_perfect" -> "Past Future Perfect"
+            "present_perfect_continuous" -> "Present Perfect Continuous"
+            "past_perfect_continuous" -> "Past Perfect Continuous"
+            "future_perfect_continuous" -> "Future Perfect Continuous"
+            "past_future_perfect_continuous" -> "Past Future Perfect Continuous"
+            else -> "Unknown Lesson"
         }
     }
 

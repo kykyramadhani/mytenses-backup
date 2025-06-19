@@ -15,6 +15,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.app.mytenses.R
 import com.app.mytenses.model.LessonProgress
+import com.app.mytenses.model.Example
 import com.app.mytenses.network.RetrofitClient
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -24,7 +25,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
-import com.app.mytenses.Activity.QuizStartFragment
 
 class Chapter3ExampleFragment : Fragment() {
 
@@ -125,21 +125,23 @@ class Chapter3ExampleFragment : Fragment() {
                     val material = materialsResponse.materials.find { it.lesson_id == lessonId }
                     if (material == null) {
                         Log.e(TAG, "Material for '$lessonId' not found in response: ${materialsResponse.materials}")
-                        showError("Material data not found")
+                        showError("Material data not found for $lessonId")
                         return@launch
                     }
 
                     Log.d(TAG, "lesson_id: ${material.lesson_id}")
                     Log.d(TAG, "chapter_title: ${material.chapter_title}")
-                    Log.d(TAG, "explanation: ${material.explanation}")
+                    Log.d(TAG, "examples: ${material.examples}")
 
+                    // Set titles
                     tvMainTitle.text = "Chapter 3"
-                    tvSubTitle.text = material.chapter_title
+                    tvSubTitle.text = "Contoh ${getLessonTitle(lessonId)}"
 
-                    val explanations = material.explanation ?: emptyList()
-                    textOnImage1.text = explanations.getOrNull(0) ?: "No data"
+                    // Display examples
+                    val examples = material.examples ?: emptyList()
+                    textOnImage1.text = examples.getOrNull(0)?.let { "${it.sentence}\n${it.example_translation}" } ?: "No example available"
                     Log.d(TAG, "Card 1: ${textOnImage1.text}")
-                    textOnImage2.text = explanations.getOrNull(1) ?: "No data"
+                    textOnImage2.text = examples.getOrNull(1)?.let { "${it.sentence}\n${it.example_translation}" } ?: "No example available"
                     Log.d(TAG, "Card 2: ${textOnImage2.text}")
 
                     progressBar.visibility = View.GONE
@@ -159,6 +161,28 @@ class Chapter3ExampleFragment : Fragment() {
                 Log.e(TAG, errorMessage, e)
                 showError(errorMessage)
             }
+        }
+    }
+
+    private fun getLessonTitle(lessonId: String?): String {
+        return when (lessonId) {
+            "simple_present" -> "Simple Present"
+            "simple_past" -> "Simple Past"
+            "simple_future" -> "Simple Future"
+            "simple_past_future" -> "Simple Past Future"
+            "present_continuous" -> "Present Continuous"
+            "past_continuous" -> "Past Continuous"
+            "future_continuous" -> "Future Continuous"
+            "past_future_continuous" -> "Past Future Continuous"
+            "present_perfect" -> "Present Perfect"
+            "past_perfect" -> "Past Perfect"
+            "future_perfect" -> "Future Perfect"
+            "past_future_perfect" -> "Past Future Perfect"
+            "present_perfect_continuous" -> "Present Perfect Continuous"
+            "past_perfect_continuous" -> "Past Perfect Continuous"
+            "future_perfect_continuous" -> "Future Perfect Continuous"
+            "past_future_perfect_continuous" -> "Past Future Perfect Continuous"
+            else -> "Unknown Lesson"
         }
     }
 
@@ -210,12 +234,15 @@ class Chapter3ExampleFragment : Fragment() {
             }
             if (attempt < retries) delay(1000) // Wait 1s before retry
         }
-        Toast.makeText(requireContext(), "Gagal memperbarui progres setelah beberapa percobaan", Toast.LENGTH_SHORT).show()
+        withContext(Dispatchers.Main) {
+            Toast.makeText(requireContext(), "Gagal memperbarui progres setelah beberapa percobaan", Toast.LENGTH_SHORT).show()
+        }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         fragmentScope.cancel()
+        Log.d(TAG, "onDestroyView: Coroutine scope cancelled")
     }
 
     companion object {
