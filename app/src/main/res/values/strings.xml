@@ -21,7 +21,7 @@
     <string name="future">Future</string>
     <string name="present_perfect">Present Perfect</string>
     <string name="past_perfect">Past Perfect</string>
-    <string name="congrats_message">Selamat %s !</string>
+    <string name="congrats_message">Selamat Kamu Sudah Menyelesaikan %s</string>
     <string name="profil">Profil</string>
 
 </resources>
