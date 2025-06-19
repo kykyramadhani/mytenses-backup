@@ -16,6 +16,7 @@ import com.app.mytenses.Course
 
 class CourseFragment : Fragment() {
 
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

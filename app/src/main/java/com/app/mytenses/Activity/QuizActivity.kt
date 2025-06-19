@@ -110,6 +110,7 @@ class QuizActivity : AppCompatActivity() {
 
         // Tombol Lihat Jawaban/Selesai
         btnFinish.setOnClickListener {
+            Log.d("QuizActivity", "btnFinish diklik, isAnswerMode: $isAnswerMode, questionIndex: $questionIndex, questionsList.size: ${questionsList.size}")
             if (isAnswerMode) {
                 if (selectedOptionIndex != -1) {
                     saveSelectedAnswer()
@@ -122,12 +123,21 @@ class QuizActivity : AppCompatActivity() {
                 if (questionIndex == questionsList.size - 1) {
                     val totalScore = calculateScore()
                     Log.d("QuizActivity", "Total Skor: $totalScore")
-                    // Ganti fragment dengan QuizResultFragment
-                    val fragment = QuizResultFragment.newInstance(totalScore) // Asumsikan ada metode newInstance
-                    supportFragmentManager.beginTransaction()
-                        .replace(R.id.fragment_container, fragment) // Ganti dengan ID container fragment di layout
-                        .addToBackStack(null) // Opsional: Tambahkan ke back stack agar bisa kembali
-                        .commit()
+                    Log.d("QuizActivity", "Navigasi ke QuizResultFragment, isFinishing: ${isFinishing()}")
+                    val fragment = QuizResultFragment.newInstance(totalScore)
+                    try {
+                        // Atur visibilitas
+                        findViewById<LinearLayout>(R.id.quiz_ui_container).visibility = View.GONE
+                        findViewById<FrameLayout>(R.id.fragment_container).visibility = View.VISIBLE
+                        // Lakukan transaksi fragment
+                        supportFragmentManager.beginTransaction()
+                            .replace(R.id.fragment_container, fragment)
+                            .addToBackStack(null)
+                            .commit()
+                        Log.d("QuizActivity", "Transaksi fragment berhasil dikomit")
+                    } catch (e: Exception) {
+                        Log.e("QuizActivity", "Gagal melakukan transaksi fragment: ${e.message}", e)
+                    }
                 } else {
                     questionIndex++
                     isAnswerMode = true
@@ -334,4 +344,5 @@ class QuizActivity : AppCompatActivity() {
         }
         return totalScore
     }
+
 }

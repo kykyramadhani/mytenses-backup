@@ -6,9 +6,8 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Activity.CompletedCourseActivity">
+    tools:context=".Fragment.CompletedCourseFragment">
 
-    <!-- Frame untuk tampilan hasil -->
     <FrameLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -18,14 +17,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- Background hasil -->
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="463dp"
             android:contentDescription="Background hasil"
             android:src="@drawable/finishedbackground" />
 
-        <!-- Icon bintang dan centang -->
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -34,7 +31,6 @@
             android:src="@drawable/finished"
             android:contentDescription="3 bintang dan shield" />
 
-        <!-- Teks Selamat -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -46,11 +42,12 @@
             android:layout_marginTop="160dp"
             android:textColor="@android:color/black" />
 
-        <!-- Teks Deskripsi -->
         <TextView
+            android:id="@+id/textViewDesc"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Anda telah menyelesaikan semua materi\nkelas Simple Present!"
+            android:text=""
+            tools:text="Anda telah menyelesaikan semua materi\nkelas ini!"
             android:textAlignment="center"
             android:fontFamily="@font/plusjakartasans_medium"
             android:textSize="14sp"
@@ -58,7 +55,6 @@
             android:layout_marginTop="200dp"
             android:textColor="@android:color/black" />
 
-        <!-- Tombol -->
         <Button
             android:id="@+id/btnBackCompleted"
             android:layout_width="wrap_content"

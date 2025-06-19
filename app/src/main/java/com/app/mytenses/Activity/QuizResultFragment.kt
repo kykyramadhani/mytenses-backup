@@ -13,6 +13,7 @@ import android.widget.ImageButton
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import com.app.mytenses.Fragment.CompletedCourseFragment
 import com.app.mytenses.R
 
 class QuizResultFragment : Fragment() {
@@ -28,10 +29,15 @@ class QuizResultFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Setup tombol kembali
+        // Retrieve totalScore from arguments
+        val totalScore = arguments?.getInt("totalScore") ?: 0
+
+        // Display totalScore
+        val scoreTextView = view.findViewById<TextView>(R.id.scoreText)
+        scoreTextView.text = "$totalScore/100"
+
         val btnBack = view.findViewById<ImageButton>(R.id.btnBack)
         btnBack.setOnClickListener {
-            // Navigasi eksplisit ke CourseMateriSimplePresentFragment
             val targetFragment = CourseMateriSimplePresentFragment()
             requireActivity().supportFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, targetFragment)
@@ -39,16 +45,13 @@ class QuizResultFragment : Fragment() {
                 .commit()
         }
 
-        // Setup teks ucapan dengan nama pengguna
         val congratsTextView = view.findViewById<TextView>(R.id.congratsText)
         val sharedPreferences = requireContext().getSharedPreferences("MyTensesPrefs", Context.MODE_PRIVATE)
         val fullName = sharedPreferences.getString("name", null)
 
-        // Ambil nama depan atau gunakan "Pengguna" jika null
         val firstName = fullName?.split(" ")?.firstOrNull() ?: "Pengguna"
-        val welcomeText = getString(R.string.congrats_message, firstName) // Misal: "Selamat %s !"
+        val welcomeText = getString(R.string.congrats_message, firstName)
 
-        // Buat SpannableString untuk mewarnai nama
         val spannable = SpannableString(welcomeText)
         val nameStartIndex = welcomeText.indexOf(firstName)
         val nameEndIndex = nameStartIndex + firstName.length
@@ -61,25 +64,29 @@ class QuizResultFragment : Fragment() {
         )
         congratsTextView.text = spannable
 
-        // Setup tombol Berikutnya
+
         val btnNext = view.findViewById<Button>(R.id.btnNextResult)
         btnNext.setOnClickListener {
-            // Contoh navigasi ke fragment lain (sesuaikan dengan kebutuhan)
-            val targetFragment = CourseMateriSimplePresentFragment()
+            val lessonId = arguments?.getString("lessonId")
+            val completedFragment = CompletedCourseFragment().apply {
+                arguments = Bundle().apply {
+                    putString("lessonId", lessonId)
+                }
+            }
             requireActivity().supportFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, targetFragment)
+                .replace(R.id.fragment_container, completedFragment)
                 .addToBackStack(null)
                 .commit()
-            // Atau pop back stack jika ingin kembali ke fragment sebelumnya
-            // requireActivity().supportFragmentManager.popBackStack()
-            // Atau selesaikan activity jika di akhir alur
-            // requireActivity().finish()
         }
     }
 
     companion object {
-        fun newInstance(): QuizResultFragment {
-            return QuizResultFragment()
+        fun newInstance(totalScore: Int): QuizResultFragment {
+            val fragment = QuizResultFragment()
+            val args = Bundle()
+            args.putInt("totalScore", totalScore)
+            fragment.arguments = args
+            return fragment
         }
     }
 }

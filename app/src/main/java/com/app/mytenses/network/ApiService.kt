@@ -1,7 +1,6 @@
 package com.app.mytenses.network
 
 import com.app.mytenses.model.ApiResponse
-import com.app.mytenses.model.Lesson
 import com.app.mytenses.model.MaterialsResponse
 import com.app.mytenses.model.Question
 import com.app.mytenses.model.UserData
@@ -29,4 +28,6 @@ interface ApiService {
         @Path("username") username: String,
         @Body data: Map<String, String?>
     ): Response<Unit>
+
+
 }

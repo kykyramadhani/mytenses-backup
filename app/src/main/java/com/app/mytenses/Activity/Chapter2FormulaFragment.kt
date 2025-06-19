@@ -36,7 +36,6 @@ class Chapter2FormulaFragment : Fragment() {
     private lateinit var textOnImage2: TextView
     private lateinit var textOnImage3: TextView
 
-    // Coroutine scope for the Fragment
     private val fragmentScope = CoroutineScope(Dispatchers.Main + Job())
 
     override fun onCreateView(
@@ -50,7 +49,6 @@ class Chapter2FormulaFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Initialize views
         val btnBack = view.findViewById<ImageButton>(R.id.btnBackChapt2)
         val btnNext = view.findViewById<Button>(R.id.btnNextChapt2)
         tvMainTitle = view.findViewById(R.id.tvMainTitle)
@@ -63,35 +61,33 @@ class Chapter2FormulaFragment : Fragment() {
         frameCard2 = view.findViewById(R.id.frameCard2)
         frameCard3 = view.findViewById(R.id.frameCard3)
 
-        // Show ProgressBar, hide cards
         progressBar.visibility = View.VISIBLE
         frameCard1.visibility = View.GONE
         frameCard2.visibility = View.GONE
         frameCard3.visibility = View.GONE
 
-        // Fetch data using coroutine
         fetchFormulaData()
 
-        // Set back button listener
         btnBack?.setOnClickListener {
             Log.d(TAG, "Back button clicked")
             requireActivity().supportFragmentManager.popBackStack()
         }
 
-        // Set next button listener
         btnNext?.setOnClickListener {
             Log.d(TAG, "Next button clicked")
-            requireActivity().supportFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, Chapter3ExampleFragment.newInstance())
-                .addToBackStack(null)
-                .commit()
+            fragmentScope.launch {
+
+                requireActivity().supportFragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, Chapter3ExampleFragment.newInstance())
+                    .addToBackStack(null)
+                    .commit()
+            }
         }
     }
 
     private fun fetchFormulaData() {
         fragmentScope.launch {
             try {
-                // Perform API call on IO dispatcher
                 val response = withContext(Dispatchers.IO) {
                     RetrofitClient.apiService.getMaterials()
                 }
@@ -106,7 +102,6 @@ class Chapter2FormulaFragment : Fragment() {
                         return@launch
                     }
 
-                    // Find material for "simple_present"
                     val material = materialsResponse.materials.find { it.lesson_id == "simple_present" }
                     if (material == null) {
                         Log.e(TAG, "Material for 'simple_present' not found in response: ${materialsResponse.materials}")
@@ -114,16 +109,13 @@ class Chapter2FormulaFragment : Fragment() {
                         return@launch
                     }
 
-                    // Verify and log the material fields
                     Log.d(TAG, "lesson_id: ${material.lesson_id}")
                     Log.d(TAG, "chapter_title: ${material.chapter_title}")
                     Log.d(TAG, "formulas: ${material.formulas}")
 
-                    // Update UI
                     tvMainTitle.text = "Chapter 2"
-                    tvSubTitle.text = "Rumus Simple Present" // Hardcoded since no lessons in MaterialsResponse
+                    tvSubTitle.text = "Rumus Simple Present"
 
-                    // Update cards with formula data
                     val formulas = material.formulas ?: emptyList()
                     if (formulas.isNotEmpty()) {
                         textOnImage1.text = "${formulas[0].type?.replaceFirstChar { it.uppercase() } ?: "Positive"}: ${formulas[0].formula}"
@@ -138,7 +130,6 @@ class Chapter2FormulaFragment : Fragment() {
                         Log.d(TAG, "Card 3: ${textOnImage3.text}")
                     }
 
-                    // Hide ProgressBar, show cards
                     progressBar.visibility = View.GONE
                     frameCard1.visibility = View.VISIBLE
                     frameCard2.visibility = View.VISIBLE
@@ -160,6 +151,7 @@ class Chapter2FormulaFragment : Fragment() {
         }
     }
 
+
     private fun showError(message: String) {
         textOnImage1.text = message
         textOnImage2.text = message
@@ -173,7 +165,6 @@ class Chapter2FormulaFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        // Cancel coroutines when the view is destroyed
         fragmentScope.cancel()
     }
 

@@ -13,7 +13,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.app.mytenses.R
-import com.app.mytenses.model.Material
 import com.app.mytenses.network.RetrofitClient
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -36,7 +35,6 @@ class Chapter1LessonFragment : Fragment() {
     private lateinit var textOnImage2: TextView
     private lateinit var textOnImage3: TextView
 
-    // Coroutine scope for the Fragment
     private val fragmentScope = CoroutineScope(Dispatchers.Main + Job())
 
     override fun onCreateView(
@@ -50,7 +48,6 @@ class Chapter1LessonFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Initialize views
         val btnBack = view.findViewById<ImageButton>(R.id.btnBackChapt1)
         val btnNext = view.findViewById<Button>(R.id.btnNextChapt1)
         tvMainTitle = view.findViewById(R.id.tvMainTitle)
@@ -63,35 +60,34 @@ class Chapter1LessonFragment : Fragment() {
         frameCard2 = view.findViewById(R.id.frameCard2)
         frameCard3 = view.findViewById(R.id.frameCard3)
 
-        // Show ProgressBar, hide cards
         progressBar.visibility = View.VISIBLE
         frameCard1.visibility = View.GONE
         frameCard2.visibility = View.GONE
         frameCard3.visibility = View.GONE
 
-        // Fetch data using coroutine
         fetchLessonData()
 
-        // Set back button listener
         btnBack?.setOnClickListener {
             Log.d(TAG, "Back button clicked")
             requireActivity().supportFragmentManager.popBackStack()
         }
 
-        // Set next button listener
         btnNext?.setOnClickListener {
             Log.d(TAG, "Next button clicked")
-            requireActivity().supportFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, Chapter2FormulaFragment.newInstance())
-                .addToBackStack(null)
-                .commit()
+            fragmentScope.launch {
+
+                requireActivity().supportFragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, Chapter2FormulaFragment.newInstance())
+                    .addToBackStack(null)
+                    .commit()
+            }
         }
     }
 
     private fun fetchLessonData() {
         fragmentScope.launch {
             try {
-                // Perform API call on IO dispatcher
+
                 val response = withContext(Dispatchers.IO) {
                     RetrofitClient.apiService.getMaterials()
                 }
@@ -106,7 +102,6 @@ class Chapter1LessonFragment : Fragment() {
                         return@launch
                     }
 
-                    // Find material for "simple_present"
                     val material = materialsResponse.materials.find { it.lesson_id == "simple_present" }
                     if (material == null) {
                         Log.e(TAG, "Material for 'simple_present' not found in response: ${materialsResponse.materials}")
@@ -114,16 +109,16 @@ class Chapter1LessonFragment : Fragment() {
                         return@launch
                     }
 
-                    // Verify and log the material fields
+
                     Log.d(TAG, "lesson_id: ${material.lesson_id}")
                     Log.d(TAG, "chapter_title: ${material.chapter_title}")
                     Log.d(TAG, "explanation: ${material.explanation}")
 
-                    // Update UI with material data
+
                     tvMainTitle.text = "Chapter 1"
                     tvSubTitle.text = material.chapter_title
 
-                    // Update cards with material data from the explanation list
+
                     val explanations = material.explanation ?: emptyList()
                     textOnImage1.text = explanations.getOrNull(0) ?: "No data"
                     Log.d(TAG, "Card 1: ${textOnImage1.text}")
@@ -132,13 +127,13 @@ class Chapter1LessonFragment : Fragment() {
                     textOnImage3.text = explanations.getOrNull(2) ?: "No data"
                     Log.d(TAG, "Card 3: ${textOnImage3.text}")
 
-                    // Hide ProgressBar, show cards
+
                     progressBar.visibility = View.GONE
                     frameCard1.visibility = View.VISIBLE
                     frameCard2.visibility = View.VISIBLE
                     frameCard3.visibility = View.VISIBLE
                 } else {
-                    // Handle unsuccessful response
+
                     val errorMessage = "Error: ${response.code()} - ${response.message()}"
                     Log.e(TAG, "HTTP Error: $errorMessage")
                     showError(errorMessage)
@@ -153,8 +148,10 @@ class Chapter1LessonFragment : Fragment() {
                 Log.e(TAG, errorMessage, e)
                 showError(errorMessage)
             }
+
         }
     }
+
 
     private fun showError(message: String) {
         textOnImage1.text = message

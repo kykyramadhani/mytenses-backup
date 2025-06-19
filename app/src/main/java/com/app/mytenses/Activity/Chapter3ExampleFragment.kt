@@ -34,7 +34,6 @@ class Chapter3ExampleFragment : Fragment() {
     private lateinit var textOnImage1: TextView
     private lateinit var textOnImage2: TextView
 
-    // Coroutine scope for the Fragment
     private val fragmentScope = CoroutineScope(Dispatchers.Main + Job())
 
     override fun onCreateView(
@@ -48,7 +47,6 @@ class Chapter3ExampleFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Initialize views
         val btnBack = view.findViewById<ImageButton>(R.id.btnBackChapt3)
         val btnNext = view.findViewById<Button>(R.id.btnNextChapt3)
         tvMainTitle = view.findViewById(R.id.tvMainTitle) ?: throw IllegalStateException("tvMainTitle not found")
@@ -59,34 +57,32 @@ class Chapter3ExampleFragment : Fragment() {
         frameCard1 = view.findViewById(R.id.frameCard1) ?: throw IllegalStateException("frameCard1 not found")
         frameCard2 = view.findViewById(R.id.frameCard2) ?: throw IllegalStateException("frameCard2 not found")
 
-        // Show ProgressBar, hide cards
         progressBar.visibility = View.VISIBLE
         frameCard1.visibility = View.GONE
         frameCard2.visibility = View.GONE
 
-        // Fetch data using coroutine
         fetchExampleData()
 
-        // Set back button listener
         btnBack?.setOnClickListener {
             Log.d(TAG, "Back button clicked")
             requireActivity().supportFragmentManager.popBackStack()
         }
 
-        // Set next button listener
         btnNext?.setOnClickListener {
             Log.d(TAG, "Next button clicked")
-            requireActivity().supportFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, QuizStartFragment.newInstance())
-                .addToBackStack(null)
-                .commit()
+            fragmentScope.launch {
+
+                requireActivity().supportFragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, QuizStartFragment.newInstance())
+                    .addToBackStack(null)
+                    .commit()
+            }
         }
     }
 
     private fun fetchExampleData() {
         fragmentScope.launch {
             try {
-                // Perform API call on IO dispatcher
                 val response = withContext(Dispatchers.IO) {
                     RetrofitClient.apiService.getMaterials()
                 }
@@ -101,7 +97,6 @@ class Chapter3ExampleFragment : Fragment() {
                         return@launch
                     }
 
-                    // Find material for "simple_present"
                     val material = materialsResponse.materials.find { it.lesson_id == "simple_present" }
                     if (material == null) {
                         Log.e(TAG, "Material for 'simple_present' not found in response: ${materialsResponse.materials}")
@@ -109,16 +104,13 @@ class Chapter3ExampleFragment : Fragment() {
                         return@launch
                     }
 
-                    // Verify and log the material fields
                     Log.d(TAG, "lesson_id: ${material.lesson_id}")
                     Log.d(TAG, "chapter_title: ${material.chapter_title}")
                     Log.d(TAG, "examples: ${material.examples}")
 
-                    // Update UI
                     tvMainTitle.text = "Chapter 3"
                     tvSubTitle.text = "Contoh Simple Present"
 
-                    // Update cards with example data
                     val examples = material.examples ?: emptyList()
                     if (examples.isNotEmpty()) {
                         textOnImage1.text = "${examples[0].sentence}\n(${examples[0].example_translation})"
@@ -133,7 +125,6 @@ class Chapter3ExampleFragment : Fragment() {
                         textOnImage2.text = "No example available"
                     }
 
-                    // Hide ProgressBar, show cards
                     progressBar.visibility = View.GONE
                     frameCard1.visibility = View.VISIBLE
                     frameCard2.visibility = View.VISIBLE
@@ -154,6 +145,7 @@ class Chapter3ExampleFragment : Fragment() {
         }
     }
 
+
     private fun showError(message: String) {
         textOnImage1.text = message
         textOnImage2.text = message
@@ -165,7 +157,6 @@ class Chapter3ExampleFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        // Cancel coroutines when the view is destroyed
         fragmentScope.cancel()
     }
 
