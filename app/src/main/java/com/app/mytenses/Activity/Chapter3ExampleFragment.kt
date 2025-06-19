@@ -24,6 +24,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
+import com.app.mytenses.Activity.QuizStartFragment
 
 class Chapter3ExampleFragment : Fragment() {
 
@@ -85,7 +86,7 @@ class Chapter3ExampleFragment : Fragment() {
                 if (username.isNotBlank() && lesson.isNotBlank()) {
                     updateLessonProgress(username, lesson, 75, "in_progress", 2)
                     requireActivity().supportFragmentManager.beginTransaction()
-                        .replace(R.id.fragment_container, CompletedCourseFragment.newInstance(lesson))
+                        .replace(R.id.fragment_container, QuizStartFragment.newInstance())
                         .addToBackStack(null)
                         .commit()
                 } else {
