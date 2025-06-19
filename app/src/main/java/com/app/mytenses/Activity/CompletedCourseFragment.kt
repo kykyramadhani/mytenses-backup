@@ -58,26 +58,27 @@ class CompletedCourseFragment : Fragment() {
         Log.d(TAG, "lessonId received: $lessonId")
 
 
-        textViewDesc?.text = getString(R.string.congrats_message, "")
+        textViewDesc?.text = getString(R.string.congrats_message_complete, "")
 
 
         fragmentScope.launch {
             val title = getLessonTitle(lessonId)
             Log.d(TAG, "Fetched title: $title")
-            textViewDesc?.text = getString(R.string.congrats_message, title ?: "Unknown")
+            textViewDesc?.text = getString(R.string.congrats_message_complete, title ?: "Unknown")
         }
     }
 
     private suspend fun getLessonTitle(lessonId: String): String? {
         return try {
             val response = withContext(Dispatchers.IO) {
-                RetrofitClient.apiService.getMaterials()
+                RetrofitClient.apiService.getLessons()
             }
-
             if (response.isSuccessful) {
-                val materialsResponse = response.body()
-                val material = materialsResponse?.materials?.find { it.lesson_id == lessonId }
-                material?.chapter_title
+                val lessons = response.body()
+                Log.d(TAG, "Lessons: $lessons")
+                val lesson = lessons?.get(lessonId)
+                Log.d(TAG, "Lesson for $lessonId: $lesson")
+                lesson?.title
             } else {
                 Log.e(TAG, "API error: ${response.code()} - ${response.message()}")
                 Toast.makeText(requireContext(), "Gagal mengambil data pelajaran", Toast.LENGTH_LONG).show()

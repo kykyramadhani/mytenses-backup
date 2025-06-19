@@ -1,19 +1,11 @@
 package com.app.mytenses.model
 
-data class ApiResponse(
-    val counters: Counters? = null,
-    val lessons: Map<String, Lesson>? = null,
-    val materials: Map<String, Material>? = null
-)
-
-data class Counters(
-    val user_id: Int? = null
-)
-
 data class Lesson(
     val lesson_id: String,
     val title: String,
-    val description: String
+    val description: String,
+    val materials: Map<String, Material>,
+    val quizzes: Map<String, Quiz>
 )
 
 data class Material(
@@ -39,7 +31,8 @@ data class Quiz(
     val quiz_id: String,
     val lesson_id: String,
     val title: String,
-    val total_points: Int
+    val total_points: Int,
+    val questions: Map<String, Question>
 )
 
 data class Question(
