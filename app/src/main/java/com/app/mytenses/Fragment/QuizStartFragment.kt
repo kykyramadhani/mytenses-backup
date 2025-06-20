@@ -1,4 +1,4 @@
-package com.app.mytenses.Activity
+package com.app.mytenses.Fragment
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,7 +8,6 @@ import android.widget.ImageButton
 import androidx.appcompat.widget.AppCompatButton
 import androidx.fragment.app.Fragment
 import com.app.mytenses.R
-import com.app.mytenses.ui.QuizFragment
 
 class QuizStartFragment : Fragment() {
 
