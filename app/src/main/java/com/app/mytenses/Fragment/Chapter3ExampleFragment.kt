@@ -1,4 +1,4 @@
-package com.app.mytenses.Activity
+package com.app.mytenses.Fragment
 
 import android.content.Context
 import android.os.Bundle
@@ -25,18 +25,16 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 
-class Chapter2FormulaFragment : Fragment() {
+class Chapter3ExampleFragment : Fragment() {
 
-    private val TAG = "Chapter2FormulaFragment"
+    private val TAG = "Chapter3ExampleFragment"
     private lateinit var progressBar: ProgressBar
     private lateinit var frameCard1: FrameLayout
     private lateinit var frameCard2: FrameLayout
-    private lateinit var frameCard3: FrameLayout
     private lateinit var tvMainTitle: TextView
     private lateinit var tvSubTitle: TextView
     private lateinit var textOnImage1: TextView
     private lateinit var textOnImage2: TextView
-    private lateinit var textOnImage3: TextView
     private var lessonId: String? = null
 
     private val fragmentScope = CoroutineScope(Dispatchers.Main + Job())
@@ -52,28 +50,25 @@ class Chapter2FormulaFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         Log.d(TAG, "onCreateView called")
-        return inflater.inflate(R.layout.fragment_chapter2_formula, container, false)
+        return inflater.inflate(R.layout.fragment_chapter3_example, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val btnBack = view.findViewById<ImageButton>(R.id.btnBackChapt2)
-        val btnNext = view.findViewById<Button>(R.id.btnNextChapt2)
+        val btnBack = view.findViewById<ImageButton>(R.id.btnBackChapt3)
+        val btnNext = view.findViewById<Button>(R.id.btnNextChapt3)
         tvMainTitle = view.findViewById(R.id.tvMainTitle)
-        tvSubTitle = view.findViewById(R.id.tvSubTitleFormula2)
+        tvSubTitle = view.findViewById(R.id.tvSubTitle)
         textOnImage1 = view.findViewById(R.id.textOnImage1)
         textOnImage2 = view.findViewById(R.id.textOnImage2)
-        textOnImage3 = view.findViewById(R.id.textOnImage3)
         progressBar = view.findViewById(R.id.progressBar)
         frameCard1 = view.findViewById(R.id.frameCard1)
         frameCard2 = view.findViewById(R.id.frameCard2)
-        frameCard3 = view.findViewById(R.id.frameCard3)
 
         progressBar.visibility = View.VISIBLE
         frameCard1.visibility = View.GONE
         frameCard2.visibility = View.GONE
-        frameCard3.visibility = View.GONE
 
         fetchLessonData()
 
@@ -88,9 +83,9 @@ class Chapter2FormulaFragment : Fragment() {
                 val username = getUsername()
                 val lesson = lessonId ?: "simple_present"
                 if (username.isNotBlank() && lesson.isNotBlank()) {
-                    updateLessonProgress(username, lesson, 50, "in_progress", 2)
+                    updateLessonProgress(username, lesson, 75, "in_progress", 2)
                     requireActivity().supportFragmentManager.beginTransaction()
-                        .replace(R.id.fragment_container, Chapter3ExampleFragment.newInstance())
+                        .replace(R.id.fragment_container, QuizStartFragment.newInstance())
                         .addToBackStack(null)
                         .commit()
                 } else {
@@ -129,31 +124,28 @@ class Chapter2FormulaFragment : Fragment() {
                     val material = materialsResponse.materials.find { it.lesson_id == lessonId }
                     if (material == null) {
                         Log.e(TAG, "Material for '$lessonId' not found in response: ${materialsResponse.materials}")
-                        showError("Material data not found")
+                        showError("Material data not found for $lessonId")
                         return@launch
                     }
 
                     Log.d(TAG, "lesson_id: ${material.lesson_id}")
                     Log.d(TAG, "chapter_title: ${material.chapter_title}")
-                    Log.d(TAG, "formulas: ${material.formulas}")
+                    Log.d(TAG, "examples: ${material.examples}")
 
                     // Set titles
-                    tvMainTitle.text = "Chapter 2"
-                    tvSubTitle.text = "Rumus " + getLessonTitle(lessonId)
+                    tvMainTitle.text = "Chapter 3"
+                    tvSubTitle.text = "Contoh ${getLessonTitle(lessonId)}"
 
-                    // Display formulas
-                    val formulas = material.formulas ?: emptyList()
-                    textOnImage1.text = formulas.getOrNull(0)?.let { "${it.type?.capitalize()}: ${it.formula}" } ?: "No formula"
+                    // Display examples
+                    val examples = material.examples ?: emptyList()
+                    textOnImage1.text = examples.getOrNull(0)?.let { "${it.sentence}\n${it.example_translation}" } ?: "No example available"
                     Log.d(TAG, "Card 1: ${textOnImage1.text}")
-                    textOnImage2.text = formulas.getOrNull(1)?.let { "${it.type?.capitalize()}: ${it.formula}" } ?: "No formula"
+                    textOnImage2.text = examples.getOrNull(1)?.let { "${it.sentence}\n${it.example_translation}" } ?: "No example available"
                     Log.d(TAG, "Card 2: ${textOnImage2.text}")
-                    textOnImage3.text = formulas.getOrNull(2)?.let { "${it.type?.capitalize()}: ${it.formula}" } ?: "No formula"
-                    Log.d(TAG, "Card 3: ${textOnImage3.text}")
 
                     progressBar.visibility = View.GONE
                     frameCard1.visibility = View.VISIBLE
                     frameCard2.visibility = View.VISIBLE
-                    frameCard3.visibility = View.VISIBLE
                 } else {
                     val errorMessage = "Error: ${response.code()} - ${response.message()}"
                     Log.e(TAG, "HTTP Error: $errorMessage")
@@ -196,12 +188,10 @@ class Chapter2FormulaFragment : Fragment() {
     private fun showError(message: String) {
         textOnImage1.text = message
         textOnImage2.text = message
-        textOnImage3.text = message
         Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show()
         progressBar.visibility = View.GONE
         frameCard1.visibility = View.VISIBLE
         frameCard2.visibility = View.VISIBLE
-        frameCard3.visibility = View.VISIBLE
     }
 
     private suspend fun updateLessonProgress(username: String, lessonId: String, newProgress: Int, status: String, retries: Int = 2) {
@@ -243,17 +233,20 @@ class Chapter2FormulaFragment : Fragment() {
             }
             if (attempt < retries) delay(1000) // Wait 1s before retry
         }
-        Toast.makeText(requireContext(), "Gagal memperbarui progres setelah beberapa percobaan", Toast.LENGTH_SHORT).show()
+        withContext(Dispatchers.Main) {
+            Toast.makeText(requireContext(), "Gagal memperbarui progres setelah beberapa percobaan", Toast.LENGTH_SHORT).show()
+        }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         fragmentScope.cancel()
+        Log.d(TAG, "onDestroyView: Coroutine scope cancelled")
     }
 
     companion object {
-        fun newInstance(lessonId: String = "simple_present"): Chapter2FormulaFragment {
-            return Chapter2FormulaFragment().apply {
+        fun newInstance(lessonId: String = "simple_present"): Chapter3ExampleFragment {
+            return Chapter3ExampleFragment().apply {
                 arguments = Bundle().apply {
                     putString("lesson_id", lessonId)
                 }

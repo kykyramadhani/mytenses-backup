@@ -1,4 +1,4 @@
-package com.app.mytenses.Activity
+package com.app.mytenses.Fragment
 
 import android.content.Context
 import android.os.Bundle
@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.app.mytenses.CompletedLessonAdapter
 import com.app.mytenses.R
 import com.app.mytenses.databinding.FragmentProfileBinding
-import com.app.mytenses.model.CompletedLesson
 import com.app.mytenses.network.RetrofitClient
 import kotlinx.coroutines.launch
 

@@ -1,4 +1,4 @@
-package com.app.mytenses.Activity
+package com.app.mytenses.Fragment
 
 import com.app.mytenses.R
 import android.os.Bundle

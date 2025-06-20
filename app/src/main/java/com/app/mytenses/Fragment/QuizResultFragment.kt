@@ -1,6 +1,5 @@
-package com.app.mytenses.Activity
+package com.app.mytenses.Fragment
 
-import CourseMateriSimplePresentFragment
 import android.content.Context
 import android.os.Bundle
 import android.text.SpannableString
@@ -13,7 +12,6 @@ import android.widget.ImageButton
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import com.app.mytenses.Activity.CompletedCourseFragment
 import com.app.mytenses.R
 
 class QuizResultFragment : Fragment() {

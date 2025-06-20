@@ -1,4 +1,4 @@
-package com.app.mytenses
+package com.app.mytenses.Activity
 
 import android.content.Intent
 import android.os.Bundle
@@ -7,13 +7,13 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.app.mytenses.Activity.CourseFragment
-import com.app.mytenses.Activity.HomeFragment
-import com.app.mytenses.Activity.NotificationFragment
-import com.app.mytenses.Activity.ProfileFragment
+import com.app.mytenses.Fragment.CourseFragment
+import com.app.mytenses.Fragment.HomeFragment
+import com.app.mytenses.Fragment.NotificationFragment
+import com.app.mytenses.Fragment.ProfileFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.fragment.app.Fragment
-import com.app.mytenses.Activity.LoginActivity
+import com.app.mytenses.R
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

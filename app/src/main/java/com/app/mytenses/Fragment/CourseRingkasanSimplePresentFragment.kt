@@ -1,3 +1,5 @@
+package com.app.mytenses.Fragment
+
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,7 +9,6 @@ import android.widget.ImageButton
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import com.app.mytenses.Activity.Chapter1LessonFragment
 import com.app.mytenses.R
 
 class CourseRingkasanSimplePresentFragment : Fragment() {

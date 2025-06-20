@@ -6,7 +6,6 @@ import android.os.Handler
 import android.os.Looper
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import com.app.mytenses.MainActivity
 import com.app.mytenses.databinding.ActivitySplashBinding
 
 class SplashActivity : AppCompatActivity() {

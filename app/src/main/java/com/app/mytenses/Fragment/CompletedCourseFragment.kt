@@ -1,4 +1,4 @@
-package com.app.mytenses.Activity
+package com.app.mytenses.Fragment
 
 import android.content.Context
 import android.os.Bundle
@@ -20,7 +20,6 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import retrofit2.HttpException
 
 class CompletedCourseFragment : Fragment() {
 

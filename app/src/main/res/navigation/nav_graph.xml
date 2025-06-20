@@ -1,19 +1,20 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
     app:startDestination="@id/homeFragment">
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.app.mytenses.Activity.HomeFragment"
+        android:name="com.app.mytenses.Fragment.HomeFragment"
         android:label="Home" />
     <fragment
         android:id="@+id/courseFragment"
-        android:name="com.app.mytenses.Activity.CourseFragment"
+        android:name="com.app.mytenses.Fragment.CourseFragment"
         android:label="Course" />
     <fragment
         android:id="@+id/profileFragment"
-        android:name="com.app.mytenses.Activity.ProfileFragment"
+        android:name="com.app.mytenses.Fragment.ProfileFragment"
         android:label="Profile">
         <action
             android:id="@+id/action_profileFragment_to_settingsFragment"
@@ -23,6 +24,14 @@
     </fragment>
     <fragment
         android:id="@+id/settingsFragment"
-        android:name="com.app.mytenses.Activity.SettingFragment"
+        android:name="com.app.mytenses.Fragment.SettingFragment"
         android:label="Settings" />
+    <fragment
+        android:id="@+id/quizFragment"
+        android:name="com.app.mytenses.Fragment.QuizFragment"
+        android:label="Quiz"
+        tools:layout="@layout/fragment_quiz" />
+    <action
+        android:id="@+id/action_quizStartFragment_to_quizFragment"
+        app:destination="@id/quizFragment" />
 </navigation>

@@ -1,4 +1,4 @@
-package com.app.mytenses.Activity
+package com.app.mytenses.Fragment
 
 import android.content.Context
 import android.os.Bundle
@@ -91,7 +91,9 @@ class Chapter1LessonFragment : Fragment() {
                 if (username.isNotBlank() && lesson.isNotBlank()) {
                     updateLessonProgress(username, lesson, 25, "in_progress", 2)
                     requireActivity().supportFragmentManager.beginTransaction()
-                        .replace(R.id.fragment_container, Chapter2FormulaFragment.newInstance(lesson))
+                        .replace(R.id.fragment_container,
+                            Chapter2FormulaFragment.newInstance(lesson)
+                        )
                         .addToBackStack(null)
                         .commit()
                 } else {

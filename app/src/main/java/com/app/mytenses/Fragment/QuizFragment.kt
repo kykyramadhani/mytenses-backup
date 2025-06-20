@@ -1,7 +1,6 @@
-package com.app.mytenses.ui
+package com.app.mytenses.Fragment
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,7 +8,6 @@ import android.widget.*
 import androidx.appcompat.widget.AppCompatButton
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import com.app.mytenses.Activity.QuizResultFragment
 import com.app.mytenses.R
 import com.app.mytenses.model.Question
 import com.app.mytenses.network.RetrofitClient
