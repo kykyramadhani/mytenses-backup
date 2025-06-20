@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Fragment.SettingFragment">
+    tools:context=".Activity.SettingFragment">
 
     <!-- Bagian Header: Tombol back, judul, dan tombol setting -->
     <LinearLayout
@@ -59,7 +59,6 @@
             app:tint="@color/settings_tint_selector" />
     </LinearLayout>
 
-
     <!-- Card Konten -->
     <LinearLayout
         android:id="@+id/settings_card"
@@ -67,13 +66,14 @@
         android:layout_height="wrap_content"
         android:background="@drawable/rounded_lightblue_bg"
         android:orientation="vertical"
+        android:layout_marginTop="16dp"
         app:layout_constraintTop_toBottomOf="@id/linearLayout2"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp">
+        app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- Item: Edit Profil -->
+        <!-- ✅ Item: Edit Profil -->
         <LinearLayout
+            android:id="@+id/edit_profile_section"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -203,4 +203,3 @@
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
-

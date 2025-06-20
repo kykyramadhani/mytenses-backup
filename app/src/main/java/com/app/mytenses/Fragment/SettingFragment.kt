@@ -7,6 +7,9 @@ import android.widget.ImageButton
 import androidx.fragment.app.Fragment
 import com.app.mytenses.R
 
+private const val ARG_PARAM1 = "param1"
+private const val ARG_PARAM2 = "param2"
+
 class SettingFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
@@ -29,19 +32,31 @@ class SettingFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Fungsi tombol kembali
         val backIcon = view.findViewById<View>(R.id.back_icon)
         backIcon.setOnClickListener {
             requireActivity().onBackPressedDispatcher.onBackPressed()
         }
 
+        // Ubah warna settings_button menjadi #0D47A1
         val settingsButton = view.findViewById<ImageButton>(R.id.settings_button)
         settingsButton.setColorFilter(Color.parseColor("#0D47A1"))
+
+        // Aksi klik "Edit Profil"
+        val editProfileSection = view.findViewById<View>(R.id.edit_profile_section)
+        editProfileSection.setOnClickListener {
+            val profileFragment = ProfileFragment()
+            profileFragment.arguments = Bundle().apply {
+                putBoolean("edit_mode", true)
+            }
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, profileFragment)
+                .addToBackStack(null)
+                .commit()
+        }
     }
 
     companion object {
-        private const val ARG_PARAM1 = "param1"
-        private const val ARG_PARAM2 = "param2"
-
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
             SettingFragment().apply {
@@ -52,4 +67,3 @@ class SettingFragment : Fragment() {
             }
     }
 }
-

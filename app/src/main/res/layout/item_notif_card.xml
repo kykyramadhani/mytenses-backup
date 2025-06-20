@@ -52,7 +52,7 @@
                 android:fontFamily="@font/plusjakartasans_regular" />
         </LinearLayout>
 
-        <!-- Waktu (Tanggal & Jam) -->
+        <!-- Waktu -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -64,15 +64,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="14-06-2025"
-                android:textColor="#888888"
-                android:textSize="12sp"
-                android:fontFamily="@font/plusjakartasans_bold" />
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/tvNotifTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="18:40"
+                android:text="2 menit lalu"
                 android:textColor="#888888"
                 android:textSize="12sp"
                 android:fontFamily="@font/plusjakartasans_regular" />
