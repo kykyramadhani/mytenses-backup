@@ -1,11 +1,16 @@
 package com.app.mytenses.Fragment
 
+import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.view.*
 import android.widget.ImageButton
 import androidx.fragment.app.Fragment
 import com.app.mytenses.R
+import com.app.mytenses.Activity.LoginActivity
+import android.widget.Toast
+// import com.google.firebase.auth.FirebaseAuth // Jika kamu pakai Firebase Auth
 
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
@@ -32,17 +37,17 @@ class SettingFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Fungsi tombol kembali
+        // Tombol kembali
         val backIcon = view.findViewById<View>(R.id.back_icon)
         backIcon.setOnClickListener {
             requireActivity().onBackPressedDispatcher.onBackPressed()
         }
 
-        // Ubah warna settings_button menjadi #0D47A1
+        // Ubah warna icon setting
         val settingsButton = view.findViewById<ImageButton>(R.id.settings_button)
         settingsButton.setColorFilter(Color.parseColor("#0D47A1"))
 
-        // Aksi klik "Edit Profil"
+        // Klik "Edit Profil"
         val editProfileSection = view.findViewById<View>(R.id.edit_profile_section)
         editProfileSection.setOnClickListener {
             val profileFragment = ProfileFragment()
@@ -53,6 +58,25 @@ class SettingFragment : Fragment() {
                 .replace(R.id.fragment_container, profileFragment)
                 .addToBackStack(null)
                 .commit()
+        }
+
+        // Klik "Keluar"
+        val logoutSection = view.findViewById<View>(R.id.logout_section)
+        logoutSection.setOnClickListener {
+            // (Jika pakai Firebase Auth, bisa logout di sini juga)
+            // FirebaseAuth.getInstance().signOut()
+
+            // Hapus semua data login
+            val sharedPref = requireActivity().getSharedPreferences("MyTensesPrefs", Context.MODE_PRIVATE)
+            sharedPref.edit().clear().apply()
+
+            // Feedback
+            Toast.makeText(requireContext(), "Berhasil logout", Toast.LENGTH_SHORT).show()
+
+            // Arahkan ke LoginActivity dan hapus backstack
+            val intent = Intent(requireContext(), LoginActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
         }
     }
 
@@ -67,3 +91,5 @@ class SettingFragment : Fragment() {
             }
     }
 }
+
+

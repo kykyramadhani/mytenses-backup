@@ -5,9 +5,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Activity.SettingFragment">
+    tools:context=".Fragment.SettingFragment">
 
-    <!-- Bagian Header: Tombol back, judul, dan tombol setting -->
+    <!-- Header -->
     <LinearLayout
         android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
@@ -18,14 +18,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- Tambahkan tombol back -->
+        <!-- Tombol Back -->
         <ImageView
             android:id="@+id/back_icon"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:layout_gravity="center_vertical"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="8dp"
+            android:layout_gravity="center_vertical"
             android:clickable="true"
             android:focusable="true"
             android:src="@drawable/back_sett"
@@ -36,9 +36,9 @@
             android:id="@+id/profile_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/plusjakartasans_bold"
             android:padding="16dp"
             android:text="Pengaturan"
+            android:fontFamily="@font/plusjakartasans_bold"
             android:textColor="@color/black"
             android:textSize="24sp" />
 
@@ -47,6 +47,7 @@
             android:layout_height="0dp"
             android:layout_weight="1" />
 
+        <!-- Tombol Setting -->
         <ImageButton
             android:id="@+id/settings_button"
             android:layout_width="30dp"
@@ -59,19 +60,19 @@
             app:tint="@color/settings_tint_selector" />
     </LinearLayout>
 
-    <!-- Card Konten -->
+    <!-- Kartu Pengaturan -->
     <LinearLayout
         android:id="@+id/settings_card"
         android:layout_width="333dp"
         android:layout_height="wrap_content"
-        android:background="@drawable/rounded_lightblue_bg"
-        android:orientation="vertical"
         android:layout_marginTop="16dp"
+        android:orientation="vertical"
+        android:background="@drawable/rounded_lightblue_bg"
         app:layout_constraintTop_toBottomOf="@id/linearLayout2"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- ✅ Item: Edit Profil -->
+        <!-- Edit Profil -->
         <LinearLayout
             android:id="@+id/edit_profile_section"
             android:layout_width="match_parent"
@@ -104,7 +105,7 @@
                 android:src="@drawable/chapter_button" />
         </LinearLayout>
 
-        <!-- Item: Syarat & Ketentuan -->
+        <!-- Syarat dan Ketentuan -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -136,7 +137,7 @@
                 android:src="@drawable/chapter_button" />
         </LinearLayout>
 
-        <!-- Item: Pusat Bantuan -->
+        <!-- Pusat Bantuan -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -168,8 +169,9 @@
                 android:src="@drawable/chapter_button" />
         </LinearLayout>
 
-        <!-- Item: Keluar -->
+        <!-- Logout -->
         <LinearLayout
+            android:id="@+id/logout_section"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -201,5 +203,4 @@
         </LinearLayout>
 
     </LinearLayout>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

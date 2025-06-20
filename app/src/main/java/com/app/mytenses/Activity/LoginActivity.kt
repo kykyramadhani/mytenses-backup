@@ -52,10 +52,10 @@ class LoginActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-     /*   changePassword.setOnClickListener {
-            // val intent = Intent(this, UbahKataSandiActivity::class.java)
-            // startActivity(intent)
-        }*/
+       changePassword.setOnClickListener {
+             val intent = Intent(this, UbahKataSandiActivity::class.java)
+             startActivity(intent)
+        }
 
         btnLogin.setOnClickListener {
             val email = etEmail.text.toString().trim()
