@@ -97,7 +97,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 android:gravity="center"
-                android:text="She ___ to school every day."
+                android:text=""
                 android:textColor="@color/black"
                 android:textSize="18sp" />
 
@@ -126,7 +126,7 @@
                     android:layout_marginLeft="10dp"
                     android:layout_marginTop="15dp"
                     android:fontFamily="@font/plusjakartasans_regular"
-                    android:text="walk"
+                    android:text=""
                     android:textColor="@color/black"
                     android:textSize="18sp" />
             </LinearLayout>
@@ -156,7 +156,7 @@
                     android:layout_marginLeft="10dp"
                     android:layout_marginTop="15dp"
                     android:fontFamily="@font/plusjakartasans_regular"
-                    android:text="walks"
+                    android:text=""
                     android:textColor="@color/black"
                     android:textSize="18sp" />
             </LinearLayout>
@@ -186,7 +186,7 @@
                     android:layout_marginLeft="10dp"
                     android:layout_marginTop="15dp"
                     android:fontFamily="@font/plusjakartasans_regular"
-                    android:text="walking"
+                    android:text=""
                     android:textColor="@color/black"
                     android:textSize="18sp" />
             </LinearLayout>
@@ -216,7 +216,7 @@
                     android:layout_marginLeft="10dp"
                     android:layout_marginTop="15dp"
                     android:fontFamily="@font/plusjakartasans_regular"
-                    android:text="walked"
+                    android:text=""
                     android:textColor="@color/black"
                     android:textSize="18sp" />
             </LinearLayout>
@@ -238,7 +238,7 @@
                 android:backgroundTint="@color/blue"
                 android:text="Back"
                 android:textColor="@android:color/white"
-                android:visibility="visible" />
+                android:visibility="gone" />
 
             <Button
                 android:id="@+id/btnNextQuestion"
@@ -249,7 +249,7 @@
                 android:backgroundTint="@color/blue"
                 android:text="Next"
                 android:textColor="@android:color/white"
-                android:visibility="visible" />
+                android:visibility="gone" />
 
             <Button
                 android:id="@+id/btnFinish"
