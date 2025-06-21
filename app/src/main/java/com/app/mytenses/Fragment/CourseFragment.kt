@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -66,15 +67,8 @@ class CourseFragment : Fragment() {
         if (rvCourses != null) {
             rvCourses.layoutManager = LinearLayoutManager(context)
 
-            // Initialize default courses
-            val defaultCourseList = listOf(
-                Course("Simple Present", "Belum Mulai", 0, R.drawable.simple_present, "simple_present"),
-                Course("Simple Past", "Belum Mulai", 0, R.drawable.simple_past, "simple_past"),
-                Course("Simple Future", "Belum Mulai", 0, R.drawable.simple_future, "simple_future"),
-                Course("Simple Past Future", "Belum Mulai", 0, R.drawable.simple_past_future, "simple_past_future")
-            )
-
-            adapter = CourseAdapter(defaultCourseList)
+            // Inisialisasi adapter tanpa data awal
+            adapter = CourseAdapter(mutableListOf())
             rvCourses.adapter = adapter
 
             adapter.setOnItemClickListener(object : CourseAdapter.OnItemClickListener {
@@ -96,9 +90,14 @@ class CourseFragment : Fragment() {
                 }
             })
 
-            // Fetch progress for all courses
+            // Tampilkan loading indicator (opsional)
+            val progressBar = view.findViewById<ProgressBar>(R.id.progressBarCourse)
+            progressBar?.visibility = View.VISIBLE
+
+            // Fetch data
             viewLifecycleOwner.lifecycleScope.launch {
                 fetchAllLessonProgress()
+                progressBar?.visibility = View.GONE
             }
         } else {
             Log.e(TAG, "rvCourses is null, check layout file!")
@@ -153,14 +152,17 @@ class CourseFragment : Fragment() {
                     Log.d(TAG, "Offline: Fetching lesson progress from database")
                     fetchLocalLessonProgress(updatedCourses)
                 }
-                adapter.updateData(updatedCourses.sortedBy { it.title })
+                // Urutkan: Belum Mulai/In Progress di atas, Selesai di bawah
+                val sortedCourses = updatedCourses.sortedBy { it.status == "Selesai" }
+                adapter.updateData(sortedCourses)
             } catch (e: Exception) {
                 if (e is kotlinx.coroutines.CancellationException) {
                     Log.d(TAG, "Fetch lesson progress cancelled")
                     throw e
                 }
                 Log.e(TAG, "Error fetching progress: ${e.message}")
-                adapter.updateData(updatedCourses.sortedBy { it.title })
+                val sortedCourses = updatedCourses.sortedBy { it.status == "Selesai" }
+                adapter.updateData(sortedCourses)
             }
         }
     }

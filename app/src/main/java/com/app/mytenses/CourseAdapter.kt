@@ -6,28 +6,43 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 
-class CourseAdapter(private var courseList: List<Course>) :
-    RecyclerView.Adapter<CourseAdapter.CourseViewHolder>() {
+class CourseAdapter(
+    private var courseList: MutableList<Course>,
+    private var onItemClickListener: OnItemClickListener? = null
+) : RecyclerView.Adapter<CourseAdapter.CourseViewHolder>() {
 
     interface OnItemClickListener {
         fun onItemClick(position: Int)
     }
 
-    private var onItemClickListener: OnItemClickListener? = null
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CourseViewHolder {
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.item_card_course, parent, false)
+        return CourseViewHolder(view, onItemClickListener)
+    }
+
+    override fun onBindViewHolder(holder: CourseViewHolder, position: Int) {
+        val course = courseList[position]
+        holder.bind(course)
+    }
+
+    override fun getItemCount(): Int = courseList.size
+
+    fun updateData(newCourseList: List<Course>) {
+        val diffCallback = CourseDiffCallback(courseList, newCourseList)
+        val diffResult = DiffUtil.calculateDiff(diffCallback)
+        courseList.clear()
+        courseList.addAll(newCourseList)
+        diffResult.dispatchUpdatesTo(this)
+    }
+
+    fun getItem(position: Int): Course = courseList[position]
 
     fun setOnItemClickListener(listener: OnItemClickListener) {
         this.onItemClickListener = listener
-    }
-
-    fun updateData(newCourseList: List<Course>) {
-        this.courseList = newCourseList
-        notifyDataSetChanged()
-    }
-
-    fun getItem(position: Int): Course {
-        return courseList[position]
     }
 
     class CourseViewHolder(itemView: View, private val listener: OnItemClickListener?) : RecyclerView.ViewHolder(itemView) {
@@ -44,21 +59,28 @@ class CourseAdapter(private var courseList: List<Course>) :
                 }
             }
         }
+
+        fun bind(course: Course) {
+            ivIcon.setImageResource(course.iconResId)
+            tvTitle.text = course.title
+            tvStatus.text = course.status
+            progressBar.progress = course.progress
+        }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CourseViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_card_course, parent, false)
-        return CourseViewHolder(view, onItemClickListener)
-    }
+    private class CourseDiffCallback(
+        private val oldList: List<Course>,
+        private val newList: List<Course>
+    ) : DiffUtil.Callback() {
+        override fun getOldListSize(): Int = oldList.size
+        override fun getNewListSize(): Int = newList.size
 
-    override fun onBindViewHolder(holder: CourseViewHolder, position: Int) {
-        val course = courseList[position]
-        holder.ivIcon.setImageResource(course.iconResId)
-        holder.tvTitle.text = course.title
-        holder.progressBar.progress = course.progress
-        holder.tvStatus.text = course.status
-    }
+        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            return oldList[oldItemPosition].lessonId == newList[newItemPosition].lessonId
+        }
 
-    override fun getItemCount(): Int = courseList.size
+        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            return oldList[oldItemPosition] == newList[newItemPosition]
+        }
+    }
 }

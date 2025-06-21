@@ -6,10 +6,11 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 
 class TenseCardAdapter(
-    private var tenseCards: List<TenseCard>,
+    private var tenseCards: MutableList<TenseCard>,
     private val onItemClick: (TenseCard) -> Unit
 ) : RecyclerView.Adapter<TenseCardAdapter.TenseCardViewHolder>() {
 
@@ -30,8 +31,11 @@ class TenseCardAdapter(
     override fun getItemCount(): Int = tenseCards.size
 
     fun updateData(newTenseCards: List<TenseCard>) {
-        this.tenseCards = newTenseCards
-        notifyDataSetChanged()
+        val diffCallback = TenseCardDiffCallback(tenseCards, newTenseCards)
+        val diffResult = DiffUtil.calculateDiff(diffCallback)
+        tenseCards.clear()
+        tenseCards.addAll(newTenseCards)
+        diffResult.dispatchUpdatesTo(this)
     }
 
     class TenseCardViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -45,6 +49,22 @@ class TenseCardAdapter(
             tvTenseTitle.text = tenseCard.title
             tvTenseStatus.text = tenseCard.status
             progressBar.progress = tenseCard.progress
+        }
+    }
+
+    private class TenseCardDiffCallback(
+        private val oldList: List<TenseCard>,
+        private val newList: List<TenseCard>
+    ) : DiffUtil.Callback() {
+        override fun getOldListSize(): Int = oldList.size
+        override fun getNewListSize(): Int = newList.size
+
+        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            return oldList[oldItemPosition].lessonId == newList[newItemPosition].lessonId
+        }
+
+        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            return oldList[oldItemPosition] == newList[newItemPosition]
         }
     }
 }

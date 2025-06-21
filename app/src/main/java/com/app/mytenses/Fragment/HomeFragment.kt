@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -86,15 +87,16 @@ class HomeFragment : Fragment() {
         )
         welcomeTextView.text = spannable
 
-        // RecyclerView setup with default cards
+        // RecyclerView setup
         val rvTenseCards = view.findViewById<RecyclerView>(R.id.rvTenseCards)
-        val defaultTenseCards = listOf(
-            TenseCard("Simple Present", "Belum Mulai", 0, R.drawable.simple_present, "simple_present"),
-            TenseCard("Simple Past", "Belum Mulai", 0, R.drawable.simple_past, "simple_past"),
-            TenseCard("Simple Future", "Belum Mulai", 0, R.drawable.simple_future, "simple_future"),
-            TenseCard("Simple Past Future", "Belum Mulai", 0, R.drawable.simple_past_future, "simple_past_future")
-        )
-        adapter = TenseCardAdapter(defaultTenseCards) { tenseCard ->
+        rvTenseCards.layoutManager = GridLayoutManager(context, 2).apply {
+            spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+                override fun getSpanSize(position: Int): Int = 1
+            }
+        }
+
+        // Inisialisasi adapter tanpa data awal
+        adapter = TenseCardAdapter(mutableListOf()) { tenseCard ->
             val fragment = CourseRingkasanSimplePresentFragment().apply {
                 arguments = Bundle().apply {
                     putString("TITLE", tenseCard.title)
@@ -110,17 +112,15 @@ class HomeFragment : Fragment() {
                 .commit()
         }
         rvTenseCards.adapter = adapter
-        val gridLayoutManager = GridLayoutManager(context, 2)
-        gridLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
-            override fun getSpanSize(position: Int): Int {
-                return 1
-            }
-        }
-        rvTenseCards.layoutManager = gridLayoutManager
 
-        // Tunda fetchAllLessonProgress hingga view siap
+        // Tampilkan loading indicator (opsional, tambahkan di layout jika diperlukan)
+        val progressBar = view.findViewById<ProgressBar>(R.id.progressBar)
+        progressBar?.visibility = View.VISIBLE
+
+        // Fetch data
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             fetchAllLessonProgress()
+            progressBar?.visibility = View.GONE
         }
 
         // Button selection logic
@@ -197,14 +197,17 @@ class HomeFragment : Fragment() {
                     Log.d(TAG, "Offline: Fetching lesson progress from database")
                     fetchLocalLessonProgress(updatedCards)
                 }
-                adapter.updateData(updatedCards.sortedBy { it.title })
+                // Urutkan: Belum Mulai/In Progress di atas, Selesai di bawah
+                val sortedCards = updatedCards.sortedBy { it.status == "Selesai" }
+                adapter.updateData(sortedCards)
             } catch (e: Exception) {
                 if (e is kotlinx.coroutines.CancellationException) {
                     Log.d(TAG, "Fetch lesson progress cancelled")
                     throw e
                 }
                 Log.e(TAG, "Error fetching progress: ${e.message}")
-                adapter.updateData(updatedCards.sortedBy { it.title })
+                val sortedCards = updatedCards.sortedBy { it.status == "Selesai" }
+                adapter.updateData(sortedCards)
             }
         }
     }
