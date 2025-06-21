@@ -1,10 +1,12 @@
 package com.app.mytenses.Fragment
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.appcompat.app.AppCompatActivity.MODE_PRIVATE
 import androidx.appcompat.widget.AppCompatButton
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -110,7 +112,10 @@ class QuizFragment : Fragment() {
                         .replace(R.id.fragment_container, fragment)
                         .addToBackStack(null)
                         .commit()
-                } else {
+
+                    submitQuizScore(totalScore) // <- tambahkan ini
+                }
+                else {
                     questionIndex++
                     isAnswerMode = true
                     showQuestion()
@@ -128,14 +133,39 @@ class QuizFragment : Fragment() {
     }
 
     private suspend fun fetchQuestionsFromApi(dispatcher: CoroutineDispatcher = Dispatchers.IO) {
+        val lessonId = arguments?.getString("lesson_id")
+        val quizId = when (lessonId) {
+            "simple_present" -> "quiz_simple_present_1"
+            "simple_past" -> "quiz_simple_past_1"
+            "simple_future" -> "quiz_simple_future_1"
+            // Tambahkan semua mapping lain
+            else -> null
+        }
+
+        if (quizId == null) {
+            requireActivity().runOnUiThread {
+                Toast.makeText(requireContext(), "Quiz ID tidak ditemukan untuk lesson ini", Toast.LENGTH_SHORT).show()
+            }
+            return
+        }
+
         try {
             val response = withContext(dispatcher) {
                 RetrofitClient.apiService.getQuestions()
             }
             if (response.isSuccessful) {
-                val questions = response.body()?.get("questions") ?: emptyList()
-                questionsList = questions
-                requireActivity().runOnUiThread { showQuestion() }
+                val allQuestions = response.body()?.get("questions") ?: emptyList()
+                questionsList = allQuestions.filter { it.quiz_id == quizId }
+
+                if (questionsList.isEmpty()) {
+                    requireActivity().runOnUiThread {
+                        Toast.makeText(requireContext(), "Soal tidak tersedia untuk quiz ini", Toast.LENGTH_LONG).show()
+                    }
+                } else {
+                    requireActivity().runOnUiThread {
+                        showQuestion()
+                    }
+                }
             } else {
                 requireActivity().runOnUiThread {
                     Toast.makeText(requireContext(), "Soal tidak tersedia", Toast.LENGTH_LONG).show()
@@ -147,6 +177,7 @@ class QuizFragment : Fragment() {
             }
         }
     }
+
 
     private fun showQuestion() {
         if (questionsList.isEmpty()) return
@@ -238,5 +269,44 @@ class QuizFragment : Fragment() {
             }
         }
         return totalScore
+    }
+
+    private fun submitQuizScore(score: Int) {
+        val sharedPreferences = requireActivity().getSharedPreferences("MyTensesPrefs", Context.MODE_PRIVATE)
+        val userId = sharedPreferences.getInt("user_id", -1)
+        val username = if (userId != -1) "user_$userId" else ""
+
+        // Ambil quiz_id dari soal pertama
+        val quizId = questionsList.firstOrNull()?.quiz_id
+
+        if (username == null) {
+            Toast.makeText(requireContext(), "Username tidak ditemukan", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        if (quizId == null) {
+            Toast.makeText(requireContext(), "Quiz_id tidak ditemukan", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val requestBody: Map<String, Any> = mapOf(
+            "user_id" to username,
+            "quiz_id" to quizId,
+            "score" to score,
+            "date_taken" to java.time.LocalDateTime.now().toString()
+        )
+
+        lifecycleScope.launch {
+            try {
+                val response = RetrofitClient.apiService.addQuizScore(requestBody)
+                if (response.isSuccessful) {
+                    Toast.makeText(requireContext(), "Skor berhasil disimpan", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(requireContext(), "Gagal menyimpan skor", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                Toast.makeText(requireContext(), "Error: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 }

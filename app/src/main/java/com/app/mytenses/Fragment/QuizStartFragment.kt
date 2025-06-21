@@ -11,6 +11,13 @@ import com.app.mytenses.R
 
 class QuizStartFragment : Fragment() {
 
+    private var lessonId: String? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        lessonId = arguments?.getString("lesson_id")
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -29,7 +36,11 @@ class QuizStartFragment : Fragment() {
         }
 
         btnMulaiQuiz.setOnClickListener {
-            val quizFragment = QuizFragment()
+            val quizFragment = QuizFragment().apply {
+                arguments = Bundle().apply {
+                    putString("lesson_id", lessonId)
+                }
+            }
             parentFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, quizFragment)
                 .addToBackStack(null)
@@ -38,7 +49,12 @@ class QuizStartFragment : Fragment() {
     }
 
     companion object {
-        @JvmStatic
-        fun newInstance() = QuizStartFragment()
+        fun newInstance(lessonId: String): QuizStartFragment {
+            val fragment = QuizStartFragment()
+            fragment.arguments = Bundle().apply {
+                putString("lesson_id", lessonId)
+            }
+            return fragment
+        }
     }
 }

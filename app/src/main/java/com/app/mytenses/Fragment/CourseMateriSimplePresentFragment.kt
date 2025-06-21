@@ -83,11 +83,12 @@ class CourseMateriSimplePresentFragment : Fragment() {
 
         val btnChapter4 = view.findViewById<Button>(R.id.btnChapter4)
         btnChapter4.setOnClickListener {
-            val fragment = QuizStartFragment()
+            val fragment = QuizStartFragment.newInstance("simple_present")
             requireActivity().supportFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, fragment)
                 .addToBackStack(null)
                 .commit()
+
         }
 
         val btnBelajar1 = view.findViewById<Button>(R.id.btnBelajar1)

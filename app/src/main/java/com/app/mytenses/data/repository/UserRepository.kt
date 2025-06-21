@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import com.app.mytenses.data.dao.UserDao
 import com.app.mytenses.data.entity.LessonProgressEntity
+import com.app.mytenses.data.entity.QuizScoreEntity
 import com.app.mytenses.data.entity.UserEntity
 import com.app.mytenses.network.ApiService
 import kotlinx.coroutines.Dispatchers
@@ -69,9 +70,21 @@ class UserRepository(
         }
     }
 
-    suspend fun getLessonProgressByUser(userId: String): LessonProgressEntity {
+    suspend fun getUserByUsername(username: String): UserEntity? {
         return withContext(Dispatchers.IO) {
-            userDao.getLessonProgressByUser(userId).first() // Jika menggunakan Flow
+            userDao.getUserByUsername(username)
+        }
+    }
+
+    suspend fun getLessonProgressByUser(userId: String): List<LessonProgressEntity> {
+        return withContext(Dispatchers.IO) {
+            userDao.getLessonProgressByUser(userId)
+        }
+    }
+
+    suspend fun getQuizScoresByUser(userId: String): List<QuizScoreEntity> {
+        return withContext(Dispatchers.IO) {
+            userDao.getQuizScoresByUser(userId)
         }
     }
 }

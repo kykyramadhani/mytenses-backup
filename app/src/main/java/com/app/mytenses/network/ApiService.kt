@@ -12,6 +12,7 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.PUT
 import retrofit2.http.Body
+import retrofit2.http.POST
 
 interface ApiService {
     @GET("api/lessons")
@@ -42,4 +43,11 @@ interface ApiService {
     @GET("api/users/{username}/lessons")
     suspend fun getLessonProgress(@Path("username") username: String): Response<LessonProgressResponse>
 
+//    @POST("api/quiz_scores")
+//    suspend fun addQuizScore(
+//        @Body data: Map<String, Any>
+//    ): Response<Unit>
+//
+    @POST("/api/quiz_scores")
+    suspend fun addQuizScore(@Body body: Map<String, @JvmSuppressWildcards Any>): Response<Any>
 }

@@ -24,6 +24,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
+import java.net.UnknownHostException
 
 class Chapter3ExampleFragment : Fragment() {
 
@@ -82,10 +83,11 @@ class Chapter3ExampleFragment : Fragment() {
             fragmentScope.launch {
                 val username = getUsername()
                 val lesson = lessonId ?: "simple_present"
+                val fragment = QuizStartFragment.newInstance("simple_present")
                 if (username.isNotBlank() && lesson.isNotBlank()) {
                     updateLessonProgress(username, lesson, 75, "in_progress", 2)
                     requireActivity().supportFragmentManager.beginTransaction()
-                        .replace(R.id.fragment_container, QuizStartFragment.newInstance())
+                        .replace(R.id.fragment_container, fragment)
                         .addToBackStack(null)
                         .commit()
                 } else {
@@ -154,7 +156,7 @@ class Chapter3ExampleFragment : Fragment() {
             } catch (e: Exception) {
                 val errorMessage = when (e) {
                     is HttpException -> "HTTP Error: ${e.code()} - ${e.message()}"
-                    is java.net.UnknownHostException -> "No internet connection"
+                    is UnknownHostException -> "No internet connection"
                     else -> "Error loading data: ${e.message}"
                 }
                 Log.e(TAG, errorMessage, e)
