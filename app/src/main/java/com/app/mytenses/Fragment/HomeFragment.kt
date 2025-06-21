@@ -18,8 +18,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.app.mytenses.R
 import com.app.mytenses.TenseCard
 import com.app.mytenses.TenseCardAdapter
+import com.app.mytenses.data.database.AppDatabase
+import com.app.mytenses.data.repository.UserRepository
 import com.app.mytenses.network.RetrofitClient
+import com.app.mytenses.utils.NetworkUtils
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -28,7 +32,9 @@ class HomeFragment : Fragment() {
     private var selectedButton: Button? = null
     private lateinit var adapter: TenseCardAdapter
     private lateinit var username: String
+    private lateinit var userRepository: UserRepository
     private val apiService = RetrofitClient.apiService
+    private var fetchProgressJob: Job? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -40,7 +46,6 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Ambil konteks dengan pengecekan aman
         val context = view.context
         val activity = activity
 
@@ -49,7 +54,10 @@ class HomeFragment : Fragment() {
             return
         }
 
-        // Get username from SharedPreferences dengan pengecekan
+        // Inisialisasi UserRepository
+        userRepository = UserRepository(apiService, context, AppDatabase.getDatabase(context).userDao())
+
+        // Get username from SharedPreferences
         val sharedPreferences = activity.getSharedPreferences("MyTensesPrefs", Context.MODE_PRIVATE)
         val userId = sharedPreferences.getInt("user_id", -1)
         username = if (userId != -1) "user_$userId" else ""
@@ -142,65 +150,96 @@ class HomeFragment : Fragment() {
     }
 
     private suspend fun fetchAllLessonProgress() {
-        try {
-            val context = view?.context
-            if (context == null || !isAdded) {
-                Log.w(TAG, "Fragment not attached, skipping fetchAllLessonProgress")
-                return
+        fetchProgressJob?.cancel()
+        fetchProgressJob = viewLifecycleOwner.lifecycleScope.launch {
+            val context = view?.context ?: return@launch
+            val updatedCards = mutableListOf<TenseCard>().apply {
+                add(TenseCard("Simple Present", "Belum Mulai", 0, R.drawable.simple_present, "simple_present"))
+                add(TenseCard("Simple Past", "Belum Mulai", 0, R.drawable.simple_past, "simple_past"))
+                add(TenseCard("Simple Future", "Belum Mulai", 0, R.drawable.simple_future, "simple_future"))
+                add(TenseCard("Simple Past Future", "Belum Mulai", 0, R.drawable.simple_past_future, "simple_past_future"))
             }
 
-            val response = withContext(Dispatchers.IO) {
-                apiService.getLessonProgress(username)
-            }
-            if (response.isSuccessful) {
-                val lessonProgressList = response.body()?.lesson_progress ?: emptyList()
-                val updatedCards = mutableListOf<TenseCard>().apply {
-                    add(TenseCard("Simple Present", "Belum Mulai", 0, R.drawable.simple_present, "simple_present"))
-                    add(TenseCard("Simple Past", "Belum Mulai", 0, R.drawable.simple_past, "simple_past"))
-                    add(TenseCard("Simple Future", "Belum Mulai", 0, R.drawable.simple_future, "simple_future"))
-                    add(TenseCard("Simple Past Future", "Belum Mulai", 0, R.drawable.simple_past_future, "simple_past_future"))
-                }
-                lessonProgressList.forEach { progressItem ->
-                    val index = updatedCards.indexOfFirst { it.lessonId == progressItem.lesson_id }
-                    if (index != -1) {
-                        updatedCards[index] = TenseCard(
-                            title = progressItem.title,
-                            status = when (progressItem.status) {
-                                "not_started" -> "Belum Mulai"
-                                "in_progress" -> "Sedang Diproses"
-                                "completed" -> "Selesai"
-                                else -> "Belum Mulai"
-                            },
-                            progress = progressItem.progress,
-                            imageResId = updatedCards[index].imageResId,
-                            lessonId = progressItem.lesson_id
-                        )
+            try {
+                if (NetworkUtils.isOnline(context)) {
+                    Log.d(TAG, "Online: Fetching lesson progress from API")
+                    val response = withContext(Dispatchers.IO) {
+                        apiService.getLessonProgress(username)
                     }
+                    if (response.isSuccessful) {
+                        val lessonProgressList = response.body()?.lesson_progress ?: emptyList()
+                        lessonProgressList.forEach { progressItem ->
+                            val index = updatedCards.indexOfFirst { it.lessonId == progressItem.lesson_id }
+                            if (index != -1) {
+                                updatedCards[index] = TenseCard(
+                                    title = progressItem.title,
+                                    status = when (progressItem.status) {
+                                        "not_started" -> "Belum Mulai"
+                                        "in_progress" -> "Sedang Diproses"
+                                        "completed" -> "Selesai"
+                                        else -> "Belum Mulai"
+                                    },
+                                    progress = progressItem.progress,
+                                    imageResId = updatedCards[index].imageResId,
+                                    lessonId = progressItem.lesson_id
+                                )
+                            }
+                        }
+                        // Sinkronkan data ke database
+                        withContext(Dispatchers.IO) {
+                            userRepository.syncUserData(username)
+                        }
+                    } else {
+                        Log.e(TAG, "Failed to fetch progress from API: ${response.message()}")
+                        fetchLocalLessonProgress(updatedCards)
+                    }
+                } else {
+                    Log.d(TAG, "Offline: Fetching lesson progress from database")
+                    fetchLocalLessonProgress(updatedCards)
                 }
                 adapter.updateData(updatedCards.sortedBy { it.title })
-            } else {
-                Log.e(TAG, "Failed to fetch progress: ${response.message()}")
-                adapter.updateData(listOf(
-                    TenseCard("Simple Present", "Belum Mulai", 0, R.drawable.simple_present, "simple_present"),
-                    TenseCard("Simple Past", "Belum Mulai", 0, R.drawable.simple_past, "simple_past"),
-                    TenseCard("Simple Future", "Belum Mulai", 0, R.drawable.simple_future, "simple_future"),
-                    TenseCard("Simple Past Future", "Belum Mulai", 0, R.drawable.simple_past_future, "simple_past_future")
-                ))
+            } catch (e: Exception) {
+                if (e is kotlinx.coroutines.CancellationException) {
+                    Log.d(TAG, "Fetch lesson progress cancelled")
+                    throw e
+                }
+                Log.e(TAG, "Error fetching progress: ${e.message}")
+                adapter.updateData(updatedCards.sortedBy { it.title })
             }
-        } catch (e: Exception) {
-            Log.e(TAG, "Error fetching progress: ${e.message}")
-            adapter.updateData(listOf(
-                TenseCard("Simple Present", "Belum Mulai", 0, R.drawable.simple_present, "simple_present"),
-                TenseCard("Simple Past", "Belum Mulai", 0, R.drawable.simple_past, "simple_past"),
-                TenseCard("Simple Future", "Belum Mulai", 0, R.drawable.simple_future, "simple_future"),
-                TenseCard("Simple Past Future", "Belum Mulai", 0, R.drawable.simple_past_future, "simple_past_future")
-            ))
+        }
+    }
+
+    private suspend fun fetchLocalLessonProgress(updatedCards: MutableList<TenseCard>) {
+        val lessonProgressList = withContext(Dispatchers.IO) {
+            userRepository.getLessonProgressByUser(username)
+        }
+        lessonProgressList.forEach { progressItem ->
+            val index = updatedCards.indexOfFirst { it.lessonId == progressItem.lessonId }
+            if (index != -1) {
+                updatedCards[index] = TenseCard(
+                    title = updatedCards[index].title,
+                    status = when (progressItem.status) {
+                        "not_started" -> "Belum Mulai"
+                        "in_progress" -> "Sedang Diproses"
+                        "completed" -> "Selesai"
+                        else -> "Belum Mulai"
+                    },
+                    progress = progressItem.progress,
+                    imageResId = updatedCards[index].imageResId,
+                    lessonId = progressItem.lessonId
+                )
+            }
         }
     }
 
     private fun updateRecyclerView(filter: String) {
         Log.d(TAG, "Selected filter: $filter")
         // Implement filtering logic if needed
+    }
+
+    override fun onDestroyView() {
+        fetchProgressJob?.cancel()
+        super.onDestroyView()
     }
 
     companion object {
