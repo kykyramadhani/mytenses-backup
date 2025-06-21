@@ -7,15 +7,26 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.app.mytenses.Fragment.CourseFragment
 import com.app.mytenses.Fragment.HomeFragment
 import com.app.mytenses.Fragment.NotificationFragment
 import com.app.mytenses.Fragment.ProfileFragment
+import com.app.mytenses.data.database.AppDatabase
+import com.app.mytenses.data.repository.UserRepository
+import com.app.mytenses.network.RetrofitClient
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import androidx.fragment.app.Fragment
 import com.app.mytenses.R
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
+    private val TAG = "MainActivity"
+    private lateinit var userRepository: UserRepository
+    private val appDatabase: AppDatabase by lazy {
+        AppDatabase.getDatabase(this) // Inisialisasi database saat pertama kali diakses
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -30,15 +41,27 @@ class MainActivity : AppCompatActivity() {
         val sharedPreferences = getSharedPreferences("MyTensesPrefs", MODE_PRIVATE)
         val fullName = sharedPreferences.getString("name", null)
         val userId = sharedPreferences.getInt("user_id", -1)
+        val username = if (userId != -1) "user_$userId" else ""
+        Log.d(TAG, "SharedPreferences - user_id: $userId, name: $fullName, username: $username")
 
-        Log.d(TAG, "SharedPreferences - user_id: $userId, name: $fullName")
 
         if (userId == -1 || fullName.isNullOrEmpty()) {
-            // Pengguna belum login, arahkan ke LoginActivity
             Log.w(TAG, "No user logged in, redirecting to LoginActivity")
             startActivity(Intent(this, LoginActivity::class.java))
             finish()
             return
+        }
+
+        // Inisialisasi UserRepository dengan database
+        userRepository = UserRepository(RetrofitClient.apiService, this, appDatabase.userDao())
+
+        lifecycleScope.launch {
+            try {
+                userRepository.syncUserData(username)
+                Log.d(TAG, "User data synced successfully for userId: $userId")
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to sync user data: ${e.message}")
+            }
         }
 
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
@@ -67,7 +90,6 @@ class MainActivity : AppCompatActivity() {
         bottomNavigationView.selectedItemId = R.id.nav_home
     }
 
-    private val TAG = "MainActivity"
     private fun replaceFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, fragment)

@@ -12,13 +12,13 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.app.mytenses.R
 import com.app.mytenses.TenseCard
 import com.app.mytenses.TenseCardAdapter
 import com.app.mytenses.network.RetrofitClient
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -40,11 +40,26 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Get username from SharedPreferences
-        val sharedPreferences = requireActivity().getSharedPreferences("MyTensesPrefs", Context.MODE_PRIVATE)
-        username = "user_${sharedPreferences.getInt("user_id", -1)}"
+        // Ambil konteks dengan pengecekan aman
+        val context = view.context
+        val activity = activity
+
+        if (context == null || activity == null || !isAdded) {
+            Log.w(TAG, "Fragment not attached to context, skipping initialization")
+            return
+        }
+
+        // Get username from SharedPreferences dengan pengecekan
+        val sharedPreferences = activity.getSharedPreferences("MyTensesPrefs", Context.MODE_PRIVATE)
+        val userId = sharedPreferences.getInt("user_id", -1)
+        username = if (userId != -1) "user_$userId" else ""
         val fullName = sharedPreferences.getString("name", null)
         Log.d(TAG, "SharedPreferences - name: $fullName, username: $username")
+
+        if (username.isEmpty()) {
+            Log.w(TAG, "Invalid username, skipping further initialization")
+            return
+        }
 
         // Welcome TextView setup
         val welcomeTextView = view.findViewById<TextView>(R.id.textView2)
@@ -56,7 +71,7 @@ class HomeFragment : Fragment() {
         val nameEndIndex = nameStartIndex + firstName.length
 
         spannable.setSpan(
-            ForegroundColorSpan(ContextCompat.getColor(requireContext(), R.color.blue)),
+            ForegroundColorSpan(ContextCompat.getColor(context, R.color.blue)),
             nameStartIndex,
             nameEndIndex,
             SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE
@@ -87,7 +102,7 @@ class HomeFragment : Fragment() {
                 .commit()
         }
         rvTenseCards.adapter = adapter
-        val gridLayoutManager = GridLayoutManager(requireContext(), 2)
+        val gridLayoutManager = GridLayoutManager(context, 2)
         gridLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
             override fun getSpanSize(position: Int): Int {
                 return 1
@@ -95,8 +110,10 @@ class HomeFragment : Fragment() {
         }
         rvTenseCards.layoutManager = gridLayoutManager
 
-        // Fetch progress for all courses
-        fetchAllLessonProgress()
+        // Tunda fetchAllLessonProgress hingga view siap
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            fetchAllLessonProgress()
+        }
 
         // Button selection logic
         val buttons = listOf(
@@ -124,53 +141,45 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun fetchAllLessonProgress() {
-        CoroutineScope(Dispatchers.Main).launch {
-            try {
-                val response = withContext(Dispatchers.IO) {
-                    apiService.getLessonProgress(username)
+    private suspend fun fetchAllLessonProgress() {
+        try {
+            val context = view?.context
+            if (context == null || !isAdded) {
+                Log.w(TAG, "Fragment not attached, skipping fetchAllLessonProgress")
+                return
+            }
+
+            val response = withContext(Dispatchers.IO) {
+                apiService.getLessonProgress(username)
+            }
+            if (response.isSuccessful) {
+                val lessonProgressList = response.body()?.lesson_progress ?: emptyList()
+                val updatedCards = mutableListOf<TenseCard>().apply {
+                    add(TenseCard("Simple Present", "Belum Mulai", 0, R.drawable.simple_present, "simple_present"))
+                    add(TenseCard("Simple Past", "Belum Mulai", 0, R.drawable.simple_past, "simple_past"))
+                    add(TenseCard("Simple Future", "Belum Mulai", 0, R.drawable.simple_future, "simple_future"))
+                    add(TenseCard("Simple Past Future", "Belum Mulai", 0, R.drawable.simple_past_future, "simple_past_future"))
                 }
-                if (response.isSuccessful) {
-                    val lessonProgressList = response.body()?.lesson_progress ?: emptyList()
-                    // Initialize default cards
-                    val updatedCards = mutableListOf<TenseCard>().apply {
-                        add(TenseCard("Simple Present", "Belum Mulai", 0, R.drawable.simple_present, "simple_present"))
-                        add(TenseCard("Simple Past", "Belum Mulai", 0, R.drawable.simple_past, "simple_past"))
-                        add(TenseCard("Simple Future", "Belum Mulai", 0, R.drawable.simple_future, "simple_future"))
-                        add(TenseCard("Simple Past Future", "Belum Mulai", 0, R.drawable.simple_past_future, "simple_past_future"))
+                lessonProgressList.forEach { progressItem ->
+                    val index = updatedCards.indexOfFirst { it.lessonId == progressItem.lesson_id }
+                    if (index != -1) {
+                        updatedCards[index] = TenseCard(
+                            title = progressItem.title,
+                            status = when (progressItem.status) {
+                                "not_started" -> "Belum Mulai"
+                                "in_progress" -> "Sedang Diproses"
+                                "completed" -> "Selesai"
+                                else -> "Belum Mulai"
+                            },
+                            progress = progressItem.progress,
+                            imageResId = updatedCards[index].imageResId,
+                            lessonId = progressItem.lesson_id
+                        )
                     }
-                    // Update cards with API data if available
-                    lessonProgressList.forEach { progressItem ->
-                        val index = updatedCards.indexOfFirst { it.lessonId == progressItem.lesson_id }
-                        if (index != -1) {
-                            updatedCards[index] = TenseCard(
-                                title = progressItem.title,
-                                status = when (progressItem.status) {
-                                    "not_started" -> "Belum Mulai"
-                                    "in_progress" -> "Sedang Diproses"
-                                    "completed" -> "Selesai"
-                                    else -> "Belum Mulai"
-                                },
-                                progress = progressItem.progress,
-                                imageResId = updatedCards[index].imageResId,
-                                lessonId = progressItem.lesson_id
-                            )
-                        }
-                    }
-                    adapter.updateData(updatedCards.sortedBy { it.title })
-                } else {
-                    Log.e(TAG, "Failed to fetch progress: ${response.message()}")
-                    // Keep default cards if API call fails
-                    adapter.updateData(listOf(
-                        TenseCard("Simple Present", "Belum Mulai", 0, R.drawable.simple_present, "simple_present"),
-                        TenseCard("Simple Past", "Belum Mulai", 0, R.drawable.simple_past, "simple_past"),
-                        TenseCard("Simple Future", "Belum Mulai", 0, R.drawable.simple_future, "simple_future"),
-                        TenseCard("Simple Past Future", "Belum Mulai", 0, R.drawable.simple_past_future, "simple_past_future")
-                    ))
                 }
-            } catch (e: Exception) {
-                Log.e(TAG, "Error fetching progress: ${e.message}")
-                // Keep default cards if exception occurs
+                adapter.updateData(updatedCards.sortedBy { it.title })
+            } else {
+                Log.e(TAG, "Failed to fetch progress: ${response.message()}")
                 adapter.updateData(listOf(
                     TenseCard("Simple Present", "Belum Mulai", 0, R.drawable.simple_present, "simple_present"),
                     TenseCard("Simple Past", "Belum Mulai", 0, R.drawable.simple_past, "simple_past"),
@@ -178,6 +187,14 @@ class HomeFragment : Fragment() {
                     TenseCard("Simple Past Future", "Belum Mulai", 0, R.drawable.simple_past_future, "simple_past_future")
                 ))
             }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error fetching progress: ${e.message}")
+            adapter.updateData(listOf(
+                TenseCard("Simple Present", "Belum Mulai", 0, R.drawable.simple_present, "simple_present"),
+                TenseCard("Simple Past", "Belum Mulai", 0, R.drawable.simple_past, "simple_past"),
+                TenseCard("Simple Future", "Belum Mulai", 0, R.drawable.simple_future, "simple_future"),
+                TenseCard("Simple Past Future", "Belum Mulai", 0, R.drawable.simple_past_future, "simple_past_future")
+            ))
         }
     }
 
