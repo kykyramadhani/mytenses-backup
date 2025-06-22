@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.app.mytenses.model.CompletedLesson
 import com.app.mytenses.CompletedLessonAdapter
 import com.app.mytenses.R
@@ -30,6 +31,7 @@ class ProfileFragment : Fragment() {
     private lateinit var userRepository: UserRepository
     private val apiService = RetrofitClient.apiService
     private var fetchUserDataJob: Job? = null
+    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -60,7 +62,7 @@ class ProfileFragment : Fragment() {
 
         if (username.isEmpty()) {
             Log.e(TAG, "Invalid username: $username")
-            _binding?.profileBio?.text = "Error: Username tidak valid"
+            binding.profileBio.text = "Error: Username tidak valid"
             return
         }
 
@@ -68,8 +70,24 @@ class ProfileFragment : Fragment() {
         binding.rvCompletedLesson.layoutManager = LinearLayoutManager(context)
         binding.rvCompletedLesson.adapter = CompletedLessonAdapter(emptyList())
 
-        // Ambil data pengguna
-        fetchUserData(username, fullName)
+        // Inisialisasi SwipeRefreshLayout
+        swipeRefreshLayout = view.findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayout) ?: run {
+            Log.e(TAG, "swipeRefreshLayout not found in layout")
+            return
+        }
+
+        // Tampilkan data lokal secara langsung
+        viewLifecycleOwner.lifecycleScope.launch {
+            fetchLocalUserData(username, fullName)
+        }
+
+        // Setup SwipeRefreshLayout
+        swipeRefreshLayout.setOnRefreshListener {
+            viewLifecycleOwner.lifecycleScope.launch {
+                fetchUserData(username, fullName)
+                swipeRefreshLayout.isRefreshing = false
+            }
+        }
 
         // Set listener untuk settings_button
         binding.settingsButton.setOnClickListener {
@@ -109,8 +127,8 @@ class ProfileFragment : Fragment() {
                     if (response.isSuccessful) {
                         val userData = response.body()
                         if (userData != null && _binding != null) {
-                            _binding?.profileName?.text = userData.name?.takeIf { it.isNotBlank() } ?: defaultName ?: "Nama Pengguna"
-                            _binding?.profileBio?.text = userData.bio?.takeIf { it.isNotBlank() } ?: "Bio tidak tersedia"
+                            binding.profileName.text = userData.name?.takeIf { it.isNotBlank() } ?: defaultName ?: "Nama Pengguna"
+                            binding.profileBio.text = userData.bio?.takeIf { it.isNotBlank() } ?: "Bio tidak tersedia"
                             requireContext().getSharedPreferences("MyTensesPrefs", Context.MODE_PRIVATE)
                                 .edit()
                                 .putString("name", userData.name)
@@ -123,25 +141,26 @@ class ProfileFragment : Fragment() {
                             }
                         } else {
                             Log.e(TAG, "User data is null or binding is null")
-                            fetchLocalUserData(username, defaultName)
                         }
                     } else {
                         Log.e(TAG, "API error: ${response.code()} - ${response.errorBody()?.string()}")
-                        fetchLocalUserData(username, defaultName)
                     }
-                } else {
-                    Log.d(TAG, "Offline: Fetching user data from database")
-                    fetchLocalUserData(username, defaultName)
                 }
+                fetchLocalUserData(username, defaultName)
             } catch (e: Exception) {
                 if (e is kotlinx.coroutines.CancellationException) {
                     Log.d(TAG, "Fetch user data cancelled")
-                    throw e // Re-throw untuk memastikan pembatalan ditangani oleh lifecycle
+                    throw e
                 }
                 Log.e(TAG, "Error fetching user data: ${e.message}", e)
                 if (_binding != null) {
-                    _binding?.profileBio?.text = "Gagal memuat data: ${e.message}"
+                    binding.profileBio.text = "Gagal memuat data: ${e.message}"
                     updateCompletedLessons(emptyList())
+                }
+            } finally {
+                fetchUserDataJob = null
+                if (swipeRefreshLayout.isRefreshing) {
+                    swipeRefreshLayout.isRefreshing = false
                 }
             }
         }
@@ -153,8 +172,8 @@ class ProfileFragment : Fragment() {
         }
         if (_binding != null) {
             if (userEntity != null) {
-                _binding?.profileName?.text = userEntity.name.takeIf { it.isNotBlank() } ?: defaultName ?: "Nama Pengguna"
-                _binding?.profileBio?.text = userEntity.bio.takeIf { it.isNotBlank() } ?: "Bio tidak tersedia"
+                binding.profileName.text = userEntity.name.takeIf { it.isNotBlank() } ?: defaultName ?: "Nama Pengguna"
+                binding.profileBio.text = userEntity.bio.takeIf { it.isNotBlank() } ?: "Bio tidak tersedia"
                 val completedLessons = userEntity.completedLessons.map {
                     CompletedLesson(it, it.replace("_", " ").split(" ").joinToString(" ") { word ->
                         word.replaceFirstChar { char ->
@@ -164,7 +183,7 @@ class ProfileFragment : Fragment() {
                 }
                 updateCompletedLessons(completedLessons)
             } else {
-                _binding?.profileBio?.text = "Data offline tidak tersedia"
+                binding.profileBio.text = "Data offline tidak tersedia"
                 updateCompletedLessons(emptyList())
             }
         }
@@ -173,12 +192,12 @@ class ProfileFragment : Fragment() {
     private fun updateCompletedLessons(completedLessons: List<CompletedLesson>) {
         if (_binding != null) {
             if (completedLessons.isEmpty()) {
-                _binding?.emptyLessonsText?.visibility = View.VISIBLE
-                _binding?.rvCompletedLesson?.visibility = View.GONE
+                binding.emptyLessonsText.visibility = View.VISIBLE
+                binding.rvCompletedLesson.visibility = View.GONE
             } else {
-                _binding?.emptyLessonsText?.visibility = View.GONE
-                _binding?.rvCompletedLesson?.visibility = View.VISIBLE
-                _binding?.rvCompletedLesson?.adapter = CompletedLessonAdapter(completedLessons)
+                binding.emptyLessonsText.visibility = View.GONE
+                binding.rvCompletedLesson.visibility = View.VISIBLE
+                binding.rvCompletedLesson.adapter = CompletedLessonAdapter(completedLessons)
             }
         }
     }
@@ -188,27 +207,29 @@ class ProfileFragment : Fragment() {
         Log.d(TAG, "Toggle edit mode: isEditMode=$isEditMode")
         if (_binding != null) {
             if (isEditMode) {
-                _binding?.profileName?.visibility = View.GONE
-                _binding?.profileBio?.visibility = View.GONE
-                _binding?.profileNameEdit?.visibility = View.VISIBLE
-                _binding?.profileBioEdit?.visibility = View.VISIBLE
-                _binding?.saveButton?.visibility = View.VISIBLE
-                _binding?.editButton?.visibility = View.GONE
-                _binding?.cancelButton?.visibility = View.VISIBLE
+                binding.profileName.visibility = View.GONE
+                binding.profileBio.visibility = View.GONE
+                binding.profileNameEdit.visibility = View.VISIBLE
+                binding.profileBioEdit.visibility = View.VISIBLE
+                binding.saveButton.visibility = View.VISIBLE
+                binding.editButton.visibility = View.GONE
+                binding.cancelButton.visibility = View.VISIBLE
 
-                _binding?.profileNameEdit?.setText(currentName?.takeIf { it != "Nama Pengguna" } ?: "")
-                _binding?.profileBioEdit?.setText(_binding?.profileBio?.text?.takeIf { it != "Bio tidak tersedia" } ?: "")
+                binding.profileNameEdit.setText(currentName?.takeIf { it != "Nama Pengguna" } ?: "")
+                binding.profileBioEdit.setText(binding.profileBio.text?.takeIf { it != "Bio tidak tersedia" } ?: "")
             } else {
-                _binding?.profileName?.visibility = View.VISIBLE
-                _binding?.profileBio?.visibility = View.VISIBLE
-                _binding?.profileNameEdit?.visibility = View.GONE
-                _binding?.profileBioEdit?.visibility = View.GONE
-                _binding?.saveButton?.visibility = View.GONE
-                _binding?.editButton?.visibility = View.VISIBLE
-                _binding?.cancelButton?.visibility = View.GONE
+                binding.profileName.visibility = View.VISIBLE
+                binding.profileBio.visibility = View.VISIBLE
+                binding.profileNameEdit.visibility = View.GONE
+                binding.profileBioEdit.visibility = View.GONE
+                binding.saveButton.visibility = View.GONE
+                binding.editButton.visibility = View.VISIBLE
+                binding.cancelButton.visibility = View.GONE
 
                 if (username != null && username.isNotBlank()) {
-                    fetchUserData(username, currentName)
+                    viewLifecycleOwner.lifecycleScope.launch {
+                        fetchLocalUserData(username, currentName)
+                    }
                 }
             }
         }
@@ -217,13 +238,13 @@ class ProfileFragment : Fragment() {
     private fun saveProfileChanges(username: String) {
         val context = view?.context ?: return
         if (!NetworkUtils.isOnline(context)) {
-            _binding?.profileBio?.text = "Gagal menyimpan: Tidak ada koneksi internet"
+            binding.profileBio.text = "Gagal menyimpan: Tidak ada koneksi internet"
             Log.e(TAG, "Cannot save changes: Offline")
             return
         }
 
-        val newName = _binding?.profileNameEdit?.text?.toString()?.trim() ?: ""
-        val newBio = _binding?.profileBioEdit?.text?.toString()?.trim() ?: ""
+        val newName = binding.profileNameEdit.text?.toString()?.trim() ?: ""
+        val newBio = binding.profileBioEdit.text?.toString()?.trim() ?: ""
         Log.d(TAG, "Saving changes: username=$username, name=$newName, bio=$newBio")
 
         val updateData = mutableMapOf<String, String>()
@@ -241,13 +262,15 @@ class ProfileFragment : Fragment() {
                         .putString("name", newName)
                         .apply()
                     toggleEditMode(newName, username, false)
-                    _binding?.profileBio?.text = "Perubahan berhasil disimpan"
+                    binding.profileBio.text = "Perubahan berhasil disimpan"
+                    // Fetch data baru langsung setelah save berhasil
+                    fetchUserData(username, newName)
                     // Sinkronkan data ke database
                     withContext(Dispatchers.IO) {
                         userRepository.syncUserData(username)
                     }
                 } else {
-                    _binding?.profileBio?.text = "Gagal menyimpan: ${response.errorBody()?.string() ?: "Unknown error"}"
+                    binding.profileBio.text = "Gagal menyimpan: ${response.errorBody()?.string() ?: "Unknown error"}"
                     Log.e(TAG, "Update API error: ${response.code()}")
                 }
             } catch (e: Exception) {
@@ -255,7 +278,7 @@ class ProfileFragment : Fragment() {
                     Log.d(TAG, "Save profile changes cancelled")
                     throw e
                 }
-                _binding?.profileBio?.text = "Gagal menyimpan: ${e.message}"
+                binding.profileBio.text = "Gagal menyimpan: ${e.message}"
                 Log.e(TAG, "Update network error: ${e.message}", e)
             }
         }

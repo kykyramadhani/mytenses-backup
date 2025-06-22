@@ -9,13 +9,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.app.mytenses.R
 import com.app.mytenses.TenseCard
 import com.app.mytenses.TenseCardAdapter
@@ -36,6 +36,7 @@ class HomeFragment : Fragment() {
     private lateinit var userRepository: UserRepository
     private val apiService = RetrofitClient.apiService
     private var fetchProgressJob: Job? = null
+    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -89,6 +90,10 @@ class HomeFragment : Fragment() {
 
         // RecyclerView setup
         val rvTenseCards = view.findViewById<RecyclerView>(R.id.rvTenseCards)
+        swipeRefreshLayout = view.findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayout) ?: run {
+            Log.e(TAG, "swipeRefreshLayout not found in layout")
+            return
+        }
         rvTenseCards.layoutManager = GridLayoutManager(context, 2).apply {
             spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
                 override fun getSpanSize(position: Int): Int = 1
@@ -113,14 +118,25 @@ class HomeFragment : Fragment() {
         }
         rvTenseCards.adapter = adapter
 
-        // Tampilkan loading indicator (opsional, tambahkan di layout jika diperlukan)
-        val progressBar = view.findViewById<ProgressBar>(R.id.progressBar)
-        progressBar?.visibility = View.VISIBLE
+        // Tampilkan data lokal secara langsung
+        viewLifecycleOwner.lifecycleScope.launch {
+            val updatedCards = mutableListOf<TenseCard>().apply {
+                add(TenseCard("Simple Present", "Belum Mulai", 0, R.drawable.simple_present, "simple_present"))
+                add(TenseCard("Simple Past", "Belum Mulai", 0, R.drawable.simple_past, "simple_past"))
+                add(TenseCard("Simple Future", "Belum Mulai", 0, R.drawable.simple_future, "simple_future"))
+                add(TenseCard("Simple Past Future", "Belum Mulai", 0, R.drawable.simple_past_future, "simple_past_future"))
+            }
+            fetchLocalLessonProgress(updatedCards)
+            val sortedCards = updatedCards.sortedBy { it.status == "Selesai" }
+            adapter.updateData(sortedCards)
+        }
 
-        // Fetch data
-        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            fetchAllLessonProgress()
-            progressBar?.visibility = View.GONE
+        // Setup SwipeRefreshLayout
+        swipeRefreshLayout.setOnRefreshListener {
+            viewLifecycleOwner.lifecycleScope.launch {
+                fetchAllLessonProgress()
+                swipeRefreshLayout.isRefreshing = false
+            }
         }
 
         // Button selection logic
@@ -136,15 +152,17 @@ class HomeFragment : Fragment() {
             view.findViewById<Button>(R.id.btnPastPerfect)
         )
 
-        selectedButton = buttons[0]
+        selectedButton = buttons.find { it != null }
         selectedButton?.isSelected = true
 
         buttons.forEach { button ->
-            button.setOnClickListener {
-                selectedButton?.isSelected = false
-                button.isSelected = true
-                selectedButton = button
-                updateRecyclerView(button.text.toString())
+            if (button != null) {
+                button.setOnClickListener {
+                    selectedButton?.isSelected = false
+                    button.isSelected = true
+                    selectedButton = button
+                    updateRecyclerView(button.text.toString())
+                }
             }
         }
     }
@@ -190,24 +208,28 @@ class HomeFragment : Fragment() {
                             userRepository.syncUserData(username)
                         }
                     } else {
-                        Log.e(TAG, "Failed to fetch progress from API: ${response.message()}")
-                        fetchLocalLessonProgress(updatedCards)
+                        Log.e(TAG, "Failed to fetch progress from API: ${response.code()} - ${response.message()}")
                     }
-                } else {
-                    Log.d(TAG, "Offline: Fetching lesson progress from database")
-                    fetchLocalLessonProgress(updatedCards)
                 }
-                // Urutkan: Belum Mulai/In Progress di atas, Selesai di bawah
+                fetchLocalLessonProgress(updatedCards)
                 val sortedCards = updatedCards.sortedBy { it.status == "Selesai" }
-                adapter.updateData(sortedCards)
+                if (isAdded) {
+                    adapter.updateData(sortedCards)
+                }
             } catch (e: Exception) {
-                if (e is kotlinx.coroutines.CancellationException) {
-                    Log.d(TAG, "Fetch lesson progress cancelled")
-                    throw e
+                if (e !is kotlinx.coroutines.CancellationException) {
+                    Log.e(TAG, "Error fetching progress: ${e.message}", e)
                 }
-                Log.e(TAG, "Error fetching progress: ${e.message}")
+                fetchLocalLessonProgress(updatedCards)
                 val sortedCards = updatedCards.sortedBy { it.status == "Selesai" }
-                adapter.updateData(sortedCards)
+                if (isAdded) {
+                    adapter.updateData(sortedCards)
+                }
+            } finally {
+                fetchProgressJob = null
+                if (swipeRefreshLayout.isRefreshing) {
+                    swipeRefreshLayout.isRefreshing = false
+                }
             }
         }
     }

@@ -6,11 +6,11 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.app.mytenses.Course
 import com.app.mytenses.CourseAdapter
 import com.app.mytenses.R
@@ -30,6 +30,7 @@ class CourseFragment : Fragment() {
     private lateinit var userRepository: UserRepository
     private val apiService = RetrofitClient.apiService
     private var fetchProgressJob: Job? = null
+    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -64,6 +65,10 @@ class CourseFragment : Fragment() {
 
         // RecyclerView setup
         val rvCourses = view.findViewById<RecyclerView>(R.id.rvCourses)
+        swipeRefreshLayout = view.findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayout) ?: run {
+            Log.e(TAG, "swipeRefreshLayout not found in layout")
+            return
+        }
         if (rvCourses != null) {
             rvCourses.layoutManager = LinearLayoutManager(context)
 
@@ -90,14 +95,25 @@ class CourseFragment : Fragment() {
                 }
             })
 
-            // Tampilkan loading indicator (opsional)
-            val progressBar = view.findViewById<ProgressBar>(R.id.progressBarCourse)
-            progressBar?.visibility = View.VISIBLE
-
-            // Fetch data
+            // Tampilkan data lokal secara langsung
             viewLifecycleOwner.lifecycleScope.launch {
-                fetchAllLessonProgress()
-                progressBar?.visibility = View.GONE
+                val updatedCourses = mutableListOf<Course>().apply {
+                    add(Course("Simple Present", "Belum Mulai", 0, R.drawable.simple_present, "simple_present"))
+                    add(Course("Simple Past", "Belum Mulai", 0, R.drawable.simple_past, "simple_past"))
+                    add(Course("Simple Future", "Belum Mulai", 0, R.drawable.simple_future, "simple_future"))
+                    add(Course("Simple Past Future", "Belum Mulai", 0, R.drawable.simple_past_future, "simple_past_future"))
+                }
+                fetchLocalLessonProgress(updatedCourses)
+                val sortedCourses = updatedCourses.sortedBy { it.status == "Selesai" }
+                adapter.updateData(sortedCourses)
+            }
+
+            // Setup SwipeRefreshLayout
+            swipeRefreshLayout.setOnRefreshListener {
+                viewLifecycleOwner.lifecycleScope.launch {
+                    fetchAllLessonProgress()
+                    swipeRefreshLayout.isRefreshing = false
+                }
             }
         } else {
             Log.e(TAG, "rvCourses is null, check layout file!")
@@ -145,24 +161,28 @@ class CourseFragment : Fragment() {
                             userRepository.syncUserData(username)
                         }
                     } else {
-                        Log.e(TAG, "Failed to fetch progress from API: ${response.message()}")
-                        fetchLocalLessonProgress(updatedCourses)
+                        Log.e(TAG, "Failed to fetch progress from API: ${response.code()} - ${response.message()}")
                     }
-                } else {
-                    Log.d(TAG, "Offline: Fetching lesson progress from database")
-                    fetchLocalLessonProgress(updatedCourses)
                 }
-                // Urutkan: Belum Mulai/In Progress di atas, Selesai di bawah
+                fetchLocalLessonProgress(updatedCourses)
                 val sortedCourses = updatedCourses.sortedBy { it.status == "Selesai" }
-                adapter.updateData(sortedCourses)
+                if (isAdded) {
+                    adapter.updateData(sortedCourses)
+                }
             } catch (e: Exception) {
-                if (e is kotlinx.coroutines.CancellationException) {
-                    Log.d(TAG, "Fetch lesson progress cancelled")
-                    throw e
+                if (e !is kotlinx.coroutines.CancellationException) {
+                    Log.e(TAG, "Error fetching progress: ${e.message}", e)
                 }
-                Log.e(TAG, "Error fetching progress: ${e.message}")
+                fetchLocalLessonProgress(updatedCourses)
                 val sortedCourses = updatedCourses.sortedBy { it.status == "Selesai" }
-                adapter.updateData(sortedCourses)
+                if (isAdded) {
+                    adapter.updateData(sortedCourses)
+                }
+            } finally {
+                fetchProgressJob = null
+                if (swipeRefreshLayout.isRefreshing) {
+                    swipeRefreshLayout.isRefreshing = false
+                }
             }
         }
     }

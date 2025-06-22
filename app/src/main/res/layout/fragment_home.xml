@@ -1,253 +1,261 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/nestedScrollView2"
+    android:id="@+id/swipeRefreshLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    app:swipeRefreshLayoutProgressSpinnerBackgroundColor="@color/blue">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/nestedScrollView2"
         android:layout_width="match_parent"
-        android:background="@color/white"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/textView2"
-            android:layout_width="wrap_content"
-            android:layout_height="33dp"
-            android:ellipsize="end"
-            android:fontFamily="@font/plusjakartasans_bold"
-            android:singleLine="true"
-            android:text="Selamat Datang"
-            android:textColor="@color/black"
-            android:textSize="20sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.059"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.071" />
-
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            tools:layout_editor_absoluteX="0dp"
-            tools:layout_editor_absoluteY="16dp">
+            android:background="@color/white"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="wrap_content"
+                android:layout_height="33dp"
+                android:ellipsize="end"
+                android:fontFamily="@font/plusjakartasans_bold"
+                android:singleLine="true"
+                android:text="Selamat Datang"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.059"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.071" />
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="55dp"
-                android:layout_marginHorizontal="16dp"
-                android:layout_marginTop="90dp"
-                android:orientation="horizontal">
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                tools:layout_editor_absoluteX="0dp"
+                tools:layout_editor_absoluteY="16dp">
 
-                <EditText
-                    android:id="@+id/etSearch"
-                    android:layout_width="wrap_content"
-                    android:layout_height="50dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/white_bg"
-                    android:drawableStart="@drawable/search"
-                    android:drawablePadding="15dp"
-                    android:ems="10"
-                    android:hint="@string/cari"
-                    android:inputType="text"
-                    android:padding="8dp"
-                    android:textColorHint="@color/mediumGray" />
-            </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginTop="90dp"
+                    android:orientation="horizontal">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                    <EditText
+                        android:id="@+id/etSearch"
+                        android:layout_width="wrap_content"
+                        android:layout_height="50dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/white_bg"
+                        android:drawableStart="@drawable/search"
+                        android:drawablePadding="15dp"
+                        android:ems="10"
+                        android:hint="@string/cari"
+                        android:inputType="text"
+                        android:padding="8dp"
+                        android:textColorHint="@color/mediumGray" />
+                </LinearLayout>
 
-                <HorizontalScrollView
-                    android:id="@+id/hsvFilter"
-                    android:layout_width="0dp"
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <HorizontalScrollView
+                        android:id="@+id/hsvFilter"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:scrollbars="none"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/etSearch"
+                        tools:ignore="NotSibling">
+
+                        <LinearLayout
+                            android:id="@+id/filterLayout"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:layout_margin="16dp"
+                            android:orientation="horizontal">
+
+                            <androidx.appcompat.widget.AppCompatButton
+                                android:id="@+id/btnSimple"
+                                android:layout_width="wrap_content"
+                                android:layout_height="30dp"
+                                android:layout_marginEnd="8dp"
+                                android:background="@drawable/button_lesson_selector_home"
+                                android:padding="4dp"
+                                android:minWidth="80dp"
+                                android:text="@string/simple"
+                                android:textAllCaps="false"
+                                android:fontFamily="@font/plusjakartasans_regular"
+                                android:textColor="@drawable/button_lesson_home_color"
+                                android:textSize="12sp" />
+
+                            <androidx.appcompat.widget.AppCompatButton
+                                android:id="@+id/btnContinuous"
+                                android:layout_width="wrap_content"
+                                android:layout_height="30dp"
+                                android:layout_marginEnd="8dp"
+                                android:background="@drawable/button_lesson_selector_home"
+                                android:padding="4dp"
+                                android:minWidth="80dp"
+                                android:text="@string/continuous"
+                                android:textAllCaps="false"
+                                android:fontFamily="@font/plusjakartasans_regular"
+                                android:textColor="@drawable/button_lesson_home_color"
+                                android:textSize="12sp" />
+
+                            <androidx.appcompat.widget.AppCompatButton
+                                android:id="@+id/btnPerfect"
+                                android:layout_width="wrap_content"
+                                android:layout_height="30dp"
+                                android:layout_marginEnd="8dp"
+                                android:background="@drawable/button_lesson_selector_home"
+                                android:padding="4dp"
+                                android:minWidth="80dp"
+                                android:text="@string/perfect"
+                                android:textAllCaps="false"
+                                android:fontFamily="@font/plusjakartasans_regular"
+                                android:textColor="@drawable/button_lesson_home_color"
+                                android:textSize="12sp"/>
+
+                            <androidx.appcompat.widget.AppCompatButton
+                                android:id="@+id/btnPresent"
+                                android:layout_width="wrap_content"
+                                android:layout_height="30dp"
+                                android:layout_marginEnd="8dp"
+                                android:background="@drawable/button_lesson_selector_home"
+                                android:padding="4dp"
+                                android:minWidth="80dp"
+                                android:text="@string/present"
+                                android:textAllCaps="false"
+                                android:fontFamily="@font/plusjakartasans_regular"
+                                android:textColor="@drawable/button_lesson_home_color"
+                                android:textSize="12sp"/>
+
+                            <androidx.appcompat.widget.AppCompatButton
+                                android:id="@+id/btnPerfectContinuous"
+                                android:layout_width="wrap_content"
+                                android:layout_height="30dp"
+                                android:layout_marginEnd="8dp"
+                                android:background="@drawable/button_lesson_selector_home"
+                                android:padding="4dp"
+                                android:minWidth="80dp"
+                                android:text="@string/perfect_continuous"
+                                android:textAllCaps="false"
+                                android:fontFamily="@font/plusjakartasans_regular"
+                                android:textColor="@drawable/button_lesson_home_color"
+                                android:textSize="12sp"/>
+
+                            <androidx.appcompat.widget.AppCompatButton
+                                android:id="@+id/btnPast"
+                                android:layout_width="wrap_content"
+                                android:layout_height="30dp"
+                                android:layout_marginEnd="8dp"
+                                android:background="@drawable/button_lesson_selector_home"
+                                android:padding="4dp"
+                                android:minWidth="80dp"
+                                android:text="@string/past"
+                                android:textAllCaps="false"
+                                android:fontFamily="@font/plusjakartasans_regular"
+                                android:textColor="@drawable/button_lesson_home_color"
+                                android:textSize="12sp"/>
+
+                            <androidx.appcompat.widget.AppCompatButton
+                                android:id="@+id/btnFuture"
+                                android:layout_width="wrap_content"
+                                android:layout_height="30dp"
+                                android:layout_marginEnd="8dp"
+                                android:background="@drawable/button_lesson_selector_home"
+                                android:padding="4dp"
+                                android:minWidth="80dp"
+                                android:text="@string/future"
+                                android:textAllCaps="false"
+                                android:fontFamily="@font/plusjakartasans_regular"
+                                android:textColor="@drawable/button_lesson_home_color"
+                                android:textSize="12sp"/>
+
+                            <androidx.appcompat.widget.AppCompatButton
+                                android:id="@+id/btnPresentPerfect"
+                                android:layout_width="wrap_content"
+                                android:layout_height="30dp"
+                                android:layout_marginEnd="8dp"
+                                android:background="@drawable/button_lesson_selector_home"
+                                android:padding="4dp"
+                                android:minWidth="80dp"
+                                android:text="@string/present_perfect"
+                                android:textAllCaps="false"
+                                android:fontFamily="@font/plusjakartasans_regular"
+                                android:textColor="@drawable/button_lesson_home_color"
+                                android:textSize="12sp"/>
+
+                            <androidx.appcompat.widget.AppCompatButton
+                                android:id="@+id/btnPastPerfect"
+                                android:layout_width="wrap_content"
+                                android:layout_height="30dp"
+                                android:layout_marginEnd="8dp"
+                                android:background="@drawable/button_lesson_selector_home"
+                                android:padding="4dp"
+                                android:minWidth="80dp"
+                                android:text="@string/past_perfect"
+                                android:textAllCaps="false"
+                                android:fontFamily="@font/plusjakartasans_regular"
+                                android:textColor="@drawable/button_lesson_home_color"
+                                android:textSize="12sp"/>
+                        </LinearLayout>
+                    </HorizontalScrollView>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:scrollbars="none"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/etSearch"
-                    tools:ignore="NotSibling">
+                    android:orientation="horizontal"
+                    android:layout_margin="7dp">
 
-                    <LinearLayout
-                        android:id="@+id/filterLayout"
+                    <TextView
+                        android:id="@+id/lanjutBelajar"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:layout_margin="16dp"
-                        android:orientation="horizontal">
+                        android:layout_marginLeft="0dp"
+                        android:layout_margin="10dp"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/plusjakartasans_bold"
+                        android:text="@string/lanjut_belajar" />
 
-                        <androidx.appcompat.widget.AppCompatButton
-                            android:id="@+id/btnSimple"
-                            android:layout_width="wrap_content"
-                            android:layout_height="30dp"
-                            android:layout_marginEnd="8dp"
-                            android:background="@drawable/button_lesson_selector_home"
-                            android:padding="4dp"
-                            android:minWidth="80dp"
-                            android:text="@string/simple"
-                            android:textAllCaps="false"
-                            android:fontFamily="@font/plusjakartasans_regular"
-                            android:textColor="@drawable/button_lesson_home_color"
-                            android:textSize="12sp" />
+                    <TextView
+                        android:id="@+id/lihatSemua"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:text="@string/lihat_semua"
+                        android:textColor="@color/mediumGray" />
+                </LinearLayout>
 
-                        <androidx.appcompat.widget.AppCompatButton
-                            android:id="@+id/btnContinuous"
-                            android:layout_width="wrap_content"
-                            android:layout_height="30dp"
-                            android:layout_marginEnd="8dp"
-                            android:background="@drawable/button_lesson_selector_home"
-                            android:padding="4dp"
-                            android:minWidth="80dp"
-                            android:text="@string/continuous"
-                            android:textAllCaps="false"
-                            android:fontFamily="@font/plusjakartasans_regular"
-                            android:textColor="@drawable/button_lesson_home_color"
-                            android:textSize="12sp" />
-
-                        <androidx.appcompat.widget.AppCompatButton
-                            android:id="@+id/btnPerfect"
-                            android:layout_width="wrap_content"
-                            android:layout_height="30dp"
-                            android:layout_marginEnd="8dp"
-                            android:background="@drawable/button_lesson_selector_home"
-                            android:padding="4dp"
-                            android:minWidth="80dp"
-                            android:text="@string/perfect"
-                            android:textAllCaps="false"
-                            android:fontFamily="@font/plusjakartasans_regular"
-                            android:textColor="@drawable/button_lesson_home_color"
-                            android:textSize="12sp"/>
-
-                        <androidx.appcompat.widget.AppCompatButton
-                            android:id="@+id/btnPresent"
-                            android:layout_width="wrap_content"
-                            android:layout_height="30dp"
-                            android:layout_marginEnd="8dp"
-                            android:background="@drawable/button_lesson_selector_home"
-                            android:padding="4dp"
-                            android:minWidth="80dp"
-                            android:text="@string/present"
-                            android:textAllCaps="false"
-                            android:fontFamily="@font/plusjakartasans_regular"
-                            android:textColor="@drawable/button_lesson_home_color"
-                            android:textSize="12sp"/>
-
-                        <androidx.appcompat.widget.AppCompatButton
-                            android:id="@+id/btnPerfectContinuous"
-                            android:layout_width="wrap_content"
-                            android:layout_height="30dp"
-                            android:layout_marginEnd="8dp"
-                            android:background="@drawable/button_lesson_selector_home"
-                            android:padding="4dp"
-                            android:minWidth="80dp"
-                            android:text="@string/perfect_continuous"
-                            android:textAllCaps="false"
-                            android:fontFamily="@font/plusjakartasans_regular"
-                            android:textColor="@drawable/button_lesson_home_color"
-                            android:textSize="12sp"/>
-
-                        <androidx.appcompat.widget.AppCompatButton
-                            android:id="@+id/btnPast"
-                            android:layout_width="wrap_content"
-                            android:layout_height="30dp"
-                            android:layout_marginEnd="8dp"
-                            android:background="@drawable/button_lesson_selector_home"
-                            android:padding="4dp"
-                            android:minWidth="80dp"
-                            android:text="@string/past"
-                            android:textAllCaps="false"
-                            android:fontFamily="@font/plusjakartasans_regular"
-                            android:textColor="@drawable/button_lesson_home_color"
-                            android:textSize="12sp"/>
-
-                        <androidx.appcompat.widget.AppCompatButton
-                            android:id="@+id/btnFuture"
-                            android:layout_width="wrap_content"
-                            android:layout_height="30dp"
-                            android:layout_marginEnd="8dp"
-                            android:background="@drawable/button_lesson_selector_home"
-                            android:padding="4dp"
-                            android:minWidth="80dp"
-                            android:text="@string/future"
-                            android:textAllCaps="false"
-                            android:fontFamily="@font/plusjakartasans_regular"
-                            android:textColor="@drawable/button_lesson_home_color"
-                            android:textSize="12sp"/>
-
-                        <androidx.appcompat.widget.AppCompatButton
-                            android:id="@+id/btnPresentPerfect"
-                            android:layout_width="wrap_content"
-                            android:layout_height="30dp"
-                            android:layout_marginEnd="8dp"
-                            android:background="@drawable/button_lesson_selector_home"
-                            android:padding="4dp"
-                            android:minWidth="80dp"
-                            android:text="@string/present_perfect"
-                            android:textAllCaps="false"
-                            android:fontFamily="@font/plusjakartasans_regular"
-                            android:textColor="@drawable/button_lesson_home_color"
-                            android:textSize="12sp"/>
-
-                        <androidx.appcompat.widget.AppCompatButton
-                            android:id="@+id/btnPastPerfect"
-                            android:layout_width="wrap_content"
-                            android:layout_height="30dp"
-                            android:layout_marginEnd="8dp"
-                            android:background="@drawable/button_lesson_selector_home"
-                            android:padding="4dp"
-                            android:minWidth="80dp"
-                            android:text="@string/past_perfect"
-                            android:textAllCaps="false"
-                            android:fontFamily="@font/plusjakartasans_regular"
-                            android:textColor="@drawable/button_lesson_home_color"
-                            android:textSize="12sp"/>
-                    </LinearLayout>
-                </HorizontalScrollView>
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_margin="7dp">
-
-                <TextView
-                    android:id="@+id/lanjutBelajar"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="0dp"
-                    android:layout_margin="10dp"
-                    android:layout_weight="1"
-                    android:fontFamily="@font/plusjakartasans_bold"
-                    android:text="@string/lanjut_belajar" />
-
-                <TextView
-                    android:id="@+id/lihatSemua"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:text="@string/lihat_semua"
-                    android:textColor="@color/mediumGray" />
-            </LinearLayout>
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="448dp">
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rvTenseCards"
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_margin="16dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </LinearLayout>
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.core.widget.NestedScrollView>
+                    android:layout_height="448dp">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rvTenseCards"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_margin="16dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
