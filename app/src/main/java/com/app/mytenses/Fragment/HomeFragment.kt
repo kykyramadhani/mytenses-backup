@@ -125,6 +125,18 @@ class HomeFragment : Fragment() {
                 add(TenseCard("Simple Past", "Belum Mulai", 0, R.drawable.simple_past, "simple_past"))
                 add(TenseCard("Simple Future", "Belum Mulai", 0, R.drawable.simple_future, "simple_future"))
                 add(TenseCard("Simple Past Future", "Belum Mulai", 0, R.drawable.simple_past_future, "simple_past_future"))
+                add(TenseCard("Present Continuous", "Belum Mulai", 0, R.drawable.continuous_present, "present_continuous"))
+                add(TenseCard("Past Continuous", "Belum Mulai", 0, R.drawable.continuous_past, "past_continuous"))
+                add(TenseCard("Future Continuous", "Belum Mulai", 0, R.drawable.continuous_future, "future_continuous"))
+                add(TenseCard("Past Future Continuous", "Belum Mulai", 0, R.drawable.continuous_past_future, "past_future_continuous"))
+                add(TenseCard("Present Perfect", "Belum Mulai", 0, R.drawable.perfect_present, "present_perfect"))
+                add(TenseCard("Past Perfect", "Belum Mulai", 0, R.drawable.perfect_past, "past_perfect"))
+                add(TenseCard("Future Perfect", "Belum Mulai", 0, R.drawable.perfect_future, "future_perfect"))
+                add(TenseCard("Past Future Perfect", "Belum Mulai", 0, R.drawable.perfect_past_future, "past_future_perfect"))
+
+                add(TenseCard("Past Perfect Continuous", "Belum Mulai", 0, R.drawable.perfect_continuous_past, "past_perfect_continuous"))
+                add(TenseCard("Future Perfect Continuous", "Belum Mulai", 0, R.drawable.perfect_continuous_future, "future_perfect_continuous"))
+                add(TenseCard("Past Future Perfect Continuous", "Belum Mulai", 0, R.drawable.perfect_continuous_past_future, "past_future_perfect_continuous"))
             }
             fetchLocalLessonProgress(updatedCards)
             val sortedCards = updatedCards.sortedBy { it.status == "Selesai" }
@@ -176,6 +188,18 @@ class HomeFragment : Fragment() {
                 add(TenseCard("Simple Past", "Belum Mulai", 0, R.drawable.simple_past, "simple_past"))
                 add(TenseCard("Simple Future", "Belum Mulai", 0, R.drawable.simple_future, "simple_future"))
                 add(TenseCard("Simple Past Future", "Belum Mulai", 0, R.drawable.simple_past_future, "simple_past_future"))
+                add(TenseCard("Present Continuous", "Belum Mulai", 0, R.drawable.continuous_present, "present_continuous"))
+                add(TenseCard("Past Continuous", "Belum Mulai", 0, R.drawable.continuous_past, "past_continuous"))
+                add(TenseCard("Future Continuous", "Belum Mulai", 0, R.drawable.continuous_future, "future_continuous"))
+                add(TenseCard("Past Future Continuous", "Belum Mulai", 0, R.drawable.continuous_past_future, "past_future_continuous"))
+                add(TenseCard("Present Perfect", "Belum Mulai", 0, R.drawable.perfect_present, "present_perfect"))
+                add(TenseCard("Past Perfect", "Belum Mulai", 0, R.drawable.perfect_past, "past_perfect"))
+                add(TenseCard("Future Perfect", "Belum Mulai", 0, R.drawable.perfect_future, "future_perfect"))
+                add(TenseCard("Past Future Perfect", "Belum Mulai", 0, R.drawable.perfect_past_future, "past_future_perfect"))
+
+                add(TenseCard("Past Perfect Continuous", "Belum Mulai", 0, R.drawable.perfect_continuous_past, "past_perfect_continuous"))
+                add(TenseCard("Future Perfect Continuous", "Belum Mulai", 0, R.drawable.perfect_continuous_future, "future_perfect_continuous"))
+                add(TenseCard("Past Future Perfect Continuous", "Belum Mulai", 0, R.drawable.perfect_continuous_past_future, "past_future_perfect_continuous"))
             }
 
             try {
@@ -259,7 +283,51 @@ class HomeFragment : Fragment() {
 
     private fun updateRecyclerView(filter: String) {
         Log.d(TAG, "Selected filter: $filter")
-        // Implement filtering logic if needed
+
+        // Inisialisasi daftar kartu untuk penyaringan
+        val allCards = mutableListOf<TenseCard>().apply {
+            add(TenseCard("Simple Present", "Belum Mulai", 0, R.drawable.simple_present, "simple_present"))
+            add(TenseCard("Simple Past", "Belum Mulai", 0, R.drawable.simple_past, "simple_past"))
+            add(TenseCard("Simple Future", "Belum Mulai", 0, R.drawable.simple_future, "simple_future"))
+            add(TenseCard("Simple Past Future", "Belum Mulai", 0, R.drawable.simple_past_future, "simple_past_future"))
+            add(TenseCard("Present Continuous", "Belum Mulai", 0, R.drawable.continuous_present, "present_continuous"))
+            add(TenseCard("Past Continuous", "Belum Mulai", 0, R.drawable.continuous_past, "past_continuous"))
+            add(TenseCard("Future Continuous", "Belum Mulai", 0, R.drawable.continuous_future, "future_continuous"))
+            add(TenseCard("Past Future Continuous", "Belum Mulai", 0, R.drawable.continuous_past_future, "past_future_continuous"))
+            add(TenseCard("Present Perfect", "Belum Mulai", 0, R.drawable.perfect_present, "present_perfect"))
+            add(TenseCard("Past Perfect", "Belum Mulai", 0, R.drawable.perfect_past, "past_perfect"))
+            add(TenseCard("Future Perfect", "Belum Mulai", 0, R.drawable.perfect_future, "future_perfect"))
+            add(TenseCard("Past Future Perfect", "Belum Mulai", 0, R.drawable.perfect_past_future, "past_future_perfect"))
+
+            add(TenseCard("Past Perfect Continuous", "Belum Mulai", 0, R.drawable.perfect_continuous_past, "past_perfect_continuous"))
+            add(TenseCard("Future Perfect Continuous", "Belum Mulai", 0, R.drawable.perfect_continuous_future, "future_perfect_continuous"))
+            add(TenseCard("Past Future Perfect Continuous", "Belum Mulai", 0, R.drawable.perfect_continuous_past_future, "past_future_perfect_continuous"))
+        }
+
+        // Perbarui status dan progress kartu berdasarkan data lokal
+        viewLifecycleOwner.lifecycleScope.launch {
+            fetchLocalLessonProgress(allCards)
+
+            // Saring kartu berdasarkan filter
+            val filteredCards = when (filter.lowercase()) {
+                "simple" -> allCards.filter { it.title.contains("Simple", ignoreCase = true) }
+                "continuous" -> allCards.filter { it.title.contains("Continuous", ignoreCase = true) }
+                "perfect" -> allCards.filter { it.title.contains("Perfect", ignoreCase = true) && !it.title.contains("Perfect Continuous", ignoreCase = true) }
+                "perfect continuous" -> allCards.filter { it.title.contains("Perfect Continuous", ignoreCase = true) }
+                "present" -> allCards.filter { it.title.contains("Present", ignoreCase = true) }
+                "past" -> allCards.filter { it.title.contains("Past", ignoreCase = true) }
+                "future" -> allCards.filter { it.title.contains("Future", ignoreCase = true) }
+                "present perfect" -> allCards.filter { it.title == "Present Perfect" }
+                "past perfect" -> allCards.filter { it.title == "Past Perfect" }
+                else -> allCards // Tampilkan semua kartu jika filter questsfilter tidak dikenali
+            }
+
+            // Urutkan kartu (opsional, sesuai dengan logika awal)
+            val sortedCards = filteredCards.sortedBy { it.status == "Selesai" }
+
+            // Perbarui adapter dengan data yang disaring
+            adapter.updateData(sortedCards)
+        }
     }
 
     override fun onDestroyView() {
