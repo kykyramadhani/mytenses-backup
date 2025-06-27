@@ -37,6 +37,7 @@ class HomeFragment : Fragment() {
     private val apiService = RetrofitClient.apiService
     private var fetchProgressJob: Job? = null
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    private var currentFilter: String? = null // Menyimpan filter yang aktif
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -55,6 +56,9 @@ class HomeFragment : Fragment() {
             Log.w(TAG, "Fragment not attached to context, skipping initialization")
             return
         }
+
+        // Pulihkan filter dari savedInstanceState jika ada
+        currentFilter = savedInstanceState?.getString("currentFilter") ?: currentFilter
 
         // Inisialisasi UserRepository
         userRepository = UserRepository(apiService, context, AppDatabase.getDatabase(context).userDao())
@@ -118,7 +122,7 @@ class HomeFragment : Fragment() {
         }
         rvTenseCards.adapter = adapter
 
-        // Tampilkan data lokal secara langsung
+        // Tampilkan data lokal dengan filter aktif
         viewLifecycleOwner.lifecycleScope.launch {
             val updatedCards = mutableListOf<TenseCard>().apply {
                 add(TenseCard("Simple Present", "Belum Mulai", 0, R.drawable.simple_present, "simple_present"))
@@ -139,8 +143,8 @@ class HomeFragment : Fragment() {
                 add(TenseCard("Past Future Perfect Continuous", "Belum Mulai", 0, R.drawable.perfect_continuous_past_future, "past_future_perfect_continuous"))
             }
             fetchLocalLessonProgress(updatedCards)
-            val sortedCards = updatedCards.sortedBy { it.status == "Selesai" }
-            adapter.updateData(sortedCards)
+            // Terapkan filter aktif
+            updateRecyclerView(currentFilter ?: "")
         }
 
         // Setup SwipeRefreshLayout
@@ -164,8 +168,14 @@ class HomeFragment : Fragment() {
             view.findViewById<Button>(R.id.btnPastPerfect)
         )
 
-        selectedButton = buttons.find { it != null }
+        // Atur tombol yang dipilih berdasarkan currentFilter atau tombol pertama
+        selectedButton = if (currentFilter != null) {
+            buttons.find { it?.text?.toString()?.lowercase() == currentFilter?.lowercase() } ?: buttons.find { it != null }
+        } else {
+            buttons.find { it != null }
+        }
         selectedButton?.isSelected = true
+        currentFilter = currentFilter ?: selectedButton?.text?.toString() // Gunakan filter yang dipulihkan atau tombol pertama
 
         buttons.forEach { button ->
             if (button != null) {
@@ -173,10 +183,17 @@ class HomeFragment : Fragment() {
                     selectedButton?.isSelected = false
                     button.isSelected = true
                     selectedButton = button
-                    updateRecyclerView(button.text.toString())
+                    currentFilter = button.text.toString() // Perbarui filter aktif
+                    updateRecyclerView(currentFilter ?: "")
                 }
             }
         }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        // Simpan filter aktif
+        outState.putString("currentFilter", currentFilter)
     }
 
     private suspend fun fetchAllLessonProgress() {
@@ -236,18 +253,18 @@ class HomeFragment : Fragment() {
                     }
                 }
                 fetchLocalLessonProgress(updatedCards)
-                val sortedCards = updatedCards.sortedBy { it.status == "Selesai" }
+                // Terapkan filter aktif setelah fetch selesai
                 if (isAdded) {
-                    adapter.updateData(sortedCards)
+                    updateRecyclerView(currentFilter ?: "")
                 }
             } catch (e: Exception) {
                 if (e !is kotlinx.coroutines.CancellationException) {
                     Log.e(TAG, "Error fetching progress: ${e.message}", e)
                 }
                 fetchLocalLessonProgress(updatedCards)
-                val sortedCards = updatedCards.sortedBy { it.status == "Selesai" }
+                // Terapkan filter aktif setelah fetch selesai
                 if (isAdded) {
-                    adapter.updateData(sortedCards)
+                    updateRecyclerView(currentFilter ?: "")
                 }
             } finally {
                 fetchProgressJob = null
@@ -319,7 +336,7 @@ class HomeFragment : Fragment() {
                 "future" -> allCards.filter { it.title.contains("Future", ignoreCase = true) }
                 "present perfect" -> allCards.filter { it.title == "Present Perfect" }
                 "past perfect" -> allCards.filter { it.title == "Past Perfect" }
-                else -> allCards // Tampilkan semua kartu jika filter questsfilter tidak dikenali
+                else -> allCards // Tampilkan semua kartu jika filter tidak dikenali
             }
 
             // Urutkan kartu (opsional, sesuai dengan logika awal)
