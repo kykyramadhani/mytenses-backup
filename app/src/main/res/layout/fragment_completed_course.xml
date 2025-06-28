@@ -43,17 +43,30 @@
             android:textColor="@android:color/black" />
 
         <TextView
+            android:id="@+id/textViewCongrats"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="200dp"
+            android:fontFamily="@font/plusjakartasans_semibold"
+            android:text="Anda telah menyelesaikan semua materi"
+            android:textAlignment="center"
+            android:textColor="@android:color/black"
+            android:textSize="14sp"
+            tools:text="Anda telah menyelesaikan semua materi" />
+
+        <TextView
             android:id="@+id/textViewDesc"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text=""
-            tools:text=""
-            android:textAlignment="center"
-            android:fontFamily="@font/plusjakartasans_medium"
-            android:textSize="14sp"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="200dp"
-            android:textColor="@android:color/black" />
+            android:layout_marginTop="230dp"
+            android:fontFamily="@font/plusjakartasans_semibold"
+            android:text=""
+            android:textAlignment="center"
+            android:textColor="@android:color/black"
+            android:textSize="14sp"
+            tools:text="" />
 
         <Button
             android:id="@+id/btnBackCompleted"

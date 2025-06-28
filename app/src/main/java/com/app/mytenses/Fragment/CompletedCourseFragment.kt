@@ -49,7 +49,7 @@ class CompletedCourseFragment : Fragment() {
         val btnBack = view.findViewById<Button>(R.id.btnBackCompleted)
         textViewDesc = view.findViewById(R.id.textViewDesc)
 
-        textViewDesc.text = "Selamat! Anda telah menyelesaikan kursus ${lessonId?.replace("_", " ")?.capitalize()}!"
+        textViewDesc.text = "kelas ${lessonId?.replace("_", " ")?.capitalize()}!"
 
         btnBack?.setOnClickListener {
             Log.d(TAG, "Back button clicked")

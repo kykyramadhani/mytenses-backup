@@ -65,106 +65,115 @@
     <FrameLayout
         android:id="@+id/frameCard1"
         android:layout_width="248dp"
-        android:layout_height="120dp"
+        android:layout_height="100dp"
         android:layout_marginTop="16dp"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/progressBar">
 
-        <ImageView
-            android:id="@+id/starter1"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="fitXY"
-            android:src="@drawable/card" />
+    <ImageView
+        android:id="@+id/starter1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitXY"
+        android:src="@drawable/card" />
 
-        <TextView
-            android:id="@+id/textOnImage1"
-            android:layout_width="229dp"
-            android:layout_height="110dp"
-            android:layout_gravity="center"
-            android:fontFamily="@font/plusjakartasans_medium"
-            android:text=""
-            android:textColor="@android:color/white"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+    <TextView
+        android:id="@+id/textOnImage1"
+        android:layout_width="223dp"
+        android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:gravity="center"
+    android:fontFamily="@font/plusjakartasans_medium"
+    android:text=""
+    android:textColor="@android:color/white"
+    android:textSize="14sp"
+    android:textStyle="bold"
+    android:maxLines="2"
+    android:ellipsize="end" />
     </FrameLayout>
 
     <!-- Card 2 -->
     <FrameLayout
-        android:id="@+id/frameCard2"
-        android:layout_width="248dp"
-        android:layout_height="120dp"
-        android:layout_marginTop="24dp"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/frameCard1">
+    android:id="@+id/frameCard2"
+    android:layout_width="248dp"
+    android:layout_height="125dp"
+    android:layout_marginTop="24dp"
+    android:visibility="gone"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@id/frameCard1">
 
         <ImageView
-            android:id="@+id/starter2"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="fitXY"
-            android:src="@drawable/card" />
+        android:id="@+id/starter2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitXY"
+        android:src="@drawable/card" />
 
         <TextView
             android:id="@+id/textOnImage2"
-            android:layout_width="229dp"
+            android:layout_width="228dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:gravity="center"
             android:fontFamily="@font/plusjakartasans_medium"
             android:text=""
             android:textColor="@android:color/white"
-            android:textSize="12sp"
-            android:textStyle="bold" />
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:maxLines="2"
+            android:ellipsize="end" />
     </FrameLayout>
 
     <!-- Card 3 -->
-    <FrameLayout
-        android:id="@+id/frameCard3"
-        android:layout_width="248dp"
-        android:layout_height="120dp"
-        android:layout_marginTop="24dp"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/frameCard2">
+<FrameLayout
+    android:id="@+id/frameCard3"
+    android:layout_width="248dp"
+    android:layout_height="125dp"
+    android:layout_marginTop="24dp"
+    android:visibility="gone"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@id/frameCard2">
 
         <ImageView
-            android:id="@+id/starter3"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="fitXY"
-            android:src="@drawable/card" />
+        android:id="@+id/starter3"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitXY"
+        android:src="@drawable/card" />
 
         <TextView
             android:id="@+id/textOnImage3"
-            android:layout_width="237dp"
+            android:layout_width="232dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:fontFamily="@font/plusjakartasans_bold"
+            android:gravity="center"
+            android:fontFamily="@font/plusjakartasans_medium"
             android:text=""
             android:textColor="@android:color/white"
-            android:textSize="12sp"
-            android:textStyle="bold" />
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:maxLines="2"
+            android:ellipsize="end" />
     </FrameLayout>
 
     <!-- Next Button -->
     <Button
-        android:id="@+id/btnNextChapt1"
-        android:layout_width="248dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:backgroundTint="@color/blue"
-        android:fontFamily="@font/plusjakartasans_bold"
-        android:text="Berikutnya"
-        android:textColor="@android:color/white"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+    android:id="@+id/btnNextChapt1"
+    android:layout_width="248dp"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="24dp"
+    android:backgroundTint="@color/blue"
+    android:fontFamily="@font/plusjakartasans_bold"
+    android:text="Berikutnya"
+    android:textColor="@android:color/white"
+    android:textSize="16sp"
+    android:textStyle="bold"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

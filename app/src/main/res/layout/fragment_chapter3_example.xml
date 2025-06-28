@@ -76,19 +76,22 @@
             android:id="@+id/starter1"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scaleType="centerCrop"
-            android:src="@drawable/card" />
+            android:scaleType="fitXY"
+        android:src="@drawable/card" />
 
         <TextView
             android:id="@+id/textOnImage1"
-            android:layout_width="193dp"
-            android:layout_height="77dp"
-            android:layout_gravity="center"
-            android:fontFamily="@font/plusjakartasans_bold"
-            android:text=""
-            android:textColor="@android:color/white"
-            android:textSize="14sp"
-            android:textStyle="bold" />
+            android:layout_width="223dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:fontFamily="@font/plusjakartasans_bold"
+        android:text=""
+        android:textColor="@android:color/white"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:maxLines="2"
+        android:ellipsize="end" />
     </FrameLayout>
 
     <!-- Card 2 -->
@@ -114,11 +117,14 @@
             android:layout_width="223dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:fontFamily="@font/plusjakartasans_bold"
-            android:text=""
-            android:textColor="@android:color/white"
-            android:textSize="14sp"
-            android:textStyle="bold" />
+            android:gravity="center"
+        android:fontFamily="@font/plusjakartasans_bold"
+        android:text=""
+        android:textColor="@android:color/white"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:maxLines="2"
+        android:ellipsize="end" />
     </FrameLayout>
 
     <!-- Next Button -->
