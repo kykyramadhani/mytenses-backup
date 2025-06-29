@@ -117,7 +117,8 @@
                     android:gravity="center"
                     android:text="A"
                     android:textColor="@color/white"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"
+                    android:visibility="gone"/>
 
                 <TextView
                     android:id="@+id/optionsAText"
@@ -147,7 +148,8 @@
                     android:gravity="center"
                     android:text="B"
                     android:textColor="@color/white"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"
+                    android:visibility="gone"/>
 
                 <TextView
                     android:id="@+id/optionsBText"
@@ -177,7 +179,8 @@
                     android:gravity="center"
                     android:text="C"
                     android:textColor="@color/white"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"
+                    android:visibility="gone"/>
 
                 <TextView
                     android:id="@+id/optionsCText"
@@ -207,7 +210,8 @@
                     android:gravity="center"
                     android:text="D"
                     android:textColor="@color/white"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"
+                    android:visibility="gone"/>
 
                 <TextView
                     android:id="@+id/optionsDText"
