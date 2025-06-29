@@ -17,14 +17,14 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import com.android.volley.DefaultRetryPolicy
-import com.android.volley.NoConnectionError
-import com.android.volley.Response
-import com.android.volley.TimeoutError
-import com.android.volley.toolbox.JsonObjectRequest
-import com.android.volley.toolbox.Volley
+import androidx.lifecycle.lifecycleScope
 import com.app.mytenses.R
-import org.json.JSONObject
+import com.app.mytenses.model.RegisterRequest
+import com.app.mytenses.network.RetrofitClient
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.IOException
 
 class SignUpActivity : AppCompatActivity() {
     private val TAG = "SignUpActivity"
@@ -102,93 +102,58 @@ class SignUpActivity : AppCompatActivity() {
         return capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
     }
 
-    private fun registerUser(name: String, email: String, password: String, progressBar: ProgressBar, btnRegister: Button) {
-        val url = "https://mytenses-api.vercel.app/api/register"
-        Log.d(TAG, "Sending register request to $url with body: { name: $name, email: $email, password: [HIDDEN] }")
+    private fun registerUser(
+        name: String,
+        email: String,
+        password: String,
+        progressBar: ProgressBar,
+        btnRegister: Button
+    ) {
+        lifecycleScope.launch {
+            try {
+                val request = RegisterRequest(name, email, password)
 
-        val jsonBody = JSONObject().apply {
-            put("name", name)
-            put("email", email)
-            put("password", password)
-        }
+                progressBar.visibility = View.VISIBLE
+                btnRegister.isEnabled = false
 
-        val jsonObjectRequest = object : JsonObjectRequest(
-            Method.POST, url, jsonBody,
-            Response.Listener { response ->
+                val response = withContext(Dispatchers.IO) {
+                    RetrofitClient.apiService.register(request)
+                }
+
                 progressBar.visibility = View.GONE
                 btnRegister.isEnabled = true
 
-                Log.d(TAG, "Register response: $response")
+                if (response.isSuccessful) {
+                    val responseBody = response.body()
+                    Log.d(TAG, "Register response: $responseBody")
 
-                try {
-                    val message = response.optString("message", "")
-                    if (message == "User registered successfully") {
-                        if (response.has("user")) {
-                            val user = response.getJSONObject("user")
-                            val userId = user.optInt("user_id", -1)
-                            val userEmail = user.optString("email", "")
-                            if (userId != -1 && userEmail == email) {
-                                Toast.makeText(this, "Pendaftaran berhasil", Toast.LENGTH_SHORT).show()
-                                // Redirect ke LoginActivity
-                                val intent = Intent(this, LoginActivity::class.java)
-                                startActivity(intent)
-                                finish()
-                            } else {
-                                Log.e(TAG, "Invalid user data in response: $response")
-                                Toast.makeText(this, "Pendaftaran gagal: Data pengguna tidak valid", Toast.LENGTH_LONG).show()
-                            }
-                        } else {
-                            Log.e(TAG, "No user data in response: $response")
-                            Toast.makeText(this, "Pendaftaran gagal: Tidak ada data pengguna", Toast.LENGTH_LONG).show()
-                        }
+                    if (responseBody?.message == "User registered successfully" && responseBody.user?.email == email) {
+                        Toast.makeText(this@SignUpActivity, "Pendaftaran berhasil", Toast.LENGTH_SHORT).show()
+                        startActivity(Intent(this@SignUpActivity, LoginActivity::class.java))
+                        finish()
                     } else {
-                        Log.e(TAG, "Unexpected message in response: $message")
-                        Toast.makeText(this, "Pendaftaran gagal: $message", Toast.LENGTH_LONG).show()
+                        Log.e(TAG, "Invalid user data or unexpected message: $responseBody")
+                        Toast.makeText(this@SignUpActivity, "Pendaftaran gagal: ${responseBody?.message}", Toast.LENGTH_LONG).show()
                     }
-                } catch (e: Exception) {
-                    Log.e(TAG, "Error parsing response: ${e.message}", e)
-                    Toast.makeText(this, "Gagal memproses data: ${e.message}", Toast.LENGTH_LONG).show()
+                } else {
+                    val errorMessage = when (response.code()) {
+                        400 -> "Data tidak valid atau email sudah terdaftar"
+                        500 -> "Terjadi kesalahan server"
+                        else -> "Gagal mendaftar: ${response.message()}"
+                    }
+                    Toast.makeText(this@SignUpActivity, errorMessage, Toast.LENGTH_LONG).show()
                 }
-            },
-            Response.ErrorListener { error ->
+            } catch (e: IOException) {
                 progressBar.visibility = View.GONE
                 btnRegister.isEnabled = true
-
-                Log.e(TAG, "Register error: ${error.message}", error)
-
-                val errorMessage = when {
-                    error is NoConnectionError -> "Tidak ada koneksi internet"
-                    error is TimeoutError -> "Permintaan ke server timeout"
-                    error.networkResponse != null -> {
-                        try {
-                            val errorObj = JSONObject(String(error.networkResponse.data))
-                            val errorMsg = errorObj.optString("error", "Kesalahan tidak diketahui")
-                            val details = errorObj.optString("details", "")
-                            "$errorMsg${if (details.isNotEmpty()) ": $details" else ""}"
-                        } catch (e: Exception) {
-                            when (error.networkResponse.statusCode) {
-                                400 -> "Data tidak valid atau email sudah terdaftar"
-                                500 -> "Terjadi kesalahan server"
-                                else -> "Gagal mendaftar: ${error.message}"
-                            }
-                        }
-                    }
-                    else -> "Gagal mendaftar: ${error.message}"
-                }
-                Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show()
-            }
-        ) {
-            override fun getHeaders(): Map<String, String> {
-                return mapOf("Content-Type" to "application/json")
+                Log.e(TAG, "Network error: ${e.message}", e)
+                Toast.makeText(this@SignUpActivity, "Tidak ada koneksi internet", Toast.LENGTH_LONG).show()
+            } catch (e: Exception) {
+                progressBar.visibility = View.GONE
+                btnRegister.isEnabled = true
+                Log.e(TAG, "Unexpected error: ${e.message}", e)
+                Toast.makeText(this@SignUpActivity, "Gagal memproses data: ${e.message}", Toast.LENGTH_LONG).show()
             }
         }
-
-        jsonObjectRequest.retryPolicy = DefaultRetryPolicy(
-            10000, // Timeout 10 detik
-            DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-            DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
-        )
-
-        Volley.newRequestQueue(this).add(jsonObjectRequest)
     }
 }

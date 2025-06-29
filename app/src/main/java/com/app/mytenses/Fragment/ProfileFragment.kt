@@ -53,12 +53,10 @@ class ProfileFragment : Fragment() {
         // Inisialisasi UserRepository
         userRepository = UserRepository(apiService, context, AppDatabase.getDatabase(context).userDao())
 
-        // Ambil data dari SharedPreferences
         val sharedPreferences = requireContext().getSharedPreferences("MyTensesPrefs", Context.MODE_PRIVATE)
         val fullName = sharedPreferences.getString("name", "Nama Pengguna")
-        val userId = sharedPreferences.getInt("user_id", -1)
-        val username = if (userId != -1) "user_$userId" else ""
-        Log.d(TAG, "User ID: $userId, Username: $username")
+        val username = sharedPreferences.getString("username",null).toString()
+        Log.d(TAG, "Username: $username")
 
         if (username.isEmpty()) {
             Log.e(TAG, "Invalid username: $username")
@@ -66,22 +64,18 @@ class ProfileFragment : Fragment() {
             return
         }
 
-        // Setup RecyclerView
         binding.rvCompletedLesson.layoutManager = LinearLayoutManager(context)
         binding.rvCompletedLesson.adapter = CompletedLessonAdapter(emptyList())
 
-        // Inisialisasi SwipeRefreshLayout
         swipeRefreshLayout = view.findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayout) ?: run {
             Log.e(TAG, "swipeRefreshLayout not found in layout")
             return
         }
 
-        // Tampilkan data lokal secara langsung
         viewLifecycleOwner.lifecycleScope.launch {
             fetchLocalUserData(username, fullName)
         }
 
-        // Setup SwipeRefreshLayout
         swipeRefreshLayout.setOnRefreshListener {
             viewLifecycleOwner.lifecycleScope.launch {
                 fetchUserData(username, fullName)
@@ -89,7 +83,6 @@ class ProfileFragment : Fragment() {
             }
         }
 
-        // Set listener untuk settings_button
         binding.settingsButton.setOnClickListener {
             parentFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, SettingFragment())
@@ -97,17 +90,14 @@ class ProfileFragment : Fragment() {
                 .commit()
         }
 
-        // Set listener untuk edit_button
         binding.editButton.setOnClickListener {
             toggleEditMode(fullName, username, true)
         }
 
-        // Set listener untuk cancel_button
         binding.cancelButton.setOnClickListener {
             toggleEditMode(fullName, username, false)
         }
 
-        // Set listener untuk save_button
         binding.saveButton.setOnClickListener {
             saveProfileChanges(username)
         }

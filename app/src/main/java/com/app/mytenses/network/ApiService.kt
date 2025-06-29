@@ -4,9 +4,12 @@ import com.app.mytenses.model.ChangePasswordRequest
 import com.app.mytenses.model.Lesson
 import com.app.mytenses.model.LessonProgress
 import com.app.mytenses.model.LessonProgressResponse
+import com.app.mytenses.model.LoginResponse
 
 import com.app.mytenses.model.MaterialsResponse
 import com.app.mytenses.model.Question
+import com.app.mytenses.model.RegisterRequest
+import com.app.mytenses.model.RegisterResponse
 import com.app.mytenses.model.UserData
 import retrofit2.Response
 import retrofit2.http.GET
@@ -49,4 +52,11 @@ interface ApiService {
 
     @PUT("api/change-password-by-email")
     suspend fun changePasswordByEmail(@Body body: ChangePasswordRequest): Response<Map<String, String>>
+
+    @POST("api/register")
+    suspend fun register(@Body request: RegisterRequest): Response<RegisterResponse>
+
+
+    @POST("api/login")
+    suspend fun login(@Body request: Map<String, String>): Response<LoginResponse>
 }

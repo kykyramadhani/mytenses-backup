@@ -8,7 +8,8 @@ data class UserData(
     val bio: String?,
     val completed_lessons: List<CompletedLesson>?,
     val lessons: Map<String, LessonProgress>?,
-    val quiz_scores: Map<String, QuizScore>?
+    val quiz_scores: Map<String, QuizScore>?,
+    val fcm_token: String?
 )
 
 data class CompletedLesson(
@@ -33,3 +34,20 @@ data class ChangePasswordRequest(
     val email: String,
     val new_password: String
 )
+
+data class LoginResponse(
+    val message: String,
+    val user: UserData
+)
+
+data class RegisterRequest(
+    val name: String,
+    val email: String,
+    val password: String
+)
+
+data class RegisterResponse(
+    val message: String,
+    val user: UserData?
+)
+

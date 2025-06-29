@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -13,39 +14,43 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.android.volley.NoConnectionError
-import com.android.volley.Request
-import com.android.volley.Response
-import com.android.volley.toolbox.JsonObjectRequest
-import com.android.volley.toolbox.Volley
+import androidx.lifecycle.lifecycleScope
 import com.app.mytenses.R
+import com.app.mytenses.network.RetrofitClient
 import com.google.firebase.messaging.FirebaseMessaging
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.json.JSONObject
+import retrofit2.HttpException
+import java.io.IOException
 
 class LoginActivity : AppCompatActivity() {
 
-    private var currentFcmToken: String? = null //
+    private var currentFcmToken: String? = null
+    private val TAG = "LoginActivity"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Cek apakah pengguna sudah login
         val sharedPreferences = getSharedPreferences("MyTensesPrefs", MODE_PRIVATE)
-        val userId = sharedPreferences.getInt("user_id", -1) // -1 sebagai default jika belum login
+        val userId = sharedPreferences.getInt("user_id", -1)
         if (userId != -1) {
-            // Pengguna sudah login, langsung ke MainActivity
+            Log.d(TAG, "User already logged in, navigating to MainActivity")
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
             finish()
             return
         }
 
-        // FCM Token saat pertama kali
+        // Save FCM token
         FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 currentFcmToken = task.result
+                Log.d(TAG, "FCM token retrieved: $currentFcmToken")
             } else {
                 currentFcmToken = null
+                Log.w(TAG, "Failed to retrieve FCM token: ${task.exception?.message}")
             }
         }
 
@@ -113,66 +118,81 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun loginUser(email: String, password: String, progressBar: ProgressBar, btnLogin: Button) {
-        val url = "https://mytenses-api.vercel.app/api/login"
+        lifecycleScope.launch {
+            try {
+                val loginBody = mapOf(
+                    "email" to email,
+                    "password" to password,
+                    "fcm_token" to (currentFcmToken ?: "")
+                )
 
-        val jsonBody = JSONObject().apply {
-            put("email", email)
-            put("password", password)
-            put("fcm_token", currentFcmToken) // Kirim FCM Token ke body login
-        }
+                Log.d(TAG, "Sending login request with body: $loginBody")
 
-        val jsonObjectRequest = JsonObjectRequest(
-            Request.Method.POST, url, jsonBody,
-            Response.Listener { response ->
-                try {
-                    progressBar.visibility = View.GONE
-                    btnLogin.isEnabled = true
-
-                    val user = response.getJSONObject("user")
-                    val name = user.getString("name")
-                    val userId = user.getInt("user_id")
-                    val username = user.getString("username")
-                    val fcmToken = user.optString("fcm_token", null)
-
-                    // Simpan data pengguna ke SharedPreferences
-                    val sharedPreferences = getSharedPreferences("MyTensesPrefs", MODE_PRIVATE)
-                    sharedPreferences.edit()
-                        .putInt("user_id", userId)
-                        .putString("username", username)
-                        .putString("name", name)
-                        .putString("fcm_token", fcmToken)
-                        .apply()
-
-                    Toast.makeText(this, "Login berhasil! Selamat datang, $name", Toast.LENGTH_SHORT).show()
-                    val intent = Intent(this, MainActivity::class.java)
-                    startActivity(intent)
-                    finish()
-                } catch (e: Exception) {
-                    progressBar.visibility = View.GONE
-                    btnLogin.isEnabled = true
-                    Toast.makeText(this, "Gagal memproses data: ${e.message}", Toast.LENGTH_LONG).show()
+                val response = withContext(Dispatchers.IO) {
+                    RetrofitClient.apiService.login(loginBody)
                 }
-            },
-            Response.ErrorListener { error ->
+
                 progressBar.visibility = View.GONE
                 btnLogin.isEnabled = true
-                val errorMessage = when {
-                    error is NoConnectionError -> "Tidak ada koneksi internet"
-                    error.networkResponse?.statusCode == 401 -> {
-                        try {
-                            val errorObj = JSONObject(String(error.networkResponse.data))
-                            errorObj.getString("error")
-                        } catch (e: Exception) {
-                            "Email atau password salah"
-                        }
-                    }
-                    error.networkResponse?.statusCode == 500 -> "Terjadi kesalahan server"
-                    else -> "Gagal login: ${error.message}"
-                }
-                Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show()
-            }
-        )
 
-        Volley.newRequestQueue(this).add(jsonObjectRequest)
+                if (response.isSuccessful) {
+                    val loginResponse = response.body()
+                    val user = loginResponse?.user
+
+                    if (user != null && user.user_id != null && user.user_id != -1) {
+                        val sharedPreferences = getSharedPreferences("MyTensesPrefs", MODE_PRIVATE)
+                        sharedPreferences.edit()
+                            .putInt("user_id", user.user_id)
+                            .putString("username", user.username)
+                            .putString("name", user.name)
+                            .putString("email", user.email)
+                            .putString("bio", user.bio)
+                            .putString("fcm_token", currentFcmToken)
+                            .apply()
+
+                        Log.d(TAG, "Login successful, user: $user, SharedPreferences: ${sharedPreferences.all}")
+                        Toast.makeText(this@LoginActivity, "Login berhasil! Selamat datang, ${user.name}", Toast.LENGTH_SHORT).show()
+
+                        Log.d(TAG, "Navigating to MainActivity")
+                        val intent = Intent(this@LoginActivity, MainActivity::class.java)
+                        startActivity(intent)
+                        finish()
+                    } else {
+                        Log.w(TAG, "Invalid user data: $loginResponse")
+                        Toast.makeText(this@LoginActivity, "Gagal login: Data pengguna tidak valid", Toast.LENGTH_LONG).show()
+                    }
+                } else {
+                    val errorMessage = when (response.code()) {
+                        401 -> {
+                            try {
+                                val errorBody = response.errorBody()?.string()
+                                errorBody?.let { JSONObject(it).getString("error") } ?: "Email atau password salah"
+                            } catch (e: Exception) {
+                                "Email atau password salah"
+                            }
+                        }
+                        500 -> "Terjadi kesalahan server"
+                        else -> "Gagal login: ${response.message()}"
+                    }
+                    Log.w(TAG, "Login failed with code ${response.code()}: $errorMessage")
+                    Toast.makeText(this@LoginActivity, errorMessage, Toast.LENGTH_LONG).show()
+                }
+            } catch (e: IOException) {
+                progressBar.visibility = View.GONE
+                btnLogin.isEnabled = true
+                Log.e(TAG, "Network error: ${e.message}", e)
+                Toast.makeText(this@LoginActivity, "Tidak ada koneksi internet", Toast.LENGTH_LONG).show()
+            } catch (e: HttpException) {
+                progressBar.visibility = View.GONE
+                btnLogin.isEnabled = true
+                Log.e(TAG, "HTTP error: ${e.message()}", e)
+                Toast.makeText(this@LoginActivity, "Gagal login: ${e.message()}", Toast.LENGTH_LONG).show()
+            } catch (e: Exception) {
+                progressBar.visibility = View.GONE
+                btnLogin.isEnabled = true
+                Log.e(TAG, "Unexpected error: ${e.message}", e)
+                Toast.makeText(this@LoginActivity, "Gagal memproses data: ${e.message}", Toast.LENGTH_LONG).show()
+            }
+        }
     }
 }

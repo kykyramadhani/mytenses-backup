@@ -51,7 +51,6 @@ class UserRepository(
                                 dateTaken = quizScore.date_taken
                             )
                         } ?: emptyList()
-                        // Panggil insertUserData untuk menyimpan semua data sekaligus
                         userDao.insertUserData(userEntity, progressList, quizScores)
                     } else {
                         Log.e("UserRepository", "User data is null")

@@ -37,8 +37,7 @@ class HomeFragment : Fragment() {
     private val apiService = RetrofitClient.apiService
     private var fetchProgressJob: Job? = null
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    private var currentFilter: String? = null // Menyimpan filter yang aktif
-    // Inisialisasi TenseCard sekali sebagai properti kelas
+    private var currentFilter: String? = null
     private val tenseCards = mutableListOf<TenseCard>().apply {
         add(TenseCard("Simple Present", "Belum Mulai", 0, R.drawable.simple_present, "simple_present"))
         add(TenseCard("Simple Past", "Belum Mulai", 0, R.drawable.simple_past, "simple_past"))
@@ -75,16 +74,12 @@ class HomeFragment : Fragment() {
             return
         }
 
-        // Pulihkan filter dari savedInstanceState jika ada
         currentFilter = savedInstanceState?.getString("currentFilter") ?: currentFilter
 
-        // Inisialisasi UserRepository
         userRepository = UserRepository(apiService, context, AppDatabase.getDatabase(context).userDao())
 
-        // Get username from SharedPreferences
         val sharedPreferences = activity.getSharedPreferences("MyTensesPrefs", Context.MODE_PRIVATE)
-        val userId = sharedPreferences.getInt("user_id", -1)
-        username = if (userId != -1) "user_$userId" else ""
+        username = sharedPreferences.getString("username",null).toString()
         val fullName = sharedPreferences.getString("name", null)
         Log.d(TAG, "SharedPreferences - name: $fullName, username: $username")
 
@@ -122,7 +117,6 @@ class HomeFragment : Fragment() {
             }
         }
 
-        // Inisialisasi adapter tanpa data awal
         adapter = TenseCardAdapter(mutableListOf()) { tenseCard ->
             val fragment = CourseRingkasanSimplePresentFragment().apply {
                 arguments = Bundle().apply {
@@ -140,13 +134,11 @@ class HomeFragment : Fragment() {
         }
         rvTenseCards.adapter = adapter
 
-        // Tampilkan data lokal dengan filter aktif
         viewLifecycleOwner.lifecycleScope.launch {
             fetchLocalLessonProgress()
             updateRecyclerView(currentFilter ?: "")
         }
 
-        // Setup SwipeRefreshLayout
         swipeRefreshLayout.setOnRefreshListener {
             viewLifecycleOwner.lifecycleScope.launch {
                 fetchAllLessonProgress()
@@ -154,7 +146,6 @@ class HomeFragment : Fragment() {
             }
         }
 
-        // Button selection logic
         val buttons = listOf(
             view.findViewById<Button>(R.id.btnSimple),
             view.findViewById<Button>(R.id.btnContinuous),
@@ -167,7 +158,7 @@ class HomeFragment : Fragment() {
             view.findViewById<Button>(R.id.btnPastPerfect)
         )
 
-        // Atur tombol yang dipilih berdasarkan currentFilter atau tombol pertama
+        // Ngatur tombol yang dipilih berdasarkan currentFilter gesss
         selectedButton = if (currentFilter != null) {
             buttons.find { it?.text?.toString()?.lowercase() == currentFilter?.lowercase() } ?: buttons.find { it != null }
         } else {
