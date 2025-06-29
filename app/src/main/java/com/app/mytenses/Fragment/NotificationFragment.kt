@@ -1,6 +1,10 @@
 package com.app.mytenses.Fragment
 
+import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -52,6 +56,9 @@ class NotificationFragment : Fragment() {
         override fun getItemCount() = items.size
     }
 
+    private lateinit var rv: RecyclerView
+    private lateinit var receiver: BroadcastReceiver
+
     private fun getRelativeTime(date: String, time: String): String {
         return try {
             val format = SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.getDefault())
@@ -88,21 +95,30 @@ class NotificationFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val rv = view.findViewById<RecyclerView>(R.id.rvNotifList)
+        rv = view.findViewById(R.id.rvNotifList)
         rv.layoutManager = LinearLayoutManager(requireContext())
 
-        // Ambil nama depan dari SharedPreferences
-        val sharedPreferences = requireContext().getSharedPreferences("MyTensesPrefs", Context.MODE_PRIVATE)
-        val fullName = sharedPreferences.getString("name", "User") ?: "User"
-        val firstName = fullName.split(" ").firstOrNull() ?: "User"
+        loadNotifications()
 
-        // Dummy data pakai nama depan
-        val dummyData = listOf(
-            NotificationItem("Hai, $firstName!", "Ayo lanjutkan belajarmu!", "14-06-2025", "18:40"),
-            NotificationItem("Selamat Datang, $firstName!", "Rasakan Pengalaman Belajar Menyenangkan dengan MyTenses", "14-06-2025", "10:30")
-        )
+        // BroadcastReceiver untuk update saat notifikasi baru masuk
+        receiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                loadNotifications()
+            }
+        }
 
-        rv.adapter = NotificationAdapter(dummyData)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requireContext().registerReceiver(
+                receiver,
+                IntentFilter("com.app.mytenses.NOTIF_HISTORY_UPDATED"),
+                Context.RECEIVER_NOT_EXPORTED
+            )
+        } else {
+            requireContext().registerReceiver(
+                receiver,
+                IntentFilter("com.app.mytenses.NOTIF_HISTORY_UPDATED")
+            )
+        }
 
         val settingsButton = view.findViewById<ImageView>(R.id.settings_button)
         settingsButton.setOnClickListener {
@@ -111,5 +127,32 @@ class NotificationFragment : Fragment() {
                 .addToBackStack(null)
                 .commit()
         }
+    }
+
+    private fun loadNotifications() {
+        val prefs = requireContext().getSharedPreferences("NotifHistory", Context.MODE_PRIVATE)
+        val savedSet = prefs.getStringSet("data", emptySet()) ?: emptySet()
+
+        val notifList = savedSet.mapNotNull {
+            val parts = it.split("|")
+            if (parts.size == 4) {
+                NotificationItem(
+                    title = parts[0],
+                    subtitle = parts[1],
+                    date = parts[2],
+                    time = parts[3]
+                )
+            } else null
+        }.sortedByDescending {
+            val format = SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.getDefault())
+            format.parse("${it.date} ${it.time}")?.time ?: 0L
+        }
+
+        rv.adapter = NotificationAdapter(notifList)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        requireContext().unregisterReceiver(receiver)
     }
 }

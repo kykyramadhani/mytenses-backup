@@ -19,9 +19,12 @@ import com.android.volley.Response
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import com.app.mytenses.R
+import com.google.firebase.messaging.FirebaseMessaging
 import org.json.JSONObject
 
 class LoginActivity : AppCompatActivity() {
+
+    private var currentFcmToken: String? = null //
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,6 +38,15 @@ class LoginActivity : AppCompatActivity() {
             startActivity(intent)
             finish()
             return
+        }
+
+        // FCM Token saat pertama kali
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                currentFcmToken = task.result
+            } else {
+                currentFcmToken = null
+            }
         }
 
         setContentView(R.layout.activity_login)
@@ -52,9 +64,9 @@ class LoginActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-       changePassword.setOnClickListener {
-             val intent = Intent(this, UbahKataSandiActivity::class.java)
-             startActivity(intent)
+        changePassword.setOnClickListener {
+            val intent = Intent(this, UbahKataSandiActivity::class.java)
+            startActivity(intent)
         }
 
         btnLogin.setOnClickListener {
@@ -106,6 +118,7 @@ class LoginActivity : AppCompatActivity() {
         val jsonBody = JSONObject().apply {
             put("email", email)
             put("password", password)
+            put("fcm_token", currentFcmToken) // Kirim FCM Token ke body login
         }
 
         val jsonObjectRequest = JsonObjectRequest(
@@ -119,6 +132,7 @@ class LoginActivity : AppCompatActivity() {
                     val name = user.getString("name")
                     val userId = user.getInt("user_id")
                     val username = user.getString("username")
+                    val fcmToken = user.optString("fcm_token", null)
 
                     // Simpan data pengguna ke SharedPreferences
                     val sharedPreferences = getSharedPreferences("MyTensesPrefs", MODE_PRIVATE)
@@ -126,6 +140,7 @@ class LoginActivity : AppCompatActivity() {
                         .putInt("user_id", userId)
                         .putString("username", username)
                         .putString("name", name)
+                        .putString("fcm_token", fcmToken)
                         .apply()
 
                     Toast.makeText(this, "Login berhasil! Selamat datang, $name", Toast.LENGTH_SHORT).show()
