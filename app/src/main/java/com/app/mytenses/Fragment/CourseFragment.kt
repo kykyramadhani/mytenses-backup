@@ -104,8 +104,10 @@ class CourseFragment : Fragment() {
                     add(Course("Simple Past Future", "Belum Mulai", 0, R.drawable.simple_past_future, "simple_past_future"))
                 }
                 fetchLocalLessonProgress(updatedCourses)
-                val sortedCourses = updatedCourses.sortedBy { it.status == "Selesai" }
-                adapter.updateData(sortedCourses)
+                val filteredCourses = updatedCourses.filter {
+                    it.progress > 0 && (it.status == "Sedang Diproses" || it.status == "Selesai")
+                }.sortedBy { it.status == "Selesai" }
+                adapter.updateData(filteredCourses)
             }
 
             // Setup SwipeRefreshLayout
@@ -165,18 +167,22 @@ class CourseFragment : Fragment() {
                     }
                 }
                 fetchLocalLessonProgress(updatedCourses)
-                val sortedCourses = updatedCourses.sortedBy { it.status == "Selesai" }
+                val filteredCourses = updatedCourses.filter {
+                    it.progress > 0 && (it.status == "Sedang Diproses" || it.status == "Selesai")
+                }.sortedBy { it.status == "Selesai" }
                 if (isAdded) {
-                    adapter.updateData(sortedCourses)
+                    adapter.updateData(filteredCourses)
                 }
             } catch (e: Exception) {
                 if (e !is kotlinx.coroutines.CancellationException) {
                     Log.e(TAG, "Error fetching progress: ${e.message}", e)
                 }
                 fetchLocalLessonProgress(updatedCourses)
-                val sortedCourses = updatedCourses.sortedBy { it.status == "Selesai" }
+                val filteredCourses = updatedCourses.filter {
+                    it.progress > 0 && (it.status == "Sedang Diproses" || it.status == "Selesai")
+                }.sortedBy { it.status == "Selesai" }
                 if (isAdded) {
-                    adapter.updateData(sortedCourses)
+                    adapter.updateData(filteredCourses)
                 }
             } finally {
                 fetchProgressJob = null
