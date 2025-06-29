@@ -1,5 +1,6 @@
 package com.app.mytenses.network
 
+import com.app.mytenses.model.ChangePasswordRequest
 import com.app.mytenses.model.Lesson
 import com.app.mytenses.model.LessonProgress
 import com.app.mytenses.model.LessonProgressResponse
@@ -43,11 +44,9 @@ interface ApiService {
     @GET("api/users/{username}/lessons")
     suspend fun getLessonProgress(@Path("username") username: String): Response<LessonProgressResponse>
 
-//    @POST("api/quiz_scores")
-//    suspend fun addQuizScore(
-//        @Body data: Map<String, Any>
-//    ): Response<Unit>
-//
-    @POST("/api/quiz_scores")
+    @POST("api/quiz_scores")
     suspend fun addQuizScore(@Body body: Map<String, @JvmSuppressWildcards Any>): Response<Any>
+
+    @PUT("api/change-password-by-email")
+    suspend fun changePasswordByEmail(@Body body: ChangePasswordRequest): Response<Map<String, String>>
 }

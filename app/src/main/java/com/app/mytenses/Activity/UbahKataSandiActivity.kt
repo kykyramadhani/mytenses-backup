@@ -12,12 +12,17 @@ import android.widget.ImageButton
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.android.volley.NoConnectionError
-import com.android.volley.Request
-import com.android.volley.toolbox.JsonObjectRequest
-import com.android.volley.toolbox.Volley
+import androidx.lifecycle.lifecycleScope
 import com.app.mytenses.R
+import com.app.mytenses.network.ApiService
+import com.app.mytenses.model.ChangePasswordRequest
+import com.app.mytenses.network.RetrofitClient
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.json.JSONObject
+import retrofit2.HttpException
+import java.io.IOException
 
 class UbahKataSandiActivity : AppCompatActivity() {
 
@@ -29,6 +34,7 @@ class UbahKataSandiActivity : AppCompatActivity() {
     private lateinit var progressBar: ProgressBar
     private var isPasswordVisible = false
     private var isConfirmPasswordVisible = false
+    private val apiService: ApiService by lazy { RetrofitClient.apiService }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -109,7 +115,7 @@ class UbahKataSandiActivity : AppCompatActivity() {
                 }
 
                 if (newPassword.length < 6) {
-                    Toast.makeText(this, "Kata sandi harus minimal 6", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Kata sandi harus minimal 6 karakter", Toast.LENGTH_SHORT).show()
                     return@setOnClickListener
                 }
 
@@ -126,9 +132,12 @@ class UbahKataSandiActivity : AppCompatActivity() {
                 progressBar.visibility = ProgressBar.VISIBLE
                 btnSave.isEnabled = false
 
-                resetPassword(email, newPassword)
+                // Panggil API dengan Retrofit menggunakan coroutine
+                lifecycleScope.launch {
+                    resetPassword(email, newPassword)
+                }
             } catch (e: Exception) {
-                Toast.makeText(this, "Error saat validasi: ${e.message}", Toast.LENGTH_LONG).show()
+                Toast.makeText(this@UbahKataSandiActivity, "Error saat validasi: ${e.message}", Toast.LENGTH_LONG).show()
                 progressBar.visibility = ProgressBar.GONE
                 btnSave.isEnabled = true
             }
@@ -147,63 +156,71 @@ class UbahKataSandiActivity : AppCompatActivity() {
         }
     }
 
-    private fun resetPassword(email: String, newPassword: String) {
-        val url = "https://mytenses-api.vercel.app/api/change-password-by-email"
-
-        val jsonBody = JSONObject().apply {
-            put("email", email)
-            put("new_password", newPassword)
-        }
-
-        val jsonObjectRequest = JsonObjectRequest(
-            Request.Method.PUT, url, jsonBody,
-            { response ->
+    private suspend fun resetPassword(email: String, newPassword: String) {
+        try {
+            val requestBody = ChangePasswordRequest(email, newPassword)
+            val response = withContext(Dispatchers.IO) {
+                apiService.changePasswordByEmail(requestBody)
+            }
+            withContext(Dispatchers.Main) {
                 progressBar.visibility = ProgressBar.GONE
                 btnSave.isEnabled = true
-                try {
-                    Toast.makeText(this, response.getString("message"), Toast.LENGTH_SHORT).show()
-                    val intent = Intent(this, PasswordUpdatedActivity::class.java)
+                if (response.isSuccessful) {
+                    val responseBody = response.body()
+                    val message = responseBody?.get("message") ?: "Kata sandi berhasil diperbarui"
+                    Toast.makeText(this@UbahKataSandiActivity, message, Toast.LENGTH_SHORT).show()
+                    val intent = Intent(this@UbahKataSandiActivity, PasswordUpdatedActivity::class.java)
                     startActivity(intent)
                     finish()
-                } catch (e: Exception) {
-                    Toast.makeText(this, "Gagal memproses respons: ${e.message}", Toast.LENGTH_LONG).show()
+                } else {
+                    val errorMessage = when (response.code()) {
+                        400 -> {
+                            try {
+                                val errorBody = response.errorBody()?.string()
+                                JSONObject(errorBody ?: "{}").getString("error") ?: "Permintaan tidak valid"
+                            } catch (e: Exception) {
+                                "Permintaan tidak valid"
+                            }
+                        }
+                        404 -> {
+                            try {
+                                val errorBody = response.errorBody()?.string()
+                                JSONObject(errorBody ?: "{}").getString("error") ?: "Email tidak ditemukan"
+                            } catch (e: Exception) {
+                                "Email tidak ditemukan"
+                            }
+                        }
+                        500 -> {
+                            try {
+                                val errorBody = response.errorBody()?.string()
+                                JSONObject(errorBody ?: "{}").getString("error") ?: "Terjadi kesalahan server"
+                            } catch (e: Exception) {
+                                "Terjadi kesalahan server"
+                            }
+                        }
+                        else -> "Gagal memperbarui kata sandi: ${response.message()}"
+                    }
+                    Toast.makeText(this@UbahKataSandiActivity, errorMessage, Toast.LENGTH_LONG).show()
                 }
-            },
-            { error ->
+            }
+        } catch (e: Exception) {
+            withContext(Dispatchers.Main) {
                 progressBar.visibility = ProgressBar.GONE
                 btnSave.isEnabled = true
-                val errorMessage = when {
-                    error is NoConnectionError -> "Tidak ada koneksi internet"
-                    error.networkResponse?.statusCode == 400 -> {
-                        try {
-                            val errorObj = JSONObject(String(error.networkResponse.data))
-                            errorObj.getString("error")
-                        } catch (e: Exception) {
-                            "Permintaan tidak valid"
+                val errorMessage = when (e) {
+                    is IOException -> "Tidak ada koneksi internet"
+                    is HttpException -> {
+                        when (e.code()) {
+                            400 -> "Permintaan tidak valid"
+                            404 -> "Email tidak ditemukan"
+                            500 -> "Terjadi kesalahan server"
+                            else -> "Gagal memperbarui kata sandi: ${e.message()}"
                         }
                     }
-                    error.networkResponse?.statusCode == 404 -> {
-                        try {
-                            val errorObj = JSONObject(String(error.networkResponse.data))
-                            errorObj.getString("error")
-                        } catch (e: Exception) {
-                            "Email tidak ditemukan"
-                        }
-                    }
-                    error.networkResponse?.statusCode == 500 -> {
-                        try {
-                            val errorObj = JSONObject(String(error.networkResponse.data))
-                            errorObj.getString("error")
-                        } catch (e: Exception) {
-                            "Terjadi kesalahan server"
-                        }
-                    }
-                    else -> "Gagal memperbarui kata sandi: ${error.message}"
+                    else -> "Error: ${e.message}"
                 }
-                Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show()
+                Toast.makeText(this@UbahKataSandiActivity, errorMessage, Toast.LENGTH_LONG).show()
             }
-        )
-
-        Volley.newRequestQueue(this).add(jsonObjectRequest)
+        }
     }
 }

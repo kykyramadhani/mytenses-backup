@@ -10,10 +10,10 @@ import com.app.mytenses.data.entity.UserEntity
 import com.app.mytenses.data.dao.UserDao
 import com.app.mytenses.data.entity.LessonProgressEntity
 import com.app.mytenses.data.entity.QuizScoreEntity
-import com.app.mytenses.utils.Converters // Pastikan impor ini ada
+import com.app.mytenses.utils.Converters
 
 @Database(entities = [UserEntity::class, LessonProgressEntity::class, QuizScoreEntity::class], version = 1, exportSchema = false)
-@TypeConverters(Converters::class) // Daftarkan konverter di sini
+@TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun userDao(): UserDao
 

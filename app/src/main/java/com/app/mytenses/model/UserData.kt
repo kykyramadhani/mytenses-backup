@@ -28,3 +28,8 @@ data class QuizScore(
     val score: Int,
     val date_taken: String
 )
+
+data class ChangePasswordRequest(
+    val email: String,
+    val new_password: String
+)
