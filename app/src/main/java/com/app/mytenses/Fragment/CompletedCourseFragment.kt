@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 import com.app.mytenses.R
 import com.app.mytenses.model.LessonProgress
 import com.app.mytenses.network.RetrofitClient
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -58,9 +59,13 @@ class CompletedCourseFragment : Fragment() {
                 val lesson = lessonId ?: "simple_present"
                 if (username.isNotBlank() && lesson.isNotBlank()) {
                     updateLessonProgress(username, lesson, 100, "completed", 2)
+                    // Pindah ke HomeFragment dan update bottom navbar
                     requireActivity().supportFragmentManager.beginTransaction()
                         .replace(R.id.fragment_container, HomeFragment())
                         .commit()
+                    // Update bottom navbar untuk set Home sebagai item aktif
+                    val bottomNav = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavigationView)
+                    bottomNav?.selectedItemId = R.id.nav_home
                 } else {
                     Log.e(TAG, "Invalid username: $username or lessonId: $lesson")
                     Toast.makeText(requireContext(), "Error: Username atau Lesson ID tidak valid", Toast.LENGTH_SHORT).show()
