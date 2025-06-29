@@ -46,7 +46,6 @@ class UbahKataSandiActivity : AppCompatActivity() {
             return
         }
 
-        // Inisialisasi view sesuai XML
         try {
             etEmail = findViewById(R.id.emailPw)
             etNewPassword = findViewById(R.id.NewPw)
@@ -62,7 +61,7 @@ class UbahKataSandiActivity : AppCompatActivity() {
 
         // Tombol kembali
         backButton.setOnClickListener {
-            finish() // Kembali ke LoginActivity
+            finish()
         }
 
         // Toggle password baru
@@ -132,7 +131,6 @@ class UbahKataSandiActivity : AppCompatActivity() {
                 progressBar.visibility = ProgressBar.VISIBLE
                 btnSave.isEnabled = false
 
-                // Panggil API dengan Retrofit menggunakan coroutine
                 lifecycleScope.launch {
                     resetPassword(email, newPassword)
                 }
