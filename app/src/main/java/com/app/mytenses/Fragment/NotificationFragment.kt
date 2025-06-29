@@ -14,6 +14,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.app.mytenses.R
 import java.text.SimpleDateFormat
 import java.util.*
@@ -29,7 +30,7 @@ class NotificationFragment : Fragment() {
         val iconResId: Int = R.drawable.notif
     )
 
-    inner class NotificationAdapter(private val items: List<NotificationItem>) :
+    inner class NotificationAdapter(private val items: MutableList<NotificationItem>) :
         RecyclerView.Adapter<NotificationAdapter.NotifViewHolder>() {
 
         inner class NotifViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -54,10 +55,18 @@ class NotificationFragment : Fragment() {
         }
 
         override fun getItemCount() = items.size
+
+        fun updateData(newItems: List<NotificationItem>) {
+            items.clear()
+            items.addAll(newItems)
+            notifyDataSetChanged()
+        }
     }
 
     private lateinit var rv: RecyclerView
+    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     private lateinit var receiver: BroadcastReceiver
+    private lateinit var adapter: NotificationAdapter
 
     private fun getRelativeTime(date: String, time: String): String {
         return try {
@@ -98,9 +107,18 @@ class NotificationFragment : Fragment() {
         rv = view.findViewById(R.id.rvNotifList)
         rv.layoutManager = LinearLayoutManager(requireContext())
 
+        // Initialize adapter with an empty list
+        adapter = NotificationAdapter(mutableListOf())
+        rv.adapter = adapter
+
+        swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout)
+        swipeRefreshLayout.setOnRefreshListener {
+            loadNotifications()
+            swipeRefreshLayout.isRefreshing = false
+        }
+
         loadNotifications()
 
-        // BroadcastReceiver untuk update saat notifikasi baru masuk
         receiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 loadNotifications()
@@ -148,7 +166,7 @@ class NotificationFragment : Fragment() {
             format.parse("${it.date} ${it.time}")?.time ?: 0L
         }
 
-        rv.adapter = NotificationAdapter(notifList)
+        adapter.updateData(notifList)
     }
 
     override fun onDestroyView() {
